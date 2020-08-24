@@ -19,32 +19,91 @@ class StoryCard extends StatelessWidget {
         child: Card(
           elevation: 5,
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.45,
-            width: MediaQuery.of(context).size.width * 0.9,
+            padding: EdgeInsets.all(16),
+            // height: MediaQuery.of(context).size.height * 0.45,
+            // width: MediaQuery.of(context).size.width * 0.9,
             child: Column(
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        storyDetails.owner,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w900,
-                            fontSize: 22,
-                            fontStyle: FontStyle.italic),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Title: ',
+                          ),
+                          Text(
+                            storyDetails.title,
+                          ),
+                        ],
                       ),
-                      Text(
-                        storyDetails.id,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w900,
-                            fontSize: 22,
-                            fontStyle: FontStyle.italic,
-                            color: Colors.orangeAccent),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Owner ID: ',
+                          ),
+                          Text(
+                            storyDetails.owner,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Followers: ',
+                          ),
+                          Text(
+                            '${storyDetails.followers.length}',
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Viewers: ',
+                          ),
+                          Text(
+                            '${storyDetails.viewers.length}',
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Views: ',
+                          ),
+                          Text(
+                            '${storyDetails.views}',
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Story ID: ',
+                        ),
+                        Text(
+                          storyDetails.id,
+                        ),
+                      ],
+                    ),
+                  ],
                 )
               ],
             ),

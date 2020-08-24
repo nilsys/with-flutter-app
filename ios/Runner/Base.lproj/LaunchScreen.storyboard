@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -11,10 +11,6 @@
         <scene sceneID="EHf-IW-A2E">
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Ydg-fD-yQy"/>
-                        <viewControllerLayoutGuide type="bottom" id="xbc-2k-c8Z"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -23,17 +19,17 @@
                                 <rect key="frame" x="0.0" y="113" width="414" height="670"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="gradient_bg" translatesAutoresizingMaskIntoConstraints="NO" id="Irt-zF-22M">
-                                <rect key="frame" x="2" y="0.0" width="412" height="896"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gradient_bg" translatesAutoresizingMaskIntoConstraints="NO" id="ePe-gz-PEr">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.21457958221435547" green="0.4139133095741272" blue="0.52552145719528198" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <color key="tintColor" systemColor="systemYellowColor" red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="Irt-zF-22M" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" constant="1" id="Azl-N1-pgH"/>
-                            <constraint firstAttribute="trailing" secondItem="Irt-zF-22M" secondAttribute="trailing" constant="1" id="IER-dC-f5c"/>
-                            <constraint firstItem="xbc-2k-c8Z" firstAttribute="top" secondItem="Irt-zF-22M" secondAttribute="bottom" constant="1" id="SRa-r7-d2o"/>
-                            <constraint firstItem="Irt-zF-22M" firstAttribute="top" secondItem="Ydg-fD-yQy" secondAttribute="bottom" constant="1" id="xPp-Nx-qYw"/>
+                            <constraint firstItem="ePe-gz-PEr" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="1zz-Hm-7I8"/>
+                            <constraint firstAttribute="bottom" secondItem="ePe-gz-PEr" secondAttribute="bottom" id="4ch-L3-8yC"/>
+                            <constraint firstAttribute="trailing" secondItem="ePe-gz-PEr" secondAttribute="trailing" id="w40-mh-7vn"/>
+                            <constraint firstItem="ePe-gz-PEr" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="zGC-FE-2wf"/>
                         </constraints>
                     </view>
                 </viewController>

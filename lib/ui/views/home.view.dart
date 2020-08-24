@@ -18,12 +18,12 @@ class _HomeViewState extends State<HomeView> {
     final storyProvider = Provider.of<StoryCRUDModel>(context);
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/addStory');
-        },
-        child: Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.pushNamed(context, '/addStory');
+      //   },
+      //   child: Icon(Icons.add),
+      // ),
       appBar: AppBar(
         title: Center(child: Text('Home')),
       ),
