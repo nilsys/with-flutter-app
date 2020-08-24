@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 class Story {
   final String id;
   final DateTime createdAt;
+  final DateTime closedAt;
   final String owner;
   final String title;
   final List<String> followers;
@@ -15,6 +16,7 @@ class Story {
     this.id,
     this.heroImage,
     @required this.createdAt,
+    @required this.closedAt,
     @required this.owner,
     @required this.title,
     @required this.followers,
@@ -26,6 +28,7 @@ class Story {
       : id = id ?? '',
         heroImage = snapshot['hero_image'] ?? null,
         createdAt = (snapshot['created_at'] as Timestamp).toDate(),
+        closedAt = (snapshot['closed_at'] as Timestamp).toDate(),
         owner = snapshot['owner'],
         title = snapshot['title'],
         followers = snapshot['followers'].cast<String>(),
@@ -35,6 +38,7 @@ class Story {
   toJson() {
     return {
       "created_at": createdAt,
+      "closed_at": closedAt,
       "owner": owner,
       "title": title,
       "followers": followers,
