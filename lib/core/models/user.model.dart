@@ -9,6 +9,7 @@ class User {
   final String email;
   final String profileImage;
   final UserStories stories;
+  final List<String> leads;
 
   User({
     this.id,
@@ -17,6 +18,7 @@ class User {
     @required this.displayName,
     @required this.email,
     @required this.stories,
+    @required this.leads,
     this.profileImage,
   });
 
@@ -27,6 +29,7 @@ class User {
         displayName = snapshot['display_name'],
         email = snapshot['email'],
         stories = snapshot['storeis'],
+        leads = snapshot['leads'],
         profileImage = snapshot['profile_image'];
 
   toJson() {
@@ -37,6 +40,7 @@ class User {
       "email": email,
       "profile_image": profileImage,
       "stories": stories,
+      "leads": leads,
     };
   }
 }

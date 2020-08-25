@@ -28,7 +28,9 @@ class Story {
       : id = id ?? '',
         heroImage = snapshot['hero_image'] ?? null,
         createdAt = (snapshot['created_at'] as Timestamp).toDate(),
-        closedAt = (snapshot['closed_at'] as Timestamp).toDate(),
+        closedAt = snapshot['closed_at'] != null
+            ? (snapshot['closed_at'] as Timestamp).toDate()
+            : null,
         owner = snapshot['owner'],
         title = snapshot['title'],
         followers = snapshot['followers'].cast<String>(),

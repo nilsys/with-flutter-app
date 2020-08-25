@@ -10,10 +10,10 @@ class StoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (_) => StoryView(story: storyDetails)));
-      },
+      // onTap: () {
+      //   Navigator.push(context,
+      //       MaterialPageRoute(builder: (_) => StoryView(story: storyDetails)));
+      // },
       child: Padding(
         padding: EdgeInsets.all(8),
         child: Card(
