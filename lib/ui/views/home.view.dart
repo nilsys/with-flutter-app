@@ -36,12 +36,17 @@ class _HomeViewState extends State<HomeView> {
                     .map((doc) => Story.fromMap(doc.data(), doc.id))
                     .toList();
                 return ListView.builder(
+                  key: Key('story_list'),
                   itemCount: stories.length,
-                  itemBuilder: (buildContext, index) =>
-                      StoryCard(storyDetails: stories[index]),
+                  itemBuilder: (buildContext, index) => StoryCard(
+                    storyDetails: stories[index],
+                  ),
                 );
               } else {
-                return Text('fetching');
+                return Text(
+                  'fetching',
+                  key: Key('fetching'),
+                );
               }
             }),
       ),

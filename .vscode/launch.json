@@ -26,6 +26,18 @@
       "request": "launch",
       "type": "dart",
       "args": ["-d", "chrome", "--web-port", "8080"]
+    },
+    {
+      "name": "e2e: Launch App",
+      "request": "launch",
+      "type": "dart",
+      "program": "test_driver/e2e.dart"
+    },
+    {
+      "name": "e2e: Launch Driver",
+      "request": "launch",
+      "type": "dart",
+      "program": "test_driver/e2e_test.dart"
     }
   ]
 }
