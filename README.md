@@ -1,16 +1,29 @@
 # with_app
 
-A new Flutter project.
+### Data models schema
 
-## Getting Started
+[See here](https://docs.google.com/drawings/d/1ajfmi8cEDffEGTRlMbKvoyijV7SPEjhBuKF0jYHLx5k/edit)
 
-This project is a starting point for a Flutter application.
+### Codemagic
 
-A few resources to get you started if this is your first Flutter project:
+[Project builds](https://codemagic.io/app/5f4515cd55449d000fe1b102)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+### Firebase
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+[Console](https://console.firebase.google.com/u/0/project/with-flutter-app-ae099/firestore/data~2F)
+
+### Publish to github pages
+
+`git add build/web && git commit -m "Initial dist subtree commit"`
+
+### Zeplin
+
+[Assets](https://app.zeplin.io/project/5f1ef2336d077042adcdbdd5)
+
+### Invision
+
+[Assets](https://projects.invisionapp.com/share/84XUFY6SRXW#/screens)
+
+### QA
+
+...
