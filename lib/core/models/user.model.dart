@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:with_app/core/models/user_stories.model.dart';
 
-class User {
+class UserModel {
   final String id;
   final String firstName;
   final String lastName;
@@ -11,7 +11,7 @@ class User {
   final UserStories stories;
   final List<String> leads;
 
-  User({
+  UserModel({
     this.id,
     @required this.firstName,
     @required this.lastName,
@@ -22,7 +22,7 @@ class User {
     this.profileImage,
   });
 
-  User.fromMap(Map snapshot, String id)
+  UserModel.fromMap(Map snapshot, String id)
       : id = id ?? '',
         firstName = snapshot['first_name'],
         lastName = snapshot['last_name'],
