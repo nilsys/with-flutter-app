@@ -14,7 +14,9 @@
 
 ### Publish to github pages
 
-`git add build/web && git commit -m "Initial dist subtree commit"`
+```
+$ git add build/web && git commit -m "Initial dist subtree commit"
+```
 
 ### Zeplin
 
