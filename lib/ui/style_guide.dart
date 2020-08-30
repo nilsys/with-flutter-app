@@ -6,7 +6,7 @@ class StyleGuide extends InheritedWidget {
 
   const StyleGuide({Widget child, Key key}) : super(key: key, child: child);
 
-  static const EdgeInsets pageBleed = EdgeInsets.fromLTRB(15, 40, 15, 0);
+  static const EdgeInsets pageBleed = EdgeInsets.fromLTRB(30, 40, 30, 0);
 
   @override
   bool updateShouldNotify(StyleGuide oldWidget) => false;

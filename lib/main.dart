@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
           // Define the default brightness and colors.
           brightness: Brightness.dark,
           primaryColor: new Color.fromRGBO(31, 107, 137, 1),
-          accentColor: Colors.cyan[600],
+          // accentColor: Colors.cyan[600],
 
           // Define the default font family.
           fontFamily: 'Hind',
@@ -56,13 +56,28 @@ class MyApp extends StatelessWidget {
             bodyColor: Colors.orange,
             displayColor: Colors.pink,
           ),
+          cursorColor: Colors.white,
           inputDecorationTheme: InputDecorationTheme(
+            contentPadding: EdgeInsets.fromLTRB(20, 18, 20, 18),
+            floatingLabelBehavior: FloatingLabelBehavior
+                .never, // this setting is not working - flutter bug try updating flutter package later on
             labelStyle: TextStyle(color: Colors.white),
+            filled: true,
             border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black, width: 5.0),
-              borderRadius: BorderRadius.all(Radius.circular(2.0)),
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
+            focusColor: Colors.white,
           ),
+          buttonColor: Colors.tealAccent[200],
+          buttonTheme: ButtonThemeData(
+            buttonColor: Colors.tealAccent[200].withAlpha(150),
+          ),
+          // outlinedButtonTheme: OutlinedButtonThemeData(
+          //   style: ButtonStyle(
+          //     border
+          //   ),
+          // ),
         ),
         onGenerateRoute: AppRouter.generateRoute,
       ),

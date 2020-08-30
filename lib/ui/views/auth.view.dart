@@ -8,9 +8,7 @@ import 'package:with_app/ui/style_guide.dart';
 import 'package:with_app/core/services/firebase_handler.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/core/models/user.model.dart';
-import 'package:provider/provider.dart';
 import 'package:with_app/core/models/user_stories.model.dart';
-import 'package:with_app/core/services/auth.dart';
 import 'package:with_app/ui/views/home.view.dart';
 
 class AuthView extends StatefulWidget {
@@ -26,12 +24,7 @@ class _AuthViewState extends State<AuthView> {
   FirebaseHandler fbHandler;
   String _userEmail = '';
   String _userPassword = '';
-  String _userFirstName = '';
-  String _userLastName = '';
-  String _userDisplayName = '';
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _displayNameController = TextEditingController();
+  String _userFullName = '';
   UserVM _userVM;
 
   @override
@@ -46,14 +39,6 @@ class _AuthViewState extends State<AuthView> {
       }
     });
     _userVM = new UserVM();
-    _firstNameController.addListener(() {
-      _displayNameController.text =
-          '${_firstNameController.text} ${_lastNameController.text}';
-    });
-    _lastNameController.addListener(() {
-      _displayNameController.text =
-          '${_firstNameController.text} ${_lastNameController.text}';
-    });
     // fbHandler = FirebaseHandler();
     // setDeeplinkClickHandler(fbHandler);
     // setDeeplinkBGHandler(fbHandler);
@@ -63,7 +48,7 @@ class _AuthViewState extends State<AuthView> {
   void dispose() {
     // Clean up the controller when the widget is removed from the
     // widget tree.
-    _displayNameController.dispose();
+    // _displayNameController.dispose();
     super.dispose();
   }
 
@@ -82,9 +67,8 @@ class _AuthViewState extends State<AuthView> {
           new UserModel(
             id: userCredentials.user.uid,
             email: userCredentials.user.email,
-            firstName: _userFirstName,
-            lastName: _userLastName,
-            displayName: _userDisplayName,
+            firstName: _userFullName.split(' ')[0],
+            lastName: _userFullName.split(' ')[1],
             stories: new UserStories(
               owner: new List(),
               following: new List(),
@@ -108,129 +92,140 @@ class _AuthViewState extends State<AuthView> {
       // ),
       body: Container(
         padding: StyleGuide.pageBleed,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SvgPicture.asset(
-              'images/logo_light.svg',
-              semanticsLabel: 'With Logo',
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: <Color>[
+              Theme.of(context).primaryColor,
+              Theme.of(context).primaryColor.withRed(150)
+            ],
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SvgPicture.asset(
+                  'images/logo_light.svg',
+                  semanticsLabel: 'With Logo',
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextFormField(
+                        key: ValueKey('email'),
+                        textAlignVertical: TextAlignVertical(y: 1),
+                        validator: (value) {
+                          if (!EmailValidator.validate(value.trim())) {
+                            return 'Please enter a valid email addresss';
+                          }
+                          return null;
+                        },
+                        cursorHeight: 20,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
+                          labelText: 'Email',
+                          prefixIcon: Icon(Icons.email),
+                          // border: OutlineInputBorder(
+                          //   borderSide:
+                          //       BorderSide(color: Colors.orange, width: 5.0),
+                          //   borderRadius:
+                          //       BorderRadius.all(Radius.circular(2.0)),
+                          // ),
+                        ),
+                        onSaved: (value) {
+                          _userEmail = value.trim();
+                        },
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        key: ValueKey('password'),
+                        validator: (value) {
+                          if (value.isEmpty || value.length < 7) {
+                            return 'Password must be at least 7 characters long';
+                          }
+                          return null;
+                        },
+                        textAlignVertical: TextAlignVertical(y: 1),
+                        scrollPadding: EdgeInsets.zero,
+                        // cursorHeight: 20,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.lock_rounded),
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
+                          labelText: 'Password',
+                          focusColor: Colors.white,
+                        ),
+                        onSaved: (value) {
+                          _userPassword = value.trim();
+                        },
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        key: ValueKey('full name'),
+                        textAlignVertical: TextAlignVertical(y: 1),
+                        validator: (value) {
+                          if (value.trim().isEmpty) {
+                            return 'Required';
+                          }
+                          return null;
+                        },
+                        cursorHeight: 20,
+                        keyboardType: TextInputType.name,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.person_sharp),
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
+                          labelText: 'Full Name',
+                          // border: OutlineInputBorder(
+                          //   borderSide:
+                          //       BorderSide(color: Colors.orange, width: 5.0),
+                          //   borderRadius:
+                          //       BorderRadius.all(Radius.circular(2.0)),
+                          // ),
+                        ),
+                        onSaved: (value) {
+                          _userFullName = value.trim();
+                        },
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: FlatButton(
+                            onPressed: _trySubmit,
+                            color: Theme.of(context).accentColor.withAlpha(150),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Text(
+                              'SIGNUP',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w400),
+                            ),
+                            textColor: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    key: ValueKey('first name'),
-                    controller: _firstNameController,
-                    validator: (value) {
-                      if (value.trim().isEmpty) {
-                        return 'Required';
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.name,
-                    decoration: InputDecoration(
-                      labelText: 'First Name',
-                      border: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.orange, width: 5.0),
-                        borderRadius: BorderRadius.all(Radius.circular(2.0)),
-                      ),
-                    ),
-                    onSaved: (value) {
-                      _userFirstName = value.trim();
-                    },
-                  ),
-                  TextFormField(
-                    key: ValueKey('last name'),
-                    controller: _lastNameController,
-                    validator: (value) {
-                      if (value.trim().isEmpty) {
-                        return 'Required';
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.name,
-                    decoration: InputDecoration(
-                      labelText: 'Last Name',
-                      border: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.orange, width: 5.0),
-                        borderRadius: BorderRadius.all(Radius.circular(2.0)),
-                      ),
-                    ),
-                    onSaved: (value) {
-                      _userLastName = value.trim();
-                    },
-                  ),
-                  TextFormField(
-                    key: ValueKey('display name'),
-                    controller: _displayNameController,
-                    validator: (value) {
-                      if (value.trim().isEmpty) {
-                        return 'Required';
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.name,
-                    decoration: InputDecoration(
-                      labelText: 'Display Name',
-                      border: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.orange, width: 5.0),
-                        borderRadius: BorderRadius.all(Radius.circular(2.0)),
-                      ),
-                    ),
-                    onSaved: (value) {
-                      _userDisplayName = value.trim();
-                    },
-                  ),
-                  TextFormField(
-                    key: ValueKey('email'),
-                    validator: (value) {
-                      if (!EmailValidator.validate(value.trim())) {
-                        return 'Please enter a valid email addresss';
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.orange, width: 5.0),
-                        borderRadius: BorderRadius.all(Radius.circular(2.0)),
-                      ),
-                    ),
-                    onSaved: (value) {
-                      _userEmail = value.trim();
-                    },
-                  ),
-                  TextFormField(
-                    key: ValueKey('password'),
-                    validator: (value) {
-                      if (value.isEmpty || value.length < 7) {
-                        return 'Password must be at least 7 characters long';
-                      }
-                      return null;
-                    },
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                    ),
-                    onSaved: (value) {
-                      _userPassword = value.trim();
-                    },
-                  ),
-                  FlatButton(
-                    onPressed: _trySubmit,
-                    color: Colors.orange,
-                    child: Text('Signup'),
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
