@@ -30,17 +30,17 @@ class FirebaseHandler {
         });
   }
 
-  sendEmail({email}) {
+  sendEmail(email) {
     _auth.sendSignInLinkToEmail(
       email: email,
       actionCodeSettings: ActionCodeSettings(
-        url: '/home',
+        url: 'https://withapp.page.link/',
         android: {
           'packageName': 'io.withapp.android',
           'installApp': true,
           'minimumVersion': '21'
         },
-        dynamicLinkDomain: '',
+        // dynamicLinkDomain: 'withapp.page.link',
         handleCodeInApp: true,
         iOS: {
           'bundleId': 'io.withapp.ios',

@@ -4,7 +4,7 @@ import '../services/api.dart';
 import '../models/story.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class StoryCRUDModel extends ChangeNotifier {
+class StoryVM extends ChangeNotifier {
   Api _api = Api('stories');
 
   List<Story> stories;

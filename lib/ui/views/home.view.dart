@@ -1,21 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:with_app/core/models/story.model.dart';
-import 'package:with_app/core/view_models/story_CRUDModel.dart';
+import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/ui/widgets/story_card.dart';
+import 'package:with_app/ui/views/auth.view.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeView extends StatefulWidget {
+  static const String route = '/home';
+
   @override
   _HomeViewState createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
   List<Story> stories;
+  final _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
-    final storyProvider = Provider.of<StoryCRUDModel>(context);
+    final storyProvider = Provider.of<StoryVM>(context);
 
     return Scaffold(
       // floatingActionButton: FloatingActionButton(
@@ -26,6 +31,17 @@ class _HomeViewState extends State<HomeView> {
       // ),
       appBar: AppBar(
         title: Center(child: Text('Home')),
+        leading: IconButton(
+          iconSize: 19,
+          icon: Icon(
+            Icons.power_settings_new,
+          ),
+          onPressed: () {
+            _auth.signOut().then((value) => {
+                  Navigator.pushNamed(context, AuthView.route),
+                });
+          },
+        ),
       ),
       body: Container(
         child: StreamBuilder(

@@ -6,9 +6,9 @@ import './views/auth.view.dart';
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case '/':
+      case AuthView.route:
         return MaterialPageRoute(builder: (_) => AuthView());
-      case '/home':
+      case HomeView.route:
         return MaterialPageRoute(builder: (_) => HomeView());
       // case '/addProduct' :
       //   return MaterialPageRoute(
