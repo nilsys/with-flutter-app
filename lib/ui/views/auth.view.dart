@@ -107,11 +107,18 @@ class _AuthViewState extends State<AuthView> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SvgPicture.asset(
                   'images/logo_light.svg',
                   semanticsLabel: 'With Logo',
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Create Account',
+                  style: Theme.of(context).textTheme.headline4,
                 ),
                 SizedBox(
                   height: 25,
@@ -123,7 +130,7 @@ class _AuthViewState extends State<AuthView> {
                     children: [
                       TextFormField(
                         key: ValueKey('email'),
-                        textAlignVertical: TextAlignVertical(y: 1),
+                        textAlignVertical: TextAlignVertical(y: 0.1),
                         validator: (value) {
                           if (!EmailValidator.validate(value.trim())) {
                             return 'Please enter a valid email addresss';
@@ -152,13 +159,13 @@ class _AuthViewState extends State<AuthView> {
                       ),
                       TextFormField(
                         key: ValueKey('password'),
+                        textAlignVertical: TextAlignVertical(y: 0.1),
                         validator: (value) {
                           if (value.isEmpty || value.length < 7) {
                             return 'Password must be at least 7 characters long';
                           }
                           return null;
                         },
-                        textAlignVertical: TextAlignVertical(y: 1),
                         scrollPadding: EdgeInsets.zero,
                         // cursorHeight: 20,
                         obscureText: true,
@@ -177,7 +184,7 @@ class _AuthViewState extends State<AuthView> {
                       ),
                       TextFormField(
                         key: ValueKey('full name'),
-                        textAlignVertical: TextAlignVertical(y: 1),
+                        textAlignVertical: TextAlignVertical(y: 0.1),
                         validator: (value) {
                           if (value.trim().isEmpty) {
                             return 'Required';

@@ -7,6 +7,7 @@ import './ui/router.dart';
 import './locator.dart';
 import 'core/view_models/story.vm.dart';
 import 'core/view_models/user.vm.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,21 +48,29 @@ class MyApp extends StatelessWidget {
 
           // Define the default TextTheme. Use this to specify the default
           // text styling for headlines, titles, bodies of text, and more.
-          textTheme: TextTheme(
-            headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-            headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-            bodyText2: TextStyle(fontSize: 14.0),
-            bodyText1: TextStyle(fontSize: 24.0),
-          ).apply(
-            bodyColor: Colors.orange,
-            displayColor: Colors.pink,
-          ),
+          textTheme: GoogleFonts.latoTextTheme(Theme.of(context).textTheme)
+              .copyWith(
+                headline1:
+                    TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+                headline2:
+                    TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+                headline3:
+                    TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+                headline4:
+                    GoogleFonts.satisfy(textStyle: TextStyle(fontSize: 20.0)),
+                bodyText2: TextStyle(fontSize: 14.0),
+                bodyText1: TextStyle(fontSize: 24.0),
+              )
+              .apply(
+                bodyColor: Colors.orange,
+                displayColor: Colors.tealAccent[200],
+              ),
           cursorColor: Colors.white,
           inputDecorationTheme: InputDecorationTheme(
-            contentPadding: EdgeInsets.fromLTRB(20, 18, 20, 18),
+            contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
             floatingLabelBehavior: FloatingLabelBehavior
                 .never, // this setting is not working - flutter bug try updating flutter package later on
-            labelStyle: TextStyle(color: Colors.white),
+            labelStyle: TextStyle(color: Colors.white, fontSize: 14.0),
             filled: true,
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
