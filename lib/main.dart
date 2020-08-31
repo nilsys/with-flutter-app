@@ -54,15 +54,13 @@ class MyApp extends StatelessWidget {
                     TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
                 headline2:
                     TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-                headline3:
-                    TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+                headline3: TextStyle(fontSize: 16.0),
                 headline4:
                     GoogleFonts.satisfy(textStyle: TextStyle(fontSize: 20.0)),
-                bodyText2: TextStyle(fontSize: 14.0),
-                bodyText1: TextStyle(fontSize: 24.0),
+                bodyText2: TextStyle(fontSize: 14.0, color: Colors.white),
+                bodyText1: TextStyle(fontSize: 14.0),
               )
               .apply(
-                bodyColor: Colors.orange,
                 displayColor: Colors.tealAccent[200],
               ),
           cursorColor: Colors.white,

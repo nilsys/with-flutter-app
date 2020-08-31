@@ -102,13 +102,15 @@ class _AuthViewState extends State<AuthView> {
             ],
           ),
         ),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
               mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                SizedBox(
+                  height: 25,
+                ),
                 SvgPicture.asset(
                   'images/logo_light.svg',
                   semanticsLabel: 'With Logo',
@@ -123,116 +125,135 @@ class _AuthViewState extends State<AuthView> {
                 SizedBox(
                   height: 25,
                 ),
-                Form(
-                  key: _formKey,
+              ],
+            ),
+            Expanded(
+              child: Container(
+                child: Center(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      TextFormField(
-                        key: ValueKey('email'),
-                        textAlignVertical: TextAlignVertical(y: 0.1),
-                        validator: (value) {
-                          if (!EmailValidator.validate(value.trim())) {
-                            return 'Please enter a valid email addresss';
-                          }
-                          return null;
-                        },
-                        cursorHeight: 20,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                          labelText: 'Email',
-                          prefixIcon: Icon(Icons.email),
-                          // border: OutlineInputBorder(
-                          //   borderSide:
-                          //       BorderSide(color: Colors.orange, width: 5.0),
-                          //   borderRadius:
-                          //       BorderRadius.all(Radius.circular(2.0)),
-                          // ),
-                        ),
-                        onSaved: (value) {
-                          _userEmail = value.trim();
-                        },
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      TextFormField(
-                        key: ValueKey('password'),
-                        textAlignVertical: TextAlignVertical(y: 0.1),
-                        validator: (value) {
-                          if (value.isEmpty || value.length < 7) {
-                            return 'Password must be at least 7 characters long';
-                          }
-                          return null;
-                        },
-                        scrollPadding: EdgeInsets.zero,
-                        // cursorHeight: 20,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.lock_rounded),
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                          labelText: 'Password',
-                          focusColor: Colors.white,
-                        ),
-                        onSaved: (value) {
-                          _userPassword = value.trim();
-                        },
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      TextFormField(
-                        key: ValueKey('full name'),
-                        textAlignVertical: TextAlignVertical(y: 0.1),
-                        validator: (value) {
-                          if (value.trim().isEmpty) {
-                            return 'Required';
-                          }
-                          return null;
-                        },
-                        cursorHeight: 20,
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.person_sharp),
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                          labelText: 'Full Name',
-                          // border: OutlineInputBorder(
-                          //   borderSide:
-                          //       BorderSide(color: Colors.orange, width: 5.0),
-                          //   borderRadius:
-                          //       BorderRadius.all(Radius.circular(2.0)),
-                          // ),
-                        ),
-                        onSaved: (value) {
-                          _userFullName = value.trim();
-                        },
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: FlatButton(
-                            onPressed: _trySubmit,
-                            color: Theme.of(context).accentColor.withAlpha(150),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextFormField(
+                              key: ValueKey('email'),
+                              textAlignVertical: TextAlignVertical(y: 0.1),
+                              validator: (value) {
+                                if (!EmailValidator.validate(value.trim())) {
+                                  return 'Please enter a valid email addresss';
+                                }
+                                return null;
+                              },
+                              cursorHeight: 20,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                                labelText: 'Email',
+                                prefixIcon: Icon(Icons.email),
+                                // border: OutlineInputBorder(
+                                //   borderSide:
+                                //       BorderSide(color: Colors.orange, width: 5.0),
+                                //   borderRadius:
+                                //       BorderRadius.all(Radius.circular(2.0)),
+                                // ),
+                              ),
+                              onSaved: (value) {
+                                _userEmail = value.trim();
+                              },
                             ),
-                            child: Text(
-                              'SIGNUP',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w400),
+                            SizedBox(
+                              height: 15,
                             ),
-                            textColor: Colors.black),
+                            TextFormField(
+                              key: ValueKey('password'),
+                              textAlignVertical: TextAlignVertical(y: 0.1),
+                              validator: (value) {
+                                if (value.isEmpty || value.length < 7) {
+                                  return 'Password must be at least 7 characters long';
+                                }
+                                return null;
+                              },
+                              scrollPadding: EdgeInsets.zero,
+                              // cursorHeight: 20,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.lock_rounded),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                                labelText: 'Password',
+                                focusColor: Colors.white,
+                              ),
+                              onSaved: (value) {
+                                _userPassword = value.trim();
+                              },
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            TextFormField(
+                              key: ValueKey('full name'),
+                              textAlignVertical: TextAlignVertical(y: 0.1),
+                              validator: (value) {
+                                if (value.trim().isEmpty) {
+                                  return 'Required';
+                                }
+                                return null;
+                              },
+                              cursorHeight: 20,
+                              keyboardType: TextInputType.name,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.person_sharp),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                                labelText: 'Full Name',
+                                // border: OutlineInputBorder(
+                                //   borderSide:
+                                //       BorderSide(color: Colors.orange, width: 5.0),
+                                //   borderRadius:
+                                //       BorderRadius.all(Radius.circular(2.0)),
+                                // ),
+                              ),
+                              onSaved: (value) {
+                                _userFullName = value.trim();
+                              },
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: FlatButton(
+                                  onPressed: _trySubmit,
+                                  color: Theme.of(context)
+                                      .accentColor
+                                      .withAlpha(150),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Text(
+                                    'SIGNUP',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  textColor: Colors.black),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

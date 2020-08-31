@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import './views/home.view.dart';
-import './views/auth.view.dart';
+// import './views/auth.view.dart';
+import './views/auth2.view.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
