@@ -80,6 +80,9 @@ class MyApp extends StatelessWidget {
           buttonTheme: ButtonThemeData(
             buttonColor: Colors.tealAccent[200].withAlpha(150),
           ),
+          // iconTheme: IconThemeData(
+          //   color: Theme.of(context).accentColor,
+          // ),
           // outlinedButtonTheme: OutlinedButtonThemeData(
           //   style: ButtonStyle(
           //     border
