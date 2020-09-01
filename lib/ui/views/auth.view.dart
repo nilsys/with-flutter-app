@@ -329,7 +329,7 @@ class _AuthViewState extends State<AuthView> {
               ],
             ),
             SizedBox(
-              height: 20,
+              height: 27,
             ),
             Row(
               children: [
