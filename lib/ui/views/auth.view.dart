@@ -270,7 +270,7 @@ class _AuthViewState extends State<AuthView> {
                       width: 10,
                     ),
                     Text(
-                      'I agree to the terms of use',
+                      'I agree to the\nterms of use',
                       style: Theme.of(context).textTheme.bodyText2,
                     ),
                     IconButton(
