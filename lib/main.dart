@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
           // Define the default brightness and colors.
           brightness: Brightness.dark,
           primaryColor: new Color.fromRGBO(31, 107, 137, 1),
+          backgroundColor: Colors.white.withAlpha(40),
           // accentColor: Colors.cyan[600],
 
           // Define the default font family.

@@ -38,6 +38,7 @@ dependencies:
   google_fonts: ^1.1.0
   flutter_holo_date_picker: ^0.2.0
   url_launcher: ^5.5.1
+  image_picker: ^0.6.7+7
 
 dev_dependencies:
   flutter_test:
