@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
@@ -32,15 +31,12 @@ class _AuthViewState extends State<AuthView> {
     'password': TextEditingController(),
     'display_name': TextEditingController(),
   };
-  // String _userEmail = '';
-  // String _userPassword = '';
-  // String _displayName = '';
-  bool _emailIsValid = true;
-  bool _passwordIsValid = true;
-  bool _displayNameIsValid = true;
-  bool _ageConfirmed = true;
-  bool _termsConfirmed = true;
-  int _currentStep = 2;
+  bool _emailIsValid = false;
+  bool _passwordIsValid = false;
+  bool _displayNameIsValid = false;
+  bool _ageConfirmed = false;
+  bool _termsConfirmed = false;
+  int _currentStep = 0;
   File _selfie;
   UserVM _userVM;
 
@@ -108,24 +104,33 @@ class _AuthViewState extends State<AuthView> {
     if (isValid) {
       UserCredential userCredentials =
           await _auth.createUserWithEmailAndPassword(
-        email: controllers['email'].text,
-        password: controllers['password'].text,
+        email: controllers['email'].text.trim(),
+        password: controllers['password'].text.trim(),
       );
-      _userVM.addUser(
-          new UserModel(
-            id: userCredentials.user.uid,
-            email: userCredentials.user.email,
-            displayName: controllers['display_name'].text,
-            stories: new UserStories(
-              owner: new List(),
-              following: new List(),
-              viewing: new List(),
+      String _url =
+          await _userVM.uploadAvatar(_selfie, userCredentials.user.uid);
+      if (_url != null) {
+        _userVM.addUser(
+            new UserModel(
+              id: userCredentials.user.uid,
+              email: userCredentials.user.email,
+              displayName: controllers['display_name'].text.trim(),
+              stories: new UserStories(
+                owner: new List(),
+                following: new List(),
+                viewing: new List(),
+              ),
+              leads: new List(),
+              profileImage: _url,
             ),
-            leads: new List(),
-          ),
-          userCredentials.user.uid);
+            userCredentials.user.uid);
+      }
     }
   }
+
+  Widget _verticalSpacer = SizedBox(
+    height: 12,
+  );
 
   List<Step> steps(BuildContext context) {
     return [
@@ -172,9 +177,7 @@ class _AuthViewState extends State<AuthView> {
                 FilteringTextInputFormatter.deny(RegExp(r"\s+")),
               ],
             ),
-            SizedBox(
-              height: 15,
-            ),
+            _verticalSpacer,
             TextField(
               key: ValueKey('password'),
               controller: controllers['password'],
@@ -252,10 +255,10 @@ class _AuthViewState extends State<AuthView> {
                   ],
                 ),
               ),
+              _verticalSpacer,
               CheckboxListTile(
                 value: _termsConfirmed,
                 checkColor: Colors.black,
-                dense: true,
                 contentPadding: EdgeInsets.all(0),
                 onChanged: (value) {
                   setState(() {
@@ -281,6 +284,7 @@ class _AuthViewState extends State<AuthView> {
                   ],
                 ),
               ),
+              _verticalSpacer,
             ],
           ),
         ),
@@ -294,52 +298,16 @@ class _AuthViewState extends State<AuthView> {
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            TextField(
-              key: ValueKey('display_name'),
-              // validator: (value) {
-              //   if (value.length < 3) {
-              //     return 'Please enter at least 3 charecters';
-              //   }
-              //   return null;
-              // },
-              controller: controllers['display_name'],
-              scrollPadding: EdgeInsets.zero,
-              cursorHeight: 20,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.person_sharp),
-                suffixIcon: _displayNameIsValid
-                    ? Icon(Icons.check_circle)
-                    : Icon(Icons.error),
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-                labelText: 'Display Name',
-                focusColor: Colors.white,
-              ),
-              style: TextStyle(color: Colors.white),
-              // onSaved: (value) {
-              //   _displayName = value.trim();
-              // },
-              onChanged: (value) {
-                bool isValid = value.length > 2;
-                setState(() {
-                  _displayNameIsValid = isValid;
-                });
-              },
-              inputFormatters: [
-                FilteringTextInputFormatter.deny(RegExp(r"\s+")),
-              ],
-            ),
-            SizedBox(
-              height: 27,
-            ),
             Row(
               children: [
+                Spacer(),
                 CircleAvatar(
-                  radius: 80,
-                  backgroundColor: Colors.white,
+                  radius: 60,
+                  backgroundColor: Colors.white.withAlpha(150),
                   child: ClipOval(
                     child: SizedBox(
-                      width: 152.0,
-                      height: 152.0,
+                      width: 112.0,
+                      height: 112.0,
                       child: _selfie != null
                           ? Image.file(_selfie, fit: BoxFit.fill)
                           : Image.network(
@@ -392,22 +360,42 @@ class _AuthViewState extends State<AuthView> {
             SizedBox(
               height: 20,
             ),
-            SizedBox(
-              width: double.infinity,
-              child: FlatButton(
-                onPressed: _trySubmit,
-                color: Theme.of(context).accentColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                child: Text(
-                  'Create my account',
-                ),
-                textColor: Colors.black,
+            TextField(
+              key: ValueKey('display_name'),
+              // validator: (value) {
+              //   if (value.length < 3) {
+              //     return 'Please enter at least 3 charecters';
+              //   }
+              //   return null;
+              // },
+              controller: controllers['display_name'],
+              scrollPadding: EdgeInsets.zero,
+              cursorHeight: 20,
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.person_sharp),
+                suffixIcon: _displayNameIsValid
+                    ? Icon(Icons.check_circle)
+                    : Icon(Icons.error),
+                floatingLabelBehavior: FloatingLabelBehavior.never,
+                labelText: 'Display Name',
+                focusColor: Colors.white,
               ),
+              style: TextStyle(color: Colors.white),
+              // onSaved: (value) {
+              //   _displayName = value.trim();
+              // },
+              onChanged: (value) {
+                bool isValid = value.length > 2;
+                setState(() {
+                  _displayNameIsValid = isValid;
+                });
+              },
+              inputFormatters: [
+                FilteringTextInputFormatter.deny(RegExp(r"^\s|\s\s+")),
+              ],
             ),
             SizedBox(
-              height: 20,
+              height: 10,
             ),
           ],
         ),
@@ -416,16 +404,44 @@ class _AuthViewState extends State<AuthView> {
   }
 
   Function getContinueFunction() {
-    if (_emailIsValid && _passwordIsValid) {
-      return () {
-        setState(() {
-          if (_currentStep < 2) {
-            _currentStep++;
-          }
-        });
-      };
+    switch (_currentStep) {
+      case 0:
+        if (_emailIsValid && _passwordIsValid) {
+          return () {
+            setState(() {
+              _currentStep++;
+              Future.delayed(Duration(milliseconds: 200), () {
+                FocusScope.of(this.context).unfocus();
+              });
+            });
+          };
+        }
+        return null;
+      case 1:
+        if (_ageConfirmed && _termsConfirmed) {
+          return () {
+            setState(() {
+              _currentStep++;
+              Future.delayed(Duration(milliseconds: 200), () {
+                FocusScope.of(this.context).unfocus();
+              });
+            });
+          };
+        }
+        return null;
+      case 2:
+        if (_displayNameIsValid && _selfie != null) {
+          return () {
+            _trySubmit();
+            Future.delayed(Duration(milliseconds: 200), () {
+              FocusScope.of(this.context).unfocus();
+            });
+          };
+        }
+        return null;
+      default:
+        return null;
     }
-    return null;
   }
 
   @override
@@ -444,77 +460,87 @@ class _AuthViewState extends State<AuthView> {
             // FocusScope.of(context).requestFocus(new FocusNode());
             FocusScope.of(this.context).unfocus();
           },
-          child: SingleChildScrollView(
-            child: Container(
-              // padding: StyleGuide.pageBleed,
-              padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).primaryColor.withRed(150)
-                  ],
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        height: 25,
-                      ),
-                      SvgPicture.asset(
-                        'images/logo_light.svg',
-                        semanticsLabel: 'With Logo',
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Create Account',
-                        style: Theme.of(context).textTheme.headline4,
-                      ),
-                      SizedBox(
-                        height: 25,
-                      ),
+          child: Stack(
+            fit: StackFit.expand,
+            // padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: <Color>[
+                      Theme.of(context).primaryColor,
+                      Theme.of(context).primaryColor.withRed(150)
                     ],
                   ),
-                  Stepper(
-                    physics: NeverScrollableScrollPhysics(),
-                    currentStep: _currentStep,
-                    onStepTapped: (step) {
-                      setState(() {
-                        _currentStep = step;
-                      });
-                      Future.delayed(Duration(milliseconds: 200), () {
-                        FocusScope.of(this.context).unfocus();
-                      });
-                    },
-                    onStepContinue: getContinueFunction(),
-                    controlsBuilder: (BuildContext context,
-                        {VoidCallback onStepContinue,
-                        VoidCallback onStepCancel}) {
-                      // return Row(
-                      //   children: [
-                      //     FlatButton(
-                      //       onPressed: onStepContinue,
-                      //       child: Text('Done'),
-                      //     ),
-                      //   ],
-                      // );
-                      return SizedBox(
-                        height: 0,
-                      );
-                    },
-                    steps: steps(context),
-                  )
-                ],
+                ),
               ),
-            ),
+              SingleChildScrollView(
+                child: Column(
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      height: 25,
+                    ),
+                    SvgPicture.asset(
+                      'images/logo_light.svg',
+                      semanticsLabel: 'With Logo',
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Create Account',
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 25),
+                      child: Stepper(
+                        physics: NeverScrollableScrollPhysics(),
+                        currentStep: _currentStep,
+                        onStepTapped: (step) {
+                          setState(() {
+                            _currentStep = step;
+                          });
+                          Future.delayed(Duration(milliseconds: 200), () {
+                            FocusScope.of(this.context).unfocus();
+                          });
+                        },
+                        onStepContinue: getContinueFunction(),
+                        controlsBuilder: (BuildContext context,
+                            {VoidCallback onStepContinue,
+                            VoidCallback onStepCancel}) {
+                          return SizedBox(
+                            width: double.infinity,
+                            child: RaisedButton(
+                              onPressed: onStepContinue,
+                              child: Text(_currentStep == 2
+                                  ? 'CREATE MY ACCOUNT'
+                                  : 'CONFIRM'),
+                              // color: Theme.of(context).accentColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              textColor: Colors.black,
+                            ),
+                          );
+                        },
+                        steps: steps(context),
+                      ),
+                    ),
+                    // Expanded(
+                    //   child: Container(
+                    //     child: Text('Sign in instead'),
+                    //   ),
+                    // ),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
       ),

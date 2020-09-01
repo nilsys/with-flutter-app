@@ -67,10 +67,11 @@ class MyApp extends StatelessWidget {
               ),
           cursorColor: Colors.white,
           inputDecorationTheme: InputDecorationTheme(
-            contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
             floatingLabelBehavior: FloatingLabelBehavior
                 .never, // this setting is not working - flutter bug try updating flutter package later on
-            labelStyle: TextStyle(color: Colors.white, fontSize: 14.0),
+            labelStyle:
+                TextStyle(color: Colors.white.withAlpha(100), fontSize: 14.0),
             filled: true,
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
@@ -80,7 +81,8 @@ class MyApp extends StatelessWidget {
           ),
           buttonColor: Colors.tealAccent[200],
           buttonTheme: ButtonThemeData(
-            buttonColor: Colors.tealAccent[200].withAlpha(150),
+            buttonColor: Colors.tealAccent[200],
+            height: 45,
           ),
           // iconTheme: IconThemeData(
           //   color: Theme.of(context).accentColor,
