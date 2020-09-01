@@ -1,509 +1,283 @@
-import 'dart:io';
+// import 'package:flutter/material.dart';
+// import 'package:email_validator/email_validator.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// // import 'package:flutter/rendering.dart';
+// // import 'package:flutter_svg/avd.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:with_app/ui/style_guide.dart';
+// import 'package:with_app/core/services/firebase_handler.dart';
+// import 'package:with_app/core/view_models/user.vm.dart';
+// import 'package:with_app/core/models/user.model.dart';
+// import 'package:with_app/core/models/user_stories.model.dart';
+// import 'package:with_app/ui/views/home.view.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:flutter/rendering.dart';
-// import 'package:flutter_svg/avd.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
-import 'package:with_app/ui/style_guide.dart';
-import 'package:with_app/core/services/firebase_handler.dart';
-import 'package:with_app/core/view_models/user.vm.dart';
-import 'package:with_app/core/models/user.model.dart';
-import 'package:with_app/core/models/user_stories.model.dart';
-import 'package:with_app/ui/views/home.view.dart';
+// class AuthView extends StatefulWidget {
+//   static const String route = '/auth';
 
-class AuthView extends StatefulWidget {
-  static const String route = '/auth';
+//   @override
+//   _AuthViewState createState() => _AuthViewState();
+// }
 
-  @override
-  _AuthViewState createState() => _AuthViewState();
-}
+// class _AuthViewState extends State<AuthView> {
+//   final _auth = FirebaseAuth.instance;
+//   final _formKey = GlobalKey<FormState>();
+//   FirebaseHandler fbHandler;
+//   String _userEmail = '';
+//   String _userPassword = '';
+//   String _userFullName = '';
+//   UserVM _userVM;
 
-class _AuthViewState extends State<AuthView> {
-  final _auth = FirebaseAuth.instance;
-  final picker = ImagePicker();
-  final Map<String, TextEditingController> controllers = {
-    'email': TextEditingController(),
-    'password': TextEditingController(),
-    'display_name': TextEditingController(),
-  };
-  // String _userEmail = '';
-  // String _userPassword = '';
-  // String _displayName = '';
-  bool _emailIsValid = false;
-  bool _passwordIsValid = false;
-  bool _displayNameIsValid = false;
-  bool _ageConfirmed = false;
-  bool _termsConfirmed = false;
-  int _currentStep = 0;
-  File _selfie;
-  UserVM _userVM;
+//   @override
+//   void initState() {
+//     super.initState();
+//     if (_auth.currentUser != null) {
+//       Navigator.pushNamed(context, HomeView.route);
+//     }
+//     _auth.authStateChanges().listen((user) {
+//       if (user != null) {
+//         Navigator.pushNamed(context, HomeView.route);
+//       }
+//     });
+//     _userVM = new UserVM();
+//     // fbHandler = FirebaseHandler();
+//     // setDeeplinkClickHandler(fbHandler);
+//     // setDeeplinkBGHandler(fbHandler);
+//   }
 
-  @override
-  void initState() {
-    super.initState();
-    _userVM = new UserVM();
-    if (_auth.currentUser != null) {
-      /***
-        using this.context instaed of context.
-        see https://stackoverflow.com/questions/56927095/flutter-navigator-argument-type-context-cant-be-assigned-to-the-parameter-ty?rq=1
-      ***/
-      Navigator.pushNamed(this.context, HomeView.route);
-    } else {
-      _auth.authStateChanges().listen((user) {
-        if (user != null) {
-          Navigator.pushNamed(this.context, HomeView.route);
-        }
-      });
-    }
-    // fbHandler = FirebaseHandler();
-    // setDeeplinkClickHandler(fbHandler);
-    // setDeeplinkBGHandler(fbHandler);
-  }
+//   @override
+//   void dispose() {
+//     // Clean up the controller when the widget is removed from the
+//     // widget tree.
+//     // _displayNameController.dispose();
+//     super.dispose();
+//   }
 
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is removed from the
-    // widget tree.
-    controllers['email'].dispose();
-    controllers['password'].dispose();
-    controllers['display_name'].dispose();
-    super.dispose();
-  }
+//   Future<void> _trySubmit() async {
+//     final isValid = _formKey.currentState.validate();
+//     FocusScope.of(context).unfocus();
 
-  void _launchTermsURL() async {
-    const url = 'http://withapp.io/policy/with_privacy_policy.htm';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+//     if (isValid) {
+//       _formKey.currentState.save();
+//       UserCredential userCredentials =
+//           await _auth.createUserWithEmailAndPassword(
+//         email: _userEmail,
+//         password: _userPassword,
+//       );
+//       _userVM.addUser(
+//           new UserModel(
+//             id: userCredentials.user.uid,
+//             email: userCredentials.user.email,
+//             firstName: _userFullName.split(' ')[0],
+//             lastName: _userFullName.split(' ')[1],
+//             stories: new UserStories(
+//               owner: new List(),
+//               following: new List(),
+//               viewing: new List(),
+//             ),
+//             leads: new List(),
+//           ),
+//           userCredentials.user.uid);
+//     }
+//   }
 
-  Future _getImage(ImageSource src) async {
-    var pickedFile = await picker.getImage(
-      source: src,
-      preferredCameraDevice: CameraDevice.front,
-    );
-    if (pickedFile != null) {
-      setState(() {
-        _selfie = File(pickedFile.path);
-      });
-    }
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Theme.of(context).primaryColor,
+//       // floatingActionButton: FloatingActionButton(
+//       //   onPressed: () {
+//       //     Navigator.pushNamed(context, '/addStory');
+//       //   },
+//       //   child: Icon(Icons.add),
+//       // ),
+//       body: Container(
+//         padding: StyleGuide.pageBleed,
+//         decoration: BoxDecoration(
+//           gradient: LinearGradient(
+//             begin: Alignment.topLeft,
+//             end: Alignment.bottomRight,
+//             colors: <Color>[
+//               Theme.of(context).primaryColor,
+//               Theme.of(context).primaryColor.withRed(150)
+//             ],
+//           ),
+//         ),
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 SizedBox(
+//                   height: 25,
+//                 ),
+//                 SvgPicture.asset(
+//                   'images/logo_light.svg',
+//                   semanticsLabel: 'With Logo',
+//                 ),
+//                 SizedBox(
+//                   height: 10,
+//                 ),
+//                 Text(
+//                   'Create Account',
+//                   style: Theme.of(context).textTheme.headline4,
+//                 ),
+//                 SizedBox(
+//                   height: 25,
+//                 ),
+//               ],
+//             ),
+//             Expanded(
+//               child: Container(
+//                 child: Center(
+//                   child: Column(
+//                     mainAxisSize: MainAxisSize.min,
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     crossAxisAlignment: CrossAxisAlignment.center,
+//                     children: [
+//                       Form(
+//                         key: _formKey,
+//                         child: Column(
+//                           mainAxisAlignment: MainAxisAlignment.center,
+//                           children: [
+//                             TextFormField(
+//                               key: ValueKey('email'),
+//                               textAlignVertical: TextAlignVertical(y: 0.1),
+//                               validator: (value) {
+//                                 if (!EmailValidator.validate(value.trim())) {
+//                                   return 'Please enter a valid email addresss';
+//                                 }
+//                                 return null;
+//                               },
+//                               cursorHeight: 20,
+//                               keyboardType: TextInputType.emailAddress,
+//                               decoration: InputDecoration(
+//                                 floatingLabelBehavior:
+//                                     FloatingLabelBehavior.never,
+//                                 labelText: 'Email',
+//                                 prefixIcon: Icon(Icons.email),
+//                                 // border: OutlineInputBorder(
+//                                 //   borderSide:
+//                                 //       BorderSide(color: Colors.orange, width: 5.0),
+//                                 //   borderRadius:
+//                                 //       BorderRadius.all(Radius.circular(2.0)),
+//                                 // ),
+//                               ),
+//                               onSaved: (value) {
+//                                 _userEmail = value.trim();
+//                               },
+//                             ),
+//                             SizedBox(
+//                               height: 15,
+//                             ),
+//                             TextFormField(
+//                               key: ValueKey('password'),
+//                               textAlignVertical: TextAlignVertical(y: 0.1),
+//                               validator: (value) {
+//                                 if (value.isEmpty || value.length < 7) {
+//                                   return 'Password must be at least 7 characters long';
+//                                 }
+//                                 return null;
+//                               },
+//                               scrollPadding: EdgeInsets.zero,
+//                               // cursorHeight: 20,
+//                               obscureText: true,
+//                               decoration: InputDecoration(
+//                                 prefixIcon: Icon(Icons.lock_rounded),
+//                                 floatingLabelBehavior:
+//                                     FloatingLabelBehavior.never,
+//                                 labelText: 'Password',
+//                                 focusColor: Colors.white,
+//                               ),
+//                               onSaved: (value) {
+//                                 _userPassword = value.trim();
+//                               },
+//                             ),
+//                             SizedBox(
+//                               height: 15,
+//                             ),
+//                             TextFormField(
+//                               key: ValueKey('full name'),
+//                               textAlignVertical: TextAlignVertical(y: 0.1),
+//                               validator: (value) {
+//                                 if (value.trim().isEmpty) {
+//                                   return 'Required';
+//                                 }
+//                                 return null;
+//                               },
+//                               cursorHeight: 20,
+//                               keyboardType: TextInputType.name,
+//                               decoration: InputDecoration(
+//                                 prefixIcon: Icon(Icons.person_sharp),
+//                                 floatingLabelBehavior:
+//                                     FloatingLabelBehavior.never,
+//                                 labelText: 'Full Name',
+//                                 // border: OutlineInputBorder(
+//                                 //   borderSide:
+//                                 //       BorderSide(color: Colors.orange, width: 5.0),
+//                                 //   borderRadius:
+//                                 //       BorderRadius.all(Radius.circular(2.0)),
+//                                 // ),
+//                               ),
+//                               onSaved: (value) {
+//                                 _userFullName = value.trim();
+//                               },
+//                             ),
+//                             SizedBox(
+//                               height: 15,
+//                             ),
+//                             SizedBox(
+//                               width: double.infinity,
+//                               height: 50,
+//                               child: FlatButton(
+//                                   onPressed: _trySubmit,
+//                                   color: Theme.of(context)
+//                                       .accentColor
+//                                       .withAlpha(150),
+//                                   shape: RoundedRectangleBorder(
+//                                     borderRadius: BorderRadius.circular(10.0),
+//                                   ),
+//                                   child: Text(
+//                                     'SIGNUP',
+//                                     style: TextStyle(
+//                                         fontSize: 16,
+//                                         fontWeight: FontWeight.w400),
+//                                   ),
+//                                   textColor: Colors.black),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
 
-  Future<void> _trySubmit() async {
-    final isValid = _emailIsValid &&
-        _passwordIsValid &&
-        _ageConfirmed &&
-        _termsConfirmed &&
-        _displayNameIsValid;
-    FocusScope.of(this.context).unfocus();
+//   setDeeplinkClickHandler(FirebaseHandler fbHandler) {
+//     fbHandler.getDynamiClikData().then((link) {
+//       if (link != null) {
+//         print('Deep link found $link ******');
+//         Navigator.pushNamed(context, '/dashboard');
+//       }
+//     }, onError: (err) {
+//       print('Error $err');
+//     });
+//   }
 
-    if (isValid) {
-      UserCredential userCredentials =
-          await _auth.createUserWithEmailAndPassword(
-        email: controllers['email'].text,
-        password: controllers['password'].text,
-      );
-      _userVM.addUser(
-          new UserModel(
-            id: userCredentials.user.uid,
-            email: userCredentials.user.email,
-            // firstName: _userFullName.split(' ')[0],
-            // lastName: _userFullName.split(' ')[1],
-            stories: new UserStories(
-              owner: new List(),
-              following: new List(),
-              viewing: new List(),
-            ),
-            leads: new List(),
-          ),
-          userCredentials.user.uid);
-    }
-  }
-
-  List<Step> steps(BuildContext context) {
-    return [
-      Step(
-        title: Text(
-          'Credentials',
-          style: Theme.of(context).textTheme.bodyText2,
-        ),
-        isActive: _currentStep == 0,
-        state: StepState.indexed,
-        content: Column(
-          children: <Widget>[
-            TextField(
-              key: ValueKey('email'),
-              controller: controllers['email'],
-              // textAlignVertical: TextAlignVertical(y: 0.1),
-              // validator: (value) {
-              //   if (!EmailValidator.validate(value.trim())) {
-              //     return 'Please enter a valid email addresss';
-              //   }
-              //   return null;
-              // },
-              cursorHeight: 20,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-                labelText: 'Email',
-                prefixIcon: Icon(Icons.email),
-                suffixIcon: _emailIsValid
-                    ? Icon(Icons.check_circle)
-                    : Icon(Icons.error),
-              ),
-              style: TextStyle(color: Colors.white),
-              // onSaved: (value) {
-              //   _userEmail = value.trim();
-              // },
-              onChanged: (value) {
-                bool isValid = EmailValidator.validate(value.trim());
-                setState(() {
-                  _emailIsValid = isValid;
-                });
-              },
-              inputFormatters: [
-                FilteringTextInputFormatter.deny(RegExp(r"\s+")),
-              ],
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            TextField(
-              key: ValueKey('password'),
-              controller: controllers['password'],
-              // validator: (value) {
-              //   if (value.isEmpty || value.length < 7) {
-              //     return 'Password must be at least 7 characters long';
-              //   }
-              //   return null;
-              // },
-              scrollPadding: EdgeInsets.zero,
-              cursorHeight: 20,
-              obscureText: true,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.lock_rounded),
-                suffixIcon: _passwordIsValid
-                    ? Icon(Icons.check_circle)
-                    : Icon(Icons.error),
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-                labelText: 'Password',
-                focusColor: Colors.white,
-              ),
-              style: TextStyle(color: Colors.white),
-              // onSaved: (value) {
-              //   _userPassword = value.trim();
-              // },
-              onChanged: (value) {
-                bool isValid = value.length >= 7;
-                setState(() {
-                  _passwordIsValid = isValid;
-                });
-              },
-              inputFormatters: [
-                FilteringTextInputFormatter.deny(RegExp(r"\s+")),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-          ],
-        ),
-      ),
-      Step(
-        isActive: _currentStep == 1,
-        state: _emailIsValid && _passwordIsValid
-            ? StepState.indexed
-            : StepState.disabled,
-        title: Text('Legal'),
-        content: Transform.translate(
-          offset: Offset(0, -10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              CheckboxListTile(
-                value: _ageConfirmed,
-                checkColor: Colors.black,
-                dense: true,
-                contentPadding: EdgeInsets.all(0),
-                onChanged: (value) {
-                  setState(() {
-                    _ageConfirmed = value;
-                  });
-                },
-                controlAffinity: ListTileControlAffinity.platform,
-                title: Row(
-                  children: [
-                    Icon(Icons.verified_user),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      'I am above 13 years old',
-                      style: Theme.of(context).textTheme.bodyText2,
-                    ),
-                  ],
-                ),
-              ),
-              CheckboxListTile(
-                value: _termsConfirmed,
-                checkColor: Colors.black,
-                dense: true,
-                contentPadding: EdgeInsets.all(0),
-                onChanged: (value) {
-                  setState(() {
-                    _termsConfirmed = value;
-                  });
-                },
-                controlAffinity: ListTileControlAffinity.platform,
-                title: Row(
-                  children: [
-                    Icon(Icons.policy),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      'I agree to the terms of use',
-                      style: Theme.of(context).textTheme.bodyText2,
-                    ),
-                    IconButton(
-                      onPressed: _launchTermsURL,
-                      icon: Icon(Icons.link),
-                      color: Theme.of(context).accentColor,
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      Step(
-        state: _ageConfirmed && _termsConfirmed
-            ? StepState.indexed
-            : StepState.disabled,
-        isActive: _currentStep == 2,
-        title: const Text('Identity'),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            TextField(
-              key: ValueKey('display_name'),
-              // validator: (value) {
-              //   if (value.length < 3) {
-              //     return 'Please enter at least 3 charecters';
-              //   }
-              //   return null;
-              // },
-              controller: controllers['display_name'],
-              scrollPadding: EdgeInsets.zero,
-              cursorHeight: 20,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.person_sharp),
-                suffixIcon: _displayNameIsValid
-                    ? Icon(Icons.check_circle)
-                    : Icon(Icons.error),
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-                labelText: 'Display Name',
-                focusColor: Colors.white,
-              ),
-              style: TextStyle(color: Colors.white),
-              // onSaved: (value) {
-              //   _displayName = value.trim();
-              // },
-              onChanged: (value) {
-                bool isValid = value.length > 2;
-                setState(() {
-                  _displayNameIsValid = isValid;
-                });
-              },
-              inputFormatters: [
-                FilteringTextInputFormatter.deny(RegExp(r"\s+")),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 80,
-                  backgroundColor: Colors.white,
-                  child: ClipOval(
-                    child: SizedBox(
-                      width: 152.0,
-                      height: 152.0,
-                      child: _selfie != null
-                          ? Image.file(_selfie, fit: BoxFit.fill)
-                          : Image.network(
-                              'https://firebasestorage.googleapis.com/v0/b/with-flutter-app-ae099.appspot.com/o/images%2Fprofiles%2F9xVnc7mf9jcL2VQgiuIkuYoG4sQ2.jpeg?alt=media&token=d8960b79-001d-40a7-9b1c-898f82eebfdd',
-                              fit: BoxFit.fill),
-                    ),
-                  ),
-                ),
-                Spacer(),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          _getImage(ImageSource.gallery);
-                        },
-                        icon: Icon(
-                          Icons.phone_android,
-                          size: 25.0,
-                          color: Theme.of(this.context).accentColor,
-                        ),
-                        padding: EdgeInsets.all(10.0),
-                      ),
-                      Divider(
-                        color: Colors.white.withAlpha(80),
-                        thickness: 2,
-                        // height: 50,
-                        // indent: 15,
-                        // endIndent: 15,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          _getImage(ImageSource.camera);
-                        },
-                        icon: Icon(
-                          Icons.camera_alt,
-                          size: 25.0,
-                          color: Theme.of(this.context).accentColor,
-                        ),
-                        padding: EdgeInsets.all(10.0),
-                      ),
-                    ],
-                  ),
-                ),
-                Spacer(),
-              ],
-            ),
-          ],
-        ),
-      ),
-    ];
-  }
-
-  Function getContinueFunction() {
-    if (_emailIsValid && _passwordIsValid) {
-      return () {
-        setState(() {
-          if (_currentStep < 2) {
-            _currentStep++;
-          }
-        });
-      };
-    }
-    return null;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.pushNamed(context, '/addStory');
-      //   },
-      //   child: Icon(Icons.add),
-      // ),
-      body: GestureDetector(
-        onTap: () {
-          // FocusScope.of(context).requestFocus(new FocusNode());
-          FocusScope.of(this.context).unfocus();
-        },
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints.tightFor(
-              height: MediaQuery.of(context).size.height,
-            ),
-            child: Container(
-              // padding: StyleGuide.pageBleed,
-              padding: EdgeInsets.fromLTRB(10, 40, 10, 0),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).primaryColor.withRed(150)
-                  ],
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        height: 25,
-                      ),
-                      SvgPicture.asset(
-                        'images/logo_light.svg',
-                        semanticsLabel: 'With Logo',
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Create Account',
-                        style: Theme.of(context).textTheme.headline4,
-                      ),
-                      SizedBox(
-                        height: 25,
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: Stepper(
-                      physics: NeverScrollableScrollPhysics(),
-                      currentStep: _currentStep,
-                      onStepTapped: (step) {
-                        setState(() {
-                          _currentStep = step;
-                        });
-                        Future.delayed(Duration(milliseconds: 200), () {
-                          FocusScope.of(this.context).unfocus();
-                        });
-                      },
-                      onStepContinue: getContinueFunction(),
-                      controlsBuilder: (BuildContext context,
-                          {VoidCallback onStepContinue,
-                          VoidCallback onStepCancel}) {
-                        // return Row(
-                        //   children: [
-                        //     FlatButton(
-                        //       onPressed: onStepContinue,
-                        //       child: Text('Done'),
-                        //     ),
-                        //   ],
-                        // );
-                        return SizedBox(
-                          height: 0,
-                        );
-                      },
-                      steps: steps(context),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+//   setDeeplinkBGHandler(FirebaseHandler fbHandler) {
+//     fbHandler.getDynamiBGData().then((boolValue) {
+//       // Take action, you can also put logic to transit to another screen
+//       if (boolValue) {
+//         print('Deep link found ******');
+//       }
+//     }, onError: (err) {
+//       print('Error $err');
+//     });
+//   }
+// }

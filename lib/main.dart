@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
             filled: true,
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
             focusColor: Colors.white,
           ),
