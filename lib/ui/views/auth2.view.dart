@@ -35,12 +35,12 @@ class _AuthViewState extends State<AuthView> {
   // String _userEmail = '';
   // String _userPassword = '';
   // String _displayName = '';
-  bool _emailIsValid = true;
-  bool _passwordIsValid = true;
-  bool _displayNameIsValid = true;
-  bool _ageConfirmed = true;
-  bool _termsConfirmed = true;
-  int _currentStep = 2;
+  bool _emailIsValid = false;
+  bool _passwordIsValid = false;
+  bool _displayNameIsValid = false;
+  bool _ageConfirmed = false;
+  bool _termsConfirmed = false;
+  int _currentStep = 0;
   File _selfie;
   UserVM _userVM;
 
@@ -155,6 +155,9 @@ class _AuthViewState extends State<AuthView> {
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 labelText: 'Email',
                 prefixIcon: Icon(Icons.email),
+                suffixIcon: _emailIsValid
+                    ? Icon(Icons.check_circle)
+                    : Icon(Icons.error),
               ),
               style: TextStyle(color: Colors.white),
               // onSaved: (value) {
@@ -187,6 +190,9 @@ class _AuthViewState extends State<AuthView> {
               obscureText: true,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.lock_rounded),
+                suffixIcon: _passwordIsValid
+                    ? Icon(Icons.check_circle)
+                    : Icon(Icons.error),
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 labelText: 'Password',
                 focusColor: Colors.white,
@@ -302,6 +308,9 @@ class _AuthViewState extends State<AuthView> {
               cursorHeight: 20,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.person_sharp),
+                suffixIcon: _displayNameIsValid
+                    ? Icon(Icons.check_circle)
+                    : Icon(Icons.error),
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 labelText: 'Display Name',
                 focusColor: Colors.white,
