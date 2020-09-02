@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:with_app/ui/shared/toaster.dart';
 import 'package:with_app/ui/views/home.view.dart';
 import 'auth_hero.dart';
 import 'text_input.dart';
@@ -54,20 +55,10 @@ class _LoginState extends State<Login> {
       } on PlatformException catch (err) {
         print(err);
       } catch (err) {
-        Flushbar(
+        Toaster(
           // titleText: Text("Oops..."),
           icon: Icon(Icons.error),
-          messageText: Text(err.message),
-          duration: Duration(seconds: 6),
-          margin: EdgeInsets.fromLTRB(15, 0, 15, 84),
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-          borderRadius: 10,
-          isDismissible: true,
-          forwardAnimationCurve: Curves.fastLinearToSlowEaseIn,
-          reverseAnimationCurve: Curves.easeOutCubic,
-
-          barBlur: 10,
-          backgroundColor: Colors.black.withAlpha(80),
+          content: Text(err.message),
         )..show(context);
       }
     }

@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/core/models/user.model.dart';
 import 'package:with_app/core/models/user_stories.model.dart';
+import 'package:with_app/ui/shared/toaster.dart';
 import 'package:with_app/ui/views/home.view.dart';
 import 'package:with_app/with_icons.dart';
 import 'auth_hero.dart';
@@ -91,88 +92,98 @@ class _SignupState extends State<Signup> {
     }
   }
 
-  Future<void> _trySubmit() async {
-    final isValid = _emailIsValid &&
-        _passwordIsValid &&
-        _ageConfirmed &&
-        _termsConfirmed &&
-        _displayNameIsValid;
-    FocusScope.of(this.context).unfocus();
-
-    if (isValid) {
-      UserCredential userCredentials =
-          await _auth.createUserWithEmailAndPassword(
-        email: controllers['email'].text.trim(),
-        password: controllers['password'].text.trim(),
-      );
-      String _url =
-          await _userVM.uploadAvatar(_selfie, userCredentials.user.uid);
-      if (_url != null) {
-        _userVM.addUser(
-            new UserModel(
-              id: userCredentials.user.uid,
-              email: userCredentials.user.email,
-              displayName: controllers['display_name'].text.trim(),
-              stories: new UserStories(
-                owner: new List(),
-                following: new List(),
-                viewing: new List(),
-              ),
-              leads: new List(),
-              profileImage: _url,
-            ),
-            userCredentials.user.uid);
-      }
-    }
-  }
-
   Widget _verticalSpacer = SizedBox(
     height: 12,
   );
 
-  Function getContinueFunction() {
-    switch (_currentStep) {
-      case 0:
-        if (_emailIsValid && _passwordIsValid) {
-          return () {
-            setState(() {
-              _currentStep++;
-              Future.delayed(Duration(milliseconds: 200), () {
-                FocusScope.of(this.context).unfocus();
-              });
-            });
-          };
-        }
-        return null;
-      case 1:
-        if (_ageConfirmed && _termsConfirmed) {
-          return () {
-            setState(() {
-              _currentStep++;
-              Future.delayed(Duration(milliseconds: 200), () {
-                FocusScope.of(this.context).unfocus();
-              });
-            });
-          };
-        }
-        return null;
-      case 2:
-        if (_displayNameIsValid && _selfie != null) {
-          return () {
-            _trySubmit();
-            Future.delayed(Duration(milliseconds: 200), () {
-              FocusScope.of(this.context).unfocus();
-            });
-          };
-        }
-        return null;
-      default:
-        return null;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    Future<void> _trySubmit() async {
+      final isValid = _emailIsValid &&
+          _passwordIsValid &&
+          _ageConfirmed &&
+          _termsConfirmed &&
+          _displayNameIsValid;
+      FocusScope.of(this.context).unfocus();
+
+      if (isValid) {
+        try {
+          UserCredential userCredentials =
+              await _auth.createUserWithEmailAndPassword(
+            email: controllers['email'].text.trim(),
+            password: controllers['password'].text.trim(),
+          );
+          String _url =
+              await _userVM.uploadAvatar(_selfie, userCredentials.user.uid);
+          if (_url != null) {
+            _userVM.addUser(
+                new UserModel(
+                  id: userCredentials.user.uid,
+                  email: userCredentials.user.email,
+                  displayName: controllers['display_name'].text.trim(),
+                  stories: new UserStories(
+                    owner: new List(),
+                    following: new List(),
+                    viewing: new List(),
+                  ),
+                  leads: new List(),
+                  profileImage: _url,
+                ),
+                userCredentials.user.uid);
+          }
+        } on PlatformException catch (err) {
+          print(err);
+        } catch (err) {
+          Toaster(
+            // titleText: Text("Oops..."),
+            icon: Icon(Icons.error),
+            content: Text(err.message),
+          )..show(context);
+        }
+      }
+    }
+
+    Function getContinueFunction() {
+      switch (_currentStep) {
+        case 0:
+          if (_emailIsValid && _passwordIsValid) {
+            return () {
+              setState(() {
+                _currentStep++;
+                Future.delayed(Duration(milliseconds: 200), () {
+                  FocusScope.of(this.context).unfocus();
+                });
+              });
+            };
+          }
+          return null;
+        case 1:
+          if (_ageConfirmed && _termsConfirmed) {
+            return () {
+              setState(() {
+                _currentStep++;
+                Future.delayed(Duration(milliseconds: 200), () {
+                  FocusScope.of(this.context).unfocus();
+                });
+              });
+            };
+          }
+          return null;
+        case 2:
+          if (_displayNameIsValid && _selfie != null) {
+            return () {
+              _trySubmit();
+              Future.delayed(Duration(milliseconds: 200), () {
+                FocusScope.of(this.context).unfocus();
+              });
+            };
+          }
+          return null;
+        default:
+          return null;
+      }
+    }
+
     final steps = [
       Step(
         title: Text(
