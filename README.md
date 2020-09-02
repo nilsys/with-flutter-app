@@ -10,7 +10,8 @@
 ## Services
 
 > [Codemagic](https://codemagic.io/app/5f4515cd55449d000fe1b102)  
-> [Firebase Console](https://console.firebase.google.com/u/0/project/with-flutter-app-ae099/firestore/data~2F)
+> [Firebase Console](https://console.firebase.google.com/u/0/project/with-flutter-app-ae099/firestore/data~2F)  
+> [FlutterIcon](https://www.fluttericon.com/)
 
 <br>
 

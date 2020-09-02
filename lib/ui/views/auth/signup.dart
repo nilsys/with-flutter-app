@@ -3,27 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:flutter/rendering.dart';
-// import 'package:flutter_svg/avd.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'package:path/path.dart';
-// import 'package:with_app/ui/style_guide.dart';
-// import 'package:with_app/core/services/firebase_handler.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/core/models/user.model.dart';
 import 'package:with_app/core/models/user_stories.model.dart';
 import 'package:with_app/ui/views/home.view.dart';
+import 'package:with_app/with_icons.dart';
+import 'auth_hero.dart';
+import 'text_input.dart';
 
-class AuthView extends StatefulWidget {
-  static const String route = '/auth';
-
+class Signup extends StatefulWidget {
   @override
-  _AuthViewState createState() => _AuthViewState();
+  _SignupState createState() => _SignupState();
 }
 
-class _AuthViewState extends State<AuthView> {
+class _SignupState extends State<Signup> {
   final _auth = FirebaseAuth.instance;
   final picker = ImagePicker();
   final Map<String, TextEditingController> controllers = {
@@ -31,6 +26,9 @@ class _AuthViewState extends State<AuthView> {
     'password': TextEditingController(),
     'display_name': TextEditingController(),
   };
+  final pageController = PageController(
+    initialPage: 1,
+  );
   bool _emailIsValid = false;
   bool _passwordIsValid = false;
   bool _displayNameIsValid = false;
@@ -132,86 +130,92 @@ class _AuthViewState extends State<AuthView> {
     height: 12,
   );
 
-  List<Step> steps(BuildContext context) {
-    return [
+  Function getContinueFunction() {
+    switch (_currentStep) {
+      case 0:
+        if (_emailIsValid && _passwordIsValid) {
+          return () {
+            setState(() {
+              _currentStep++;
+              Future.delayed(Duration(milliseconds: 200), () {
+                FocusScope.of(this.context).unfocus();
+              });
+            });
+          };
+        }
+        return null;
+      case 1:
+        if (_ageConfirmed && _termsConfirmed) {
+          return () {
+            setState(() {
+              _currentStep++;
+              Future.delayed(Duration(milliseconds: 200), () {
+                FocusScope.of(this.context).unfocus();
+              });
+            });
+          };
+        }
+        return null;
+      case 2:
+        if (_displayNameIsValid && _selfie != null) {
+          return () {
+            _trySubmit();
+            Future.delayed(Duration(milliseconds: 200), () {
+              FocusScope.of(this.context).unfocus();
+            });
+          };
+        }
+        return null;
+      default:
+        return null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final steps = [
       Step(
         title: Text(
           'Credentials',
-          style: Theme.of(context).textTheme.bodyText2,
+          style: Theme.of(this.context).textTheme.bodyText2,
         ),
         isActive: _currentStep == 0,
         state: StepState.indexed,
         content: Column(
           children: <Widget>[
-            TextField(
-              key: ValueKey('email'),
+            CustomTextInput(
               controller: controllers['email'],
-              // textAlignVertical: TextAlignVertical(y: 0.1),
-              // validator: (value) {
-              //   if (!EmailValidator.validate(value.trim())) {
-              //     return 'Please enter a valid email addresss';
-              //   }
-              //   return null;
-              // },
-              cursorHeight: 20,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-                labelText: 'Email',
-                prefixIcon: Icon(Icons.email),
-                suffixIcon: _emailIsValid
-                    ? Icon(Icons.check_circle)
-                    : Icon(Icons.error),
-              ),
-              style: TextStyle(color: Colors.white),
-              // onSaved: (value) {
-              //   _userEmail = value.trim();
-              // },
-              onChanged: (value) {
+              key: Key('email'),
+              deny: RegExp(r"\s+"),
+              onChange: (value) {
                 bool isValid = EmailValidator.validate(value.trim());
                 setState(() {
                   _emailIsValid = isValid;
                 });
               },
-              inputFormatters: [
-                FilteringTextInputFormatter.deny(RegExp(r"\s+")),
-              ],
+              validator: (value) {
+                return EmailValidator.validate(value.trim());
+              },
+              placeHolder: 'Email',
+              iconData: Icons.alternate_email_outlined,
             ),
             _verticalSpacer,
-            TextField(
-              key: ValueKey('password'),
+            CustomTextInput(
               controller: controllers['password'],
-              // validator: (value) {
-              //   if (value.isEmpty || value.length < 7) {
-              //     return 'Password must be at least 7 characters long';
-              //   }
-              //   return null;
-              // },
-              scrollPadding: EdgeInsets.zero,
-              cursorHeight: 20,
+              key: Key('password'),
+              deny: RegExp(r"\s+"),
               obscureText: true,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.lock_rounded),
-                suffixIcon: _passwordIsValid
-                    ? Icon(Icons.check_circle)
-                    : Icon(Icons.error),
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-                labelText: 'Password',
-                focusColor: Colors.white,
-              ),
-              style: TextStyle(color: Colors.white),
-              // onSaved: (value) {
-              //   _userPassword = value.trim();
-              // },
-              onChanged: (value) {
+              onChange: (value) {
                 bool isValid = value.length >= 7;
                 setState(() {
                   _passwordIsValid = isValid;
                 });
               },
-              inputFormatters: [
-                FilteringTextInputFormatter.deny(RegExp(r"\s+")),
-              ],
+              validator: (value) {
+                return value.length >= 7;
+              },
+              placeHolder: 'Password',
+              iconData: Icons.lock_outlined,
             ),
             SizedBox(
               height: 10,
@@ -244,13 +248,13 @@ class _AuthViewState extends State<AuthView> {
                 controlAffinity: ListTileControlAffinity.platform,
                 title: Row(
                   children: [
-                    Icon(Icons.verified_user),
+                    Icon(Icons.escalator_warning_outlined),
                     SizedBox(
                       width: 10,
                     ),
                     Text(
                       'I am above 13 years old',
-                      style: Theme.of(context).textTheme.bodyText2,
+                      style: Theme.of(this.context).textTheme.bodyText2,
                     ),
                   ],
                 ),
@@ -268,7 +272,7 @@ class _AuthViewState extends State<AuthView> {
                 controlAffinity: ListTileControlAffinity.platform,
                 title: Row(
                   children: [
-                    Icon(Icons.policy),
+                    Icon(With.gavel),
                     SizedBox(
                       width: 10,
                     ),
@@ -309,10 +313,16 @@ class _AuthViewState extends State<AuthView> {
                       width: 112.0,
                       height: 112.0,
                       child: _selfie != null
-                          ? Image.file(_selfie, fit: BoxFit.fill)
-                          : Image.network(
-                              'https://firebasestorage.googleapis.com/v0/b/with-flutter-app-ae099.appspot.com/o/images%2Fprofiles%2F9xVnc7mf9jcL2VQgiuIkuYoG4sQ2.jpeg?alt=media&token=d8960b79-001d-40a7-9b1c-898f82eebfdd',
-                              fit: BoxFit.fill),
+                          ? Image.file(
+                              _selfie,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              'images/selfie.png',
+                              fit: BoxFit.cover,
+                              color: Colors.white,
+                              colorBlendMode: BlendMode.color,
+                            ),
                     ),
                   ),
                 ),
@@ -401,147 +411,58 @@ class _AuthViewState extends State<AuthView> {
         ),
       ),
     ];
-  }
 
-  Function getContinueFunction() {
-    switch (_currentStep) {
-      case 0:
-        if (_emailIsValid && _passwordIsValid) {
-          return () {
-            setState(() {
-              _currentStep++;
-              Future.delayed(Duration(milliseconds: 200), () {
-                FocusScope.of(this.context).unfocus();
-              });
-            });
-          };
-        }
-        return null;
-      case 1:
-        if (_ageConfirmed && _termsConfirmed) {
-          return () {
-            setState(() {
-              _currentStep++;
-              Future.delayed(Duration(milliseconds: 200), () {
-                FocusScope.of(this.context).unfocus();
-              });
-            });
-          };
-        }
-        return null;
-      case 2:
-        if (_displayNameIsValid && _selfie != null) {
-          return () {
-            _trySubmit();
-            Future.delayed(Duration(milliseconds: 200), () {
-              FocusScope.of(this.context).unfocus();
-            });
-          };
-        }
-        return null;
-      default:
-        return null;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.pushNamed(context, '/addStory');
-      //   },
-      //   child: Icon(Icons.add),
-      // ),
-      body: SafeArea(
-        child: GestureDetector(
-          onTap: () {
-            // FocusScope.of(context).requestFocus(new FocusNode());
-            FocusScope.of(this.context).unfocus();
-          },
-          child: Stack(
-            fit: StackFit.expand,
-            // padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: <Color>[
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColor.withRed(150)
-                    ],
-                  ),
-                ),
-              ),
-              SingleChildScrollView(
-                child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      height: 25,
-                    ),
-                    SvgPicture.asset(
-                      'images/logo_light.svg',
-                      semanticsLabel: 'With Logo',
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Create Account',
-                      style: Theme.of(context).textTheme.headline4,
-                    ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 25),
-                      child: Stepper(
-                        physics: NeverScrollableScrollPhysics(),
-                        currentStep: _currentStep,
-                        onStepTapped: (step) {
-                          setState(() {
-                            _currentStep = step;
-                          });
-                          Future.delayed(Duration(milliseconds: 200), () {
-                            FocusScope.of(this.context).unfocus();
-                          });
-                        },
-                        onStepContinue: getContinueFunction(),
-                        controlsBuilder: (BuildContext context,
-                            {VoidCallback onStepContinue,
-                            VoidCallback onStepCancel}) {
-                          return SizedBox(
-                            width: double.infinity,
-                            child: RaisedButton(
-                              onPressed: onStepContinue,
-                              child: Text(_currentStep == 2
-                                  ? 'CREATE MY ACCOUNT'
-                                  : 'CONFIRM'),
-                              // color: Theme.of(context).accentColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              textColor: Colors.black,
-                            ),
-                          );
-                        },
-                        steps: steps(context),
+    return GestureDetector(
+      onTap: () {
+        // FocusScope.of(context).requestFocus(new FocusNode());
+        FocusScope.of(this.context).unfocus();
+      },
+      child: SingleChildScrollView(
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            AuthHero(
+              text: 'Create Acount',
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 25),
+              child: Stepper(
+                physics: NeverScrollableScrollPhysics(),
+                currentStep: _currentStep,
+                onStepTapped: (step) {
+                  setState(() {
+                    _currentStep = step;
+                  });
+                  Future.delayed(Duration(milliseconds: 200), () {
+                    FocusScope.of(this.context).unfocus();
+                  });
+                },
+                onStepContinue: getContinueFunction(),
+                controlsBuilder: (BuildContext context,
+                    {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
+                  return SizedBox(
+                    width: double.infinity,
+                    child: RaisedButton(
+                      onPressed: onStepContinue,
+                      child: Text(
+                          _currentStep == 2 ? 'CREATE MY ACCOUNT' : 'CONFIRM'),
+                      // color: Theme.of(context).accentColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
                       ),
+                      textColor: Colors.black,
                     ),
-                    // Expanded(
-                    //   child: Container(
-                    //     child: Text('Sign in instead'),
-                    //   ),
-                    // ),
-                  ],
-                ),
-              )
-            ],
-          ),
+                  );
+                },
+                steps: steps,
+              ),
+            ),
+            // Expanded(
+            //   child: Container(
+            //     child: Text('Sign in instead'),
+            //   ),
+            // ),
+          ],
         ),
       ),
     );

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/ui/widgets/story_card.dart';
-import 'package:with_app/ui/views/auth.view.dart';
+import 'package:with_app/ui/views/auth/auth.view.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
