@@ -41,6 +41,7 @@ dependencies:
   image_picker: ^0.6.7+7
   firebase_storage: ^4.0.0 #https://pub.dev/packages/firebase_storage
   flushbar: ^1.10.4 #https://pub.dev/packages/flushbar
+  sleek_circular_slider: ^1.1.0 #https://pub.dev/packages/sleek_circular_slider
 
 dev_dependencies:
   flutter_test:

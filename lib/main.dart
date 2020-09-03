@@ -38,17 +38,10 @@ class MyApp extends StatelessWidget {
         initialRoute: initialRoute,
         title: 'With',
         theme: ThemeData(
-          // Define the default brightness and colors.
           brightness: Brightness.dark,
           primaryColor: new Color.fromRGBO(31, 107, 137, 1),
           backgroundColor: Colors.white.withAlpha(40),
-          // accentColor: Colors.cyan[600],
-
-          // Define the default font family.
           fontFamily: 'Hind',
-
-          // Define the default TextTheme. Use this to specify the default
-          // text styling for headlines, titles, bodies of text, and more.
           textTheme: GoogleFonts.latoTextTheme(Theme.of(context).textTheme)
               .copyWith(
                 headline1:

@@ -46,6 +46,7 @@ class _AuthViewState extends State<AuthView> {
           ),
         ),
         Scaffold(
+          resizeToAvoidBottomInset: false,
           backgroundColor: Colors.transparent,
           // floatingActionButton: FloatingActionButton(
           //   onPressed: () {
