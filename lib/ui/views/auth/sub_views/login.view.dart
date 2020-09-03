@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:with_app/ui/shared/text_input.dart';
 import 'package:with_app/ui/shared/toaster.dart';
 import 'package:with_app/ui/views/home.view.dart';
-import 'package:with_app/ui/widgets/spinner.dart';
-import 'auth_hero.dart';
-import 'text_input.dart';
+import 'package:with_app/ui/shared/spinner.dart';
+import 'auth_hero.view.dart';
+import 'vertical_spacer.view.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -42,10 +43,6 @@ class _LoginState extends State<Login> {
     controllers['password'].dispose();
     super.dispose();
   }
-
-  Widget verticalSpacer = SizedBox(
-    height: 12,
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -187,16 +184,16 @@ class _LoginState extends State<Login> {
                   AuthHero(
                     text: 'Login',
                   ),
-                  verticalSpacer,
-                  verticalSpacer,
+                  VerticalSpacer(),
+                  VerticalSpacer(),
                   email,
-                  verticalSpacer,
+                  VerticalSpacer(),
                   password,
-                  verticalSpacer,
-                  verticalSpacer,
+                  VerticalSpacer(),
+                  VerticalSpacer(),
                   submit,
-                  verticalSpacer,
-                  verticalSpacer,
+                  VerticalSpacer(),
+                  VerticalSpacer(),
                   forgot,
                   working,
                 ],

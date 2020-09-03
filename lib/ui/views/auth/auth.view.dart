@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'auth_footer.dart';
-import 'signup.dart';
-import 'login.dart';
+import 'sub_views/auth_footer.view.dart';
+import 'sub_views/signup/signup.view.dart';
+import 'sub_views/login.view.dart';
 
 class AuthView extends StatefulWidget {
   static const String route = '/auth';
@@ -12,7 +12,7 @@ class AuthView extends StatefulWidget {
 
 class _AuthViewState extends State<AuthView> {
   final _pageController = PageController(
-    initialPage: 0,
+    initialPage: 1,
   );
 
   @override
@@ -22,8 +22,6 @@ class _AuthViewState extends State<AuthView> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is removed from the
-    // widget tree.
     _pageController.dispose();
     super.dispose();
   }
@@ -48,12 +46,6 @@ class _AuthViewState extends State<AuthView> {
         Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: Colors.transparent,
-          // floatingActionButton: FloatingActionButton(
-          //   onPressed: () {
-          //     Navigator.pushNamed(context, '/addStory');
-          //   },
-          //   child: Icon(Icons.add),
-          // ),
           body: SafeArea(
             child: Stack(
               fit: StackFit.expand,
