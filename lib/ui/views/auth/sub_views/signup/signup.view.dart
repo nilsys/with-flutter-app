@@ -11,7 +11,7 @@ import 'package:with_app/ui/shared/toaster.dart';
 import 'package:with_app/ui/views/home.view.dart';
 import '../auth_hero.view.dart';
 import 'sub_views/first_step.view.dart';
-import 'sub_views/second_step.view.dart';
+// import 'sub_views/second_step.view.dart';
 import 'sub_views/third_step.view.dart';
 import 'sub_views/age.view.dart';
 
