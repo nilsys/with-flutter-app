@@ -8,6 +8,7 @@ class UserModel {
   final String profileImage;
   final UserStories stories;
   final List<String> leads;
+  final DateTime dayOfBirth;
 
   UserModel({
     this.id,
@@ -15,6 +16,7 @@ class UserModel {
     @required this.email,
     @required this.stories,
     @required this.leads,
+    @required this.dayOfBirth,
     this.profileImage,
   });
 
@@ -24,6 +26,7 @@ class UserModel {
         email = snapshot['email'],
         stories = snapshot['storeis'],
         leads = snapshot['leads'],
+        dayOfBirth = snapshot['day_of_birth'].toDate(),
         profileImage = snapshot['profile_image'];
 
   toJson() {
@@ -33,6 +36,7 @@ class UserModel {
       "profile_image": profileImage,
       "stories": stories,
       "leads": leads,
+      "day_of_birth": dayOfBirth,
     };
   }
 }

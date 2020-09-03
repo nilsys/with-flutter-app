@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
@@ -23,14 +25,13 @@ class _LoginState extends State<Login> {
   bool _emailIsValid = false;
   bool _passwordIsValid = false;
   bool _working = false;
+  ScrollController scrollController;
 
   @override
   void initState() {
     super.initState();
+    scrollController = ScrollController();
     _auth.authStateChanges().listen((user) {
-      setState(() {
-        _working = false;
-      });
       if (user != null) {
         Navigator.pushNamed(this.context, HomeView.route);
       }
@@ -70,6 +71,13 @@ class _LoginState extends State<Login> {
       }
     }
 
+    void scrollToBottom() {
+      Timer(Duration(milliseconds: 200), () {
+        scrollController.animateTo(scrollController.position.maxScrollExtent,
+            curve: Curves.linear, duration: Duration(milliseconds: 500));
+      });
+    }
+
     final Widget email = CustomTextInput(
       controller: controllers['email'],
       key: Key('email'),
@@ -85,6 +93,7 @@ class _LoginState extends State<Login> {
       },
       placeHolder: 'Email',
       iconData: Icons.alternate_email_outlined,
+      onTap: scrollToBottom,
     );
 
     final Widget password = CustomTextInput(
@@ -121,12 +130,27 @@ class _LoginState extends State<Login> {
     final Widget forgot = FlatButton(
       onPressed: _emailIsValid
           ? () async {
+              FocusScope.of(this.context).unfocus();
               setState(() {
                 _working = true;
               });
-              await _auth.sendPasswordResetEmail(
-                email: controllers['email'].value.text,
-              );
+              try {
+                await _auth.sendPasswordResetEmail(
+                  email: controllers['email'].value.text,
+                );
+              } on PlatformException catch (err) {
+                print(err);
+              } catch (err) {
+                setState(() {
+                  _working = false;
+                });
+                Toaster(
+                  // titleText: Text("Oops..."),
+                  icon: Icon(Icons.error),
+                  content: Text(err.message),
+                )..show(context);
+                return;
+              }
               setState(() {
                 _working = false;
               });
@@ -156,51 +180,38 @@ class _LoginState extends State<Login> {
       ),
     );
 
-    final Widget working = _working
-        ? Expanded(
-            child: Transform.translate(
-              offset: Offset(0, -10),
-              child: Spinner(),
-            ),
-          )
-        : SizedBox();
+    Widget working = _working ? Spinner() : SizedBox();
 
     return GestureDetector(
       onTap: () {
         // FocusScope.of(context).requestFocus(new FocusNode());
         FocusScope.of(this.context).unfocus();
       },
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          return SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
-            child: ConstrainedBox(
-              constraints: BoxConstraints.tightFor(
-                height: constraints.maxHeight,
-              ),
-              child: Column(
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AuthHero(
-                    text: 'Login',
-                  ),
-                  VerticalSpacer(),
-                  VerticalSpacer(),
-                  email,
-                  VerticalSpacer(),
-                  password,
-                  VerticalSpacer(),
-                  VerticalSpacer(),
-                  submit,
-                  VerticalSpacer(),
-                  VerticalSpacer(),
-                  forgot,
-                  working,
-                ],
-              ),
+      child: SingleChildScrollView(
+        controller: scrollController,
+        padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            AuthHero(
+              text: 'Login',
             ),
-          );
-        },
+            VerticalSpacer(),
+            VerticalSpacer(),
+            email,
+            VerticalSpacer(),
+            password,
+            VerticalSpacer(),
+            VerticalSpacer(),
+            submit,
+            VerticalSpacer(),
+            VerticalSpacer(),
+            forgot,
+            VerticalSpacer(),
+            VerticalSpacer(),
+            working,
+          ],
+        ),
       ),
     );
   }

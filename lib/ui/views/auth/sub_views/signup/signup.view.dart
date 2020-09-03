@@ -1,9 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/core/models/user.model.dart';
 import 'package:with_app/core/models/user_stories.model.dart';
@@ -13,6 +13,7 @@ import '../auth_hero.view.dart';
 import 'sub_views/first_step.view.dart';
 import 'sub_views/second_step.view.dart';
 import 'sub_views/third_step.view.dart';
+import 'sub_views/age.view.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -21,20 +22,19 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   final _auth = FirebaseAuth.instance;
-  final picker = ImagePicker();
+
   final Map<String, TextEditingController> controllers = {
     'email': TextEditingController(),
     'password': TextEditingController(),
     'display_name': TextEditingController(),
   };
-  final pageController = PageController(
-    initialPage: 1,
-  );
+  ScrollController scrollController;
   bool _emailIsValid = false;
   bool _passwordIsValid = false;
   bool _displayNameIsValid = false;
-  bool ageConfirmed = false;
-  bool termsConfirmed = false;
+  // bool ageConfirmed = false;
+  // bool termsConfirmed = false;
+  DateTime _dayOfBirth;
   int _currentStep = 0;
   File _selfie;
   UserVM _userVM;
@@ -42,6 +42,9 @@ class _SignupState extends State<Signup> {
   @override
   void initState() {
     super.initState();
+    scrollController = ScrollController();
+    DateTime now = DateTime.now();
+    _dayOfBirth = DateTime(now.year - 20);
     _userVM = new UserVM();
     if (_auth.currentUser != null) {
       /***
@@ -76,8 +79,8 @@ class _SignupState extends State<Signup> {
     Future<void> _trySubmit() async {
       final isValid = _emailIsValid &&
           _passwordIsValid &&
-          ageConfirmed &&
-          termsConfirmed &&
+          // ageConfirmed &&
+          // termsConfirmed &&
           _displayNameIsValid;
       FocusScope.of(this.context).unfocus();
 
@@ -96,6 +99,7 @@ class _SignupState extends State<Signup> {
                   id: userCredentials.user.uid,
                   email: userCredentials.user.email,
                   displayName: controllers['display_name'].text.trim(),
+                  dayOfBirth: _dayOfBirth,
                   stories: new UserStories(
                     owner: new List(),
                     following: new List(),
@@ -118,6 +122,13 @@ class _SignupState extends State<Signup> {
       }
     }
 
+    void scrollToBottom() {
+      Timer(Duration(milliseconds: 200), () {
+        scrollController.animateTo(scrollController.position.maxScrollExtent,
+            curve: Curves.linear, duration: Duration(milliseconds: 500));
+      });
+    }
+
     Function getContinueFunction() {
       switch (_currentStep) {
         case 0:
@@ -133,17 +144,23 @@ class _SignupState extends State<Signup> {
           }
           return null;
         case 1:
-          if (ageConfirmed && termsConfirmed) {
-            return () {
-              setState(() {
-                _currentStep++;
-                Future.delayed(Duration(milliseconds: 200), () {
-                  FocusScope.of(this.context).unfocus();
-                });
-              });
-            };
-          }
-          return null;
+          // if (ageConfirmed && termsConfirmed) {
+          //   return () {
+          //     setState(() {
+          //       _currentStep++;
+          //       Future.delayed(Duration(milliseconds: 200), () {
+          //         FocusScope.of(this.context).unfocus();
+          //       });
+          //     });
+          //   };
+          // }
+          // return null;
+          return () {
+            setState(() {
+              _currentStep++;
+            });
+            scrollToBottom();
+          };
         case 2:
           if (_displayNameIsValid && _selfie != null) {
             return () {
@@ -180,7 +197,7 @@ class _SignupState extends State<Signup> {
               _passwordIsValid = isValid;
             });
           },
-          controllerEmail: controllers['password'],
+          controllerEmail: controllers['email'],
           controllerPassword: controllers['password'],
         ),
       ),
@@ -189,28 +206,21 @@ class _SignupState extends State<Signup> {
         state: _emailIsValid && _passwordIsValid
             ? StepState.indexed
             : StepState.disabled,
-        title: Text('Legal'),
-        content: SecondStep(
-          ageConfirmed: ageConfirmed,
-          termsConfirmed: termsConfirmed,
-          onChangeAgeConfirmed: (value) {
+        title: Text('Day of birth'),
+        content: Age(
+          onChange: (DateTime newDate, _) {
             setState(() {
-              ageConfirmed = value;
-            });
-          },
-          onChangeTermsConfirmed: (value) {
-            setState(() {
-              termsConfirmed = value;
+              _dayOfBirth = newDate;
             });
           },
         ),
       ),
       Step(
-        state: ageConfirmed && termsConfirmed
+        state: _emailIsValid && _passwordIsValid
             ? StepState.indexed
             : StepState.disabled,
         isActive: _currentStep == 2,
-        title: const Text('Identity'),
+        title: const Text('Name & Photo'),
         content: ThirdStep(
           selfie: _selfie,
           onFileChange: (filePath) {
@@ -235,6 +245,7 @@ class _SignupState extends State<Signup> {
         FocusScope.of(this.context).unfocus();
       },
       child: SingleChildScrollView(
+        controller: scrollController,
         child: Column(
           children: [
             AuthHero(
@@ -249,9 +260,10 @@ class _SignupState extends State<Signup> {
                   setState(() {
                     _currentStep = step;
                   });
-                  Future.delayed(Duration(milliseconds: 200), () {
+                  Timer(Duration(milliseconds: 200), () {
                     FocusScope.of(this.context).unfocus();
                   });
+                  scrollToBottom();
                 },
                 onStepContinue: getContinueFunction(),
                 controlsBuilder: (BuildContext context,

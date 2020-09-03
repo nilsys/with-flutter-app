@@ -10,6 +10,7 @@ class CustomTextInput extends StatelessWidget {
   final String placeHolder;
   final IconData iconData;
   final bool obscureText;
+  final Function onTap;
 
   CustomTextInput({
     @required this.key,
@@ -20,12 +21,14 @@ class CustomTextInput extends StatelessWidget {
     @required this.controller,
     @required this.iconData,
     this.obscureText = false,
+    this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       key: key,
+      onTap: onTap,
       controller: controller,
       cursorHeight: 20,
       keyboardType: TextInputType.emailAddress,

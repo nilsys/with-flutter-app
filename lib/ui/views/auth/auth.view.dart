@@ -12,7 +12,7 @@ class AuthView extends StatefulWidget {
 
 class _AuthViewState extends State<AuthView> {
   final _pageController = PageController(
-    initialPage: 1,
+    initialPage: 0,
   );
 
   @override
@@ -44,7 +44,6 @@ class _AuthViewState extends State<AuthView> {
           ),
         ),
         Scaffold(
-          resizeToAvoidBottomInset: false,
           backgroundColor: Colors.transparent,
           body: SafeArea(
             child: Stack(
