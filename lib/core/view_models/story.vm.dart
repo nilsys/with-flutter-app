@@ -35,9 +35,9 @@ class StoryVM extends ChangeNotifier {
     return;
   }
 
-  Future addStory(Story data) async {
-    var result = await _api.addDocument(data.toJson());
+  // Future addStory(Story data) async {
+  //   var result = await _api.addDocument(data.toJson());
 
-    return;
-  }
+  //   return;
+  // }
 }

@@ -3,17 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/core/models/user.model.dart';
 import 'package:with_app/core/models/user_stories.model.dart';
-import 'package:with_app/ui/shared/text_input.dart';
 import 'package:with_app/ui/shared/toaster.dart';
 import 'package:with_app/ui/views/home.view.dart';
-import 'package:with_app/with_icons.dart';
 import '../auth_hero.view.dart';
-import '../vertical_spacer.view.dart';
 import 'sub_views/first_step.view.dart';
 import 'sub_views/second_step.view.dart';
 import 'sub_views/third_step.view.dart';
@@ -73,15 +69,6 @@ class _SignupState extends State<Signup> {
     controllers['password'].dispose();
     controllers['display_name'].dispose();
     super.dispose();
-  }
-
-  void _launchTermsURL() async {
-    const url = 'http://withapp.io/policy/with_privacy_policy.htm';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 
   @override
