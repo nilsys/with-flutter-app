@@ -39,6 +39,10 @@ class Api {
   }
 
   Future<void> updateDocument(Map data, String id) {
-    return ref.doc(id).update(data);
+    return ref.doc(id).set(
+        data,
+        SetOptions(
+          merge: true,
+        ));
   }
 }

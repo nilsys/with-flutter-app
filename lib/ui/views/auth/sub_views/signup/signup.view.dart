@@ -45,7 +45,7 @@ class _SignupState extends State<Signup> {
     scrollController = ScrollController();
     DateTime now = DateTime.now();
     _dayOfBirth = DateTime(now.year - 20);
-    _userVM = new UserVM();
+    _userVM = UserVM();
     if (_auth.currentUser != null) {
       /***
         using this.context instaed of context.
@@ -100,12 +100,6 @@ class _SignupState extends State<Signup> {
                   email: userCredentials.user.email,
                   displayName: controllers['display_name'].text.trim(),
                   dayOfBirth: _dayOfBirth,
-                  stories: new UserStories(
-                    owner: new List(),
-                    following: new List(),
-                    viewing: new List(),
-                  ),
-                  leads: new List(),
                   profileImage: _url,
                 ),
                 userCredentials.user.uid);

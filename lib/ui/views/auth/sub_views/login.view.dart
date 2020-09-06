@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:with_app/core/models/user.model.dart';
+import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/text_input.dart';
 import 'package:with_app/ui/shared/toaster.dart';
 import 'package:with_app/ui/views/home.view.dart';
 import 'package:with_app/ui/shared/spinner.dart';
 import 'auth_hero.view.dart';
 import 'vertical_spacer.view.dart';
+import 'package:with_app/with_icons.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -26,10 +30,12 @@ class _LoginState extends State<Login> {
   bool _passwordIsValid = false;
   bool _working = false;
   ScrollController scrollController;
+  UserVM _userVM;
 
   @override
   void initState() {
     super.initState();
+    _userVM = UserVM();
     scrollController = ScrollController();
     _auth.authStateChanges().listen((user) {
       if (user != null) {
@@ -67,6 +73,66 @@ class _LoginState extends State<Login> {
           // titleText: Text("Oops..."),
           icon: Icon(Icons.error),
           content: Text(err.message),
+        )..show(context);
+      }
+    }
+
+    void _tryFacebookLogin() async {
+      FocusScope.of(this.context).unfocus();
+      try {
+        setState(() {
+          _working = true;
+        });
+        final FacebookLogin facebookLogin = new FacebookLogin();
+        final FacebookLoginResult result = await facebookLogin.logIn(['email']);
+        switch (result.status) {
+          case FacebookLoginStatus.loggedIn:
+            final FacebookAuthCredential facebookAuthCredential =
+                FacebookAuthProvider.credential(result.accessToken.token);
+            final UserCredential credentials =
+                await _auth.signInWithCredential(facebookAuthCredential);
+            _userVM.updateUser(
+                UserModel(
+                  displayName: credentials.additionalUserInfo.username,
+                  email: credentials.user.email,
+                  profileImage: credentials.user.photoURL,
+                ),
+                credentials.user.uid);
+            break;
+          case FacebookLoginStatus.cancelledByUser:
+            print('facebook login canceled by user');
+            Toaster(
+              title: 'Facebook Login',
+              icon: Icon(Icons.error),
+              content: Text('Facebook login canceled'),
+            )..show(context);
+            setState(() {
+              _working = false;
+            });
+            break;
+          case FacebookLoginStatus.error:
+            print(result.errorMessage);
+            Toaster(
+              title: 'Facebook Login',
+              icon: Icon(Icons.error),
+              content: Text(result.errorMessage),
+            )..show(context);
+            setState(() {
+              _working = false;
+            });
+            break;
+        }
+      } on PlatformException catch (err) {
+        print(err);
+      } catch (err) {
+        print(err);
+        setState(() {
+          _working = false;
+        });
+        Toaster(
+          title: 'Facebook Login',
+          icon: Icon(Icons.error),
+          content: Text('Oops! somthing went wrong...'),
         )..show(context);
       }
     }
@@ -182,6 +248,33 @@ class _LoginState extends State<Login> {
 
     Widget working = _working ? Spinner() : SizedBox();
 
+    final Widget facebook = SizedBox(
+      width: double.infinity,
+      child: OutlineButton(
+        onPressed: _tryFacebookLogin,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: 25,
+              child: Icon(With.facebook),
+            ),
+            Center(
+              child: Text('Continue with Facebook'),
+            ),
+            SizedBox(
+              width: 25,
+            ),
+          ],
+        ),
+        shape: new RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(30.0)),
+        borderSide: BorderSide(
+          color: Colors.white.withAlpha(100),
+        ),
+      ),
+    );
+
     return GestureDetector(
       onTap: () {
         // FocusScope.of(context).requestFocus(new FocusNode());
@@ -206,8 +299,10 @@ class _LoginState extends State<Login> {
             submit,
             VerticalSpacer(),
             VerticalSpacer(),
-            forgot,
+            facebook,
             VerticalSpacer(),
+            VerticalSpacer(),
+            forgot,
             VerticalSpacer(),
             working,
           ],

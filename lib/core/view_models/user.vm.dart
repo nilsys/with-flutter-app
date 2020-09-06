@@ -33,7 +33,7 @@ class UserVM extends ChangeNotifier {
     return;
   }
 
-  Future updateUser(UserModel data, String id) async {
+  Future<void> updateUser(UserModel data, String id) async {
     await _api.updateDocument(data.toJson(), id);
     return;
   }
@@ -49,9 +49,7 @@ class UserVM extends ChangeNotifier {
   }
 
   Future addUser(UserModel data, String uid) async {
-    Map<String, dynamic> _data = data.toJson();
-    _data['stories'] = _data['stories'].toJson();
-    await _api.addDocument(_data, id: uid);
+    await _api.addDocument(data.toJson(), id: uid);
     return;
   }
 }

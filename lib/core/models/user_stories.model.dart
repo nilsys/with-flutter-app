@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:with_app/core/models/story_status.model.dart';
 
 class UserStories {
@@ -7,15 +6,15 @@ class UserStories {
   final List<StoryStatus> viewing;
 
   UserStories({
-    @required this.owner,
-    @required this.following,
-    @required this.viewing,
+    this.owner = const [],
+    this.following = const [],
+    this.viewing = const [],
   });
 
   UserStories.fromMap(Map snapshot)
-      : owner = snapshot['owner'],
-        following = snapshot['following'],
-        viewing = snapshot['viewing'];
+      : owner = snapshot['owner'] ?? List(),
+        following = snapshot['following'] ?? List(),
+        viewing = snapshot['viewing'] ?? List();
 
   toJson() {
     return {

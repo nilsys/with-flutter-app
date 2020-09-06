@@ -8,7 +8,7 @@ class Spinner extends StatelessWidget {
       child: SleekCircularSlider(
         appearance: CircularSliderAppearance(
           spinnerMode: true,
-          size: 80,
+          size: 60,
           // trackWidth: 0,
           customColors: CustomSliderColors(
             trackColor: Colors.white.withAlpha(0),

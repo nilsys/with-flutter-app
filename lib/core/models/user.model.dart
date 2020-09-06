@@ -14,19 +14,20 @@ class UserModel {
     this.id,
     @required this.displayName,
     @required this.email,
-    @required this.stories,
-    @required this.leads,
-    @required this.dayOfBirth,
-    this.profileImage,
+    this.stories,
+    this.leads,
+    this.dayOfBirth,
+    @required this.profileImage,
   });
 
   UserModel.fromMap(Map snapshot, String id)
       : id = id ?? '',
         displayName = snapshot['display_name'],
         email = snapshot['email'],
-        stories = snapshot['storeis'],
-        leads = snapshot['leads'],
-        dayOfBirth = snapshot['day_of_birth'].toDate(),
+        stories = snapshot['storeis'] ?? UserStories(),
+        leads = snapshot['leads'] ?? List(),
+        dayOfBirth =
+            snapshot['day_of_birth'] ? snapshot['day_of_birth'].toDate() : null,
         profileImage = snapshot['profile_image'];
 
   toJson() {

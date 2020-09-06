@@ -11,7 +11,7 @@
 ///      fonts:
 ///       - asset: fonts/With.ttf
 ///
-///
+/// 
 /// * Material Design Icons, Copyright (C) Google, Inc
 ///         Author:    Google
 ///         License:   Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
@@ -24,6 +24,10 @@
 ///         Author:    Daniela Howe & Ivan Montiel
 ///         License:   SIL (http://scripts.sil.org/OFL)
 ///         Homepage:  http://nagoshiashumari.github.io/Rpg-Awesome/
+/// * Font Awesome 5, Copyright (C) 2016 by Dave Gandy
+///         Author:    Dave Gandy
+///         License:   SIL (https://github.com/FortAwesome/Font-Awesome/blob/master/LICENSE.txt)
+///         Homepage:  http://fortawesome.github.com/Font-Awesome/
 /// * Octicons, Copyright (C) 2020 by GitHub Inc.
 ///         Author:    GitHub
 ///         License:   MIT (http://opensource.org/licenses/mit-license.php)
@@ -37,18 +41,12 @@ class With {
   static const _kFontFam = 'With';
   static const _kFontPkg = null;
 
-  static const IconData lock_outline =
-      IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData power_settings_new =
-      IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData gavel =
-      IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData block =
-      IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData face =
-      IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData fairy_wand =
-      IconData(0xe9b6, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData stop =
-      IconData(0xf359, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData lock_outline = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData power_settings_new = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData gavel = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData block = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData face = IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData fairy_wand = IconData(0xe9b6, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData facebook = IconData(0xf09a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData stop = IconData(0xf359, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

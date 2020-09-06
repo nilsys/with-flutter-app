@@ -47,6 +47,12 @@
       "css": "face",
       "code": 59398,
       "src": "material"
+    },
+    {
+      "uid": "c8a620baa7b8ea0db70149cb5da9b6ae",
+      "css": "facebook",
+      "code": 61594,
+      "src": "fontawesome5"
     }
   ]
 }
