@@ -295,7 +295,6 @@ class _LoginState extends State<Login> {
             VerticalSpacer(),
             password,
             VerticalSpacer(),
-            VerticalSpacer(),
             submit,
             VerticalSpacer(),
             VerticalSpacer(),
