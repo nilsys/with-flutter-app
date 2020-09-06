@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:with_app/theme_data.dart';
-import 'package:with_app/ui/style_guide.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import './ui/router.dart';
 import './locator.dart';
@@ -14,11 +13,11 @@ void main() async {
   await Firebase.initializeApp();
   final _auth = FirebaseAuth.instance;
   setupLocator();
-  runApp(StyleGuide(
-    child: MyApp(
+  runApp(
+    MyApp(
       initialRoute: _auth.currentUser != null ? '/home' : '/auth',
     ),
-  ));
+  );
 }
 
 class MyApp extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:with_app/with_icons.dart';
-import '../../vertical_spacer.view.dart';
+import 'package:with_app/ui/shared/all.dart';
 
 class SecondStep extends StatelessWidget {
   final bool ageConfirmed;

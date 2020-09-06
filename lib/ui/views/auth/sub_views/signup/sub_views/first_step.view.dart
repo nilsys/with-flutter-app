@@ -1,7 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:with_app/ui/shared/text_input.dart';
-import '../../vertical_spacer.view.dart';
+import 'package:with_app/ui/shared/all.dart';
 
 class FirstStep extends StatelessWidget {
   final Function onChangeEmail;

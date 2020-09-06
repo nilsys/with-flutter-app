@@ -6,12 +6,9 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:with_app/core/models/user.model.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
-import 'package:with_app/ui/shared/text_input.dart';
-import 'package:with_app/ui/shared/toaster.dart';
 import 'package:with_app/ui/views/home.view.dart';
-import 'package:with_app/ui/shared/spinner.dart';
+import 'package:with_app/ui/shared/all.dart';
 import 'auth_hero.view.dart';
-import 'vertical_spacer.view.dart';
 import 'package:with_app/with_icons.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
