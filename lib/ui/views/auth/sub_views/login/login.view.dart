@@ -1,16 +1,12 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:with_app/core/models/user.model.dart';
-import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/views/home.view.dart';
 import 'package:with_app/ui/shared/all.dart';
-import 'auth_hero.view.dart';
-import 'package:with_app/with_icons.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import '../auth_hero.view.dart';
+
+import 'social_login.view.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -26,14 +22,12 @@ class _LoginState extends State<Login> {
   bool _emailIsValid = false;
   bool _passwordIsValid = false;
   bool _working = false;
-  ScrollController scrollController;
-  UserVM _userVM;
+  ScrollControl scrollController = ScrollControl();
 
   @override
   void initState() {
     super.initState();
-    _userVM = UserVM();
-    scrollController = ScrollController();
+    scrollController.init();
     _auth.authStateChanges().listen((user) {
       if (user != null) {
         Navigator.pushNamed(this.context, HomeView.route);
@@ -45,6 +39,7 @@ class _LoginState extends State<Login> {
   void dispose() {
     controllers['email'].dispose();
     controllers['password'].dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -74,73 +69,6 @@ class _LoginState extends State<Login> {
       }
     }
 
-    void _tryFacebookLogin() async {
-      FocusScope.of(this.context).unfocus();
-      try {
-        setState(() {
-          _working = true;
-        });
-        final FacebookLogin facebookLogin = new FacebookLogin();
-        final FacebookLoginResult result = await facebookLogin.logIn(['email']);
-        switch (result.status) {
-          case FacebookLoginStatus.loggedIn:
-            final FacebookAuthCredential facebookAuthCredential =
-                FacebookAuthProvider.credential(result.accessToken.token);
-            final UserCredential credentials =
-                await _auth.signInWithCredential(facebookAuthCredential);
-            _userVM.updateUser(
-                UserModel(
-                  displayName: credentials.additionalUserInfo.username,
-                  email: credentials.user.email,
-                  profileImage: credentials.user.photoURL,
-                ),
-                credentials.user.uid);
-            break;
-          case FacebookLoginStatus.cancelledByUser:
-            print('facebook login canceled by user');
-            Toaster(
-              title: 'Facebook Login',
-              icon: Icon(Icons.error),
-              content: Text('Facebook login canceled'),
-            )..show(context);
-            setState(() {
-              _working = false;
-            });
-            break;
-          case FacebookLoginStatus.error:
-            print(result.errorMessage);
-            Toaster(
-              title: 'Facebook Login',
-              icon: Icon(Icons.error),
-              content: Text(result.errorMessage),
-            )..show(context);
-            setState(() {
-              _working = false;
-            });
-            break;
-        }
-      } on PlatformException catch (err) {
-        print(err);
-      } catch (err) {
-        print(err);
-        setState(() {
-          _working = false;
-        });
-        Toaster(
-          title: 'Facebook Login',
-          icon: Icon(Icons.error),
-          content: Text('Oops! somthing went wrong...'),
-        )..show(context);
-      }
-    }
-
-    void scrollToBottom() {
-      Timer(Duration(milliseconds: 200), () {
-        scrollController.animateTo(scrollController.position.maxScrollExtent,
-            curve: Curves.linear, duration: Duration(milliseconds: 500));
-      });
-    }
-
     final Widget email = CustomTextInput(
       controller: controllers['email'],
       key: Key('email'),
@@ -155,8 +83,8 @@ class _LoginState extends State<Login> {
         return EmailValidator.validate(value.trim());
       },
       placeHolder: 'Email',
-      iconData: Icons.alternate_email_outlined,
-      onTap: scrollToBottom,
+      // iconData: Icons.alternate_email_outlined,
+      onTap: scrollController.scrollToBottom,
     );
 
     final Widget password = CustomTextInput(
@@ -174,7 +102,7 @@ class _LoginState extends State<Login> {
         return value.length >= 7;
       },
       placeHolder: 'Password',
-      iconData: Icons.lock_outlined,
+      // iconData: Icons.lock_outlined,
     );
 
     final Widget submit = SizedBox(
@@ -194,6 +122,7 @@ class _LoginState extends State<Login> {
       onPressed: _emailIsValid
           ? () async {
               FocusScope.of(this.context).unfocus();
+              scrollController.scrollToBottom();
               setState(() {
                 _working = true;
               });
@@ -245,31 +174,24 @@ class _LoginState extends State<Login> {
 
     Widget working = _working ? Spinner() : SizedBox();
 
-    final Widget facebook = SizedBox(
-      width: double.infinity,
-      child: OutlineButton(
-        onPressed: _tryFacebookLogin,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              width: 25,
-              child: Icon(With.facebook),
-            ),
-            Center(
-              child: Text('Continue with Facebook'),
-            ),
-            SizedBox(
-              width: 25,
-            ),
-          ],
-        ),
-        shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(30.0)),
-        borderSide: BorderSide(
-          color: Colors.white.withAlpha(100),
-        ),
-      ),
+    final Widget facebook = SocialLogin(
+      network: 'Facebook',
+      isWorking: (isWorking) {
+        setState(() {
+          _working = isWorking;
+        });
+        scrollController.scrollToBottom();
+      },
+    );
+
+    final Widget google = SocialLogin(
+      network: 'Google',
+      isWorking: (isWorking) {
+        setState(() {
+          _working = isWorking;
+        });
+        scrollController.scrollToBottom();
+      },
     );
 
     return GestureDetector(
@@ -278,7 +200,7 @@ class _LoginState extends State<Login> {
         FocusScope.of(this.context).unfocus();
       },
       child: SingleChildScrollView(
-        controller: scrollController,
+        controller: scrollController.controller,
         padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -297,10 +219,14 @@ class _LoginState extends State<Login> {
             VerticalSpacer(),
             facebook,
             VerticalSpacer(),
+            google,
+            VerticalSpacer(),
             VerticalSpacer(),
             forgot,
             VerticalSpacer(),
             working,
+            VerticalSpacer(),
+            VerticalSpacer(),
           ],
         ),
       ),

@@ -2,13 +2,13 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:with_app/ui/shared/all.dart';
 
-class FirstStep extends StatelessWidget {
+class Credentials extends StatelessWidget {
   final Function onChangeEmail;
   final Function onChangePassword;
   final TextEditingController controllerEmail;
   final TextEditingController controllerPassword;
 
-  FirstStep({
+  Credentials({
     @required this.onChangeEmail,
     @required this.onChangePassword,
     @required this.controllerEmail,
@@ -28,7 +28,7 @@ class FirstStep extends StatelessWidget {
             return EmailValidator.validate(value.trim());
           },
           placeHolder: 'Email',
-          iconData: Icons.alternate_email_outlined,
+          // iconData: Icons.alternate_email_outlined,
         ),
         VerticalSpacer(),
         CustomTextInput(
@@ -41,7 +41,7 @@ class FirstStep extends StatelessWidget {
             return value.length >= 7;
           },
           placeHolder: 'Password',
-          iconData: Icons.lock_outlined,
+          // iconData: Icons.lock_outlined,
         ),
         SizedBox(
           height: 10,

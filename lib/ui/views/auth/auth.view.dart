@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'sub_views/auth_footer.view.dart';
 import 'sub_views/signup/signup.view.dart';
-import 'sub_views/login.view.dart';
+import 'sub_views/login/login.view.dart';
 
 class AuthView extends StatefulWidget {
   static const String route = '/auth';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:with_app/ui/shared/all.dart';
 
 class AuthHero extends StatelessWidget {
   final String text;
@@ -12,8 +13,8 @@ class AuthHero extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 25,
+        VerticalSpacer(
+          multiplier: 4,
         ),
         SvgPicture.asset(
           'images/logo_light.svg',

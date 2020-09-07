@@ -49,9 +49,27 @@
       "src": "material"
     },
     {
-      "uid": "c8a620baa7b8ea0db70149cb5da9b6ae",
+      "uid": "fe117d6ac5580ba799b2301053a8581d",
+      "css": "google",
+      "code": 61856,
+      "src": "fontawesome5"
+    },
+    {
+      "uid": "c2b93e53641f7d8eb542120fa6996700",
       "css": "facebook",
-      "code": 61594,
+      "code": 62366,
+      "src": "fontawesome5"
+    },
+    {
+      "uid": "fd3128bf109153952b1b775ea574504b",
+      "css": "user",
+      "code": 59394,
+      "src": "websymbols"
+    },
+    {
+      "uid": "f0d3240bfd86fc0db9bb684c5cb6e316",
+      "css": "question",
+      "code": 61736,
       "src": "fontawesome5"
     }
   ]

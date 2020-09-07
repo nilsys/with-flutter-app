@@ -15,6 +15,7 @@ class WithTheme {
             headline3: TextStyle(fontSize: 16.0),
             headline4:
                 GoogleFonts.satisfy(textStyle: TextStyle(fontSize: 20.0)),
+            headline5: TextStyle(fontSize: 16.0),
             bodyText2:
                 TextStyle(fontSize: 14.0, color: Colors.white, height: 1.5),
             bodyText1: TextStyle(fontSize: 14.0),

@@ -16,6 +16,10 @@
 ///         Author:    Google
 ///         License:   Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
 ///         Homepage:  https://design.google.com/icons/
+/// * Web Symbols, Copyright (c) 2011 by Just Be Nice studio. All rights reserved.
+///         Author:    Just Be Nice studio
+///         License:   SIL (http://scripts.sil.org/OFL)
+///         Homepage:  http://www.justbenicestudio.com/
 /// * Iconic, Copyright (C) 2012 by P.J. Onori
 ///         Author:    P.J. Onori
 ///         License:   SIL (http://scripts.sil.org/OFL)
@@ -43,10 +47,13 @@ class With {
 
   static const IconData lock_outline = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData power_settings_new = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData user = IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData gavel = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData block = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData face = IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData fairy_wand = IconData(0xe9b6, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData facebook = IconData(0xf09a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData question = IconData(0xf128, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData google = IconData(0xf1a0, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData stop = IconData(0xf359, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData facebook = IconData(0xf39e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

@@ -9,9 +9,9 @@ import 'package:with_app/core/models/user.model.dart';
 import 'package:with_app/ui/shared/all.dart';
 import 'package:with_app/ui/views/home.view.dart';
 import '../auth_hero.view.dart';
-import 'sub_views/first_step.view.dart';
+import 'sub_views/credentials.view.dart';
 // import 'sub_views/second_step.view.dart';
-import 'sub_views/third_step.view.dart';
+import 'sub_views/name_and_photo.view.dart';
 import 'sub_views/age.view.dart';
 
 class Signup extends StatefulWidget {
@@ -27,7 +27,7 @@ class _SignupState extends State<Signup> {
     'password': TextEditingController(),
     'display_name': TextEditingController(),
   };
-  ScrollController scrollController;
+  ScrollControl scrollController = ScrollControl();
   bool _emailIsValid = false;
   bool _passwordIsValid = false;
   bool _displayNameIsValid = false;
@@ -41,13 +41,13 @@ class _SignupState extends State<Signup> {
   @override
   void initState() {
     super.initState();
-    scrollController = ScrollController();
+    scrollController.init();
     DateTime now = DateTime.now();
     _dayOfBirth = DateTime(now.year - 20);
     _userVM = UserVM();
     if (_auth.currentUser != null) {
       /***
-        using this.context instaed of context.
+        using this.context instaed of just context.
         see https://stackoverflow.com/questions/56927095/flutter-navigator-argument-type-context-cant-be-assigned-to-the-parameter-ty?rq=1
       ***/
       Navigator.pushNamed(this.context, HomeView.route);
@@ -70,6 +70,7 @@ class _SignupState extends State<Signup> {
     controllers['email'].dispose();
     controllers['password'].dispose();
     controllers['display_name'].dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -115,13 +116,6 @@ class _SignupState extends State<Signup> {
       }
     }
 
-    void scrollToBottom() {
-      Timer(Duration(milliseconds: 200), () {
-        scrollController.animateTo(scrollController.position.maxScrollExtent,
-            curve: Curves.linear, duration: Duration(milliseconds: 500));
-      });
-    }
-
     Function getContinueFunction() {
       switch (_currentStep) {
         case 0:
@@ -152,7 +146,7 @@ class _SignupState extends State<Signup> {
             setState(() {
               _currentStep++;
             });
-            scrollToBottom();
+            scrollController.scrollToBottom();
           };
         case 2:
           if (_displayNameIsValid && _selfie != null) {
@@ -177,7 +171,7 @@ class _SignupState extends State<Signup> {
         ),
         isActive: _currentStep == 0,
         state: StepState.indexed,
-        content: FirstStep(
+        content: Credentials(
           onChangeEmail: (value) {
             bool isValid = EmailValidator.validate(value.trim());
             setState(() {
@@ -214,7 +208,7 @@ class _SignupState extends State<Signup> {
             : StepState.disabled,
         isActive: _currentStep == 2,
         title: const Text('Name & Photo'),
-        content: ThirdStep(
+        content: NameAndPhoto(
           selfie: _selfie,
           onFileChange: (filePath) {
             setState(() {
@@ -238,7 +232,7 @@ class _SignupState extends State<Signup> {
         FocusScope.of(this.context).unfocus();
       },
       child: SingleChildScrollView(
-        controller: scrollController,
+        controller: scrollController.controller,
         child: Column(
           children: [
             AuthHero(
@@ -256,7 +250,7 @@ class _SignupState extends State<Signup> {
                   Timer(Duration(milliseconds: 200), () {
                     FocusScope.of(this.context).unfocus();
                   });
-                  scrollToBottom();
+                  scrollController.scrollToBottom();
                 },
                 onStepContinue: getContinueFunction(),
                 controlsBuilder: (BuildContext context,
