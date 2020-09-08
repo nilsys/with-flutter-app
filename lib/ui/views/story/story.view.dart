@@ -36,21 +36,14 @@ class _StoryViewState extends State<StoryView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            PageView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: _pageController,
-              children: [
-                Timeline(),
-                StorySettings(),
-              ],
-            ),
-          ],
-        ),
+      backgroundColor: Theme.of(context).backgroundColor,
+      body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: _pageController,
+        children: [
+          Timeline(),
+          StorySettings(),
+        ],
       ),
       bottomNavigationBar: StoryFooter(
         onChange: (pageIndex) {

@@ -15,7 +15,7 @@ void main() async {
   setupLocator();
   runApp(
     MyApp(
-      initialRoute: _auth.currentUser != null ? '/home' : '/auth',
+      initialRoute: _auth.currentUser != null ? 'home' : 'auth',
     ),
   );
 }

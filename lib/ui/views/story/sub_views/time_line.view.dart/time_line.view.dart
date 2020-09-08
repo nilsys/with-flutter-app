@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:with_app/ui/shared/all.dart';
-import 'package:with_app/ui/views/home/home.view.dart';
+// import 'package:with_app/ui/views/home/home.view.dart';
 
 class Timeline extends StatefulWidget {
   @override
@@ -28,20 +28,28 @@ class _TimelineState extends State<Timeline> {
       onTap: () {
         FocusScope.of(this.context).unfocus();
       },
-      child: SingleChildScrollView(
-        controller: scrollController.controller,
-        child: Column(
-          children: [
-            Text('Timeline View', style: Theme.of(context).textTheme.bodyText1),
-            FlatButton(
-              onPressed: () {
-                Navigator.pushNamed(this.context, HomeView.route);
-              },
-              child: Text('Back to Home',
-                  style: Theme.of(context).textTheme.bodyText1),
+      child: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            title: Text('SliverAppBar'),
+            backgroundColor: Theme.of(context).primaryColorLight,
+            expandedHeight: MediaQuery.of(context).size.width * 0.5,
+            // collapsedHeight: 80.0,
+            pinned: true,
+            // flexibleSpace: FlexibleSpaceBar(
+            //   background: Image.asset('assets/forest.jpg', fit: BoxFit.cover),
+            // ),
+          ),
+          SliverFixedExtentList(
+            itemExtent: 150.0,
+            delegate: SliverChildListDelegate(
+              [
+                Text('Timeline Posts',
+                    style: Theme.of(context).textTheme.bodyText1),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
