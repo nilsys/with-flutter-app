@@ -2,4 +2,6 @@
 
 ### Run test:
 
-`flutter driver --target=test_driver/e2e.dart`
+```
+$ flutter driver --target=test_driver/e2e.dart
+```

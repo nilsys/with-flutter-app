@@ -34,16 +34,16 @@ void main() {
       }
     });
 
-    test('renders the "fechting" text', () async {
-      final txt = await driver.getText(fetchingTextFinder);
-      print(txt);
-      expect(txt, "fetching");
-    });
+    // test('renders the "fechting" text', () async {
+    //   final txt = await driver.getText(fetchingTextFinder);
+    //   print(txt);
+    //   expect(txt, "fetching");
+    // });
 
-    test('renders the "story list"', () async {
-      await Future.delayed(Duration(seconds: 3));
-      final isExists = await isPresent(storyListFinder, driver);
-      expect(isExists, true);
-    });
+    // test('renders the "story list"', () async {
+    //   await Future.delayed(Duration(seconds: 3));
+    //   final isExists = await isPresent(storyListFinder, driver);
+    //   expect(isExists, true);
+    // });
   });
 }
