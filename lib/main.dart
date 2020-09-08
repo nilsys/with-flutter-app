@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:with_app/theme_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import './ui/router.dart';
+import 'router.dart';
 import './locator.dart';
 import 'core/view_models/story.vm.dart';
 import 'core/view_models/user.vm.dart';

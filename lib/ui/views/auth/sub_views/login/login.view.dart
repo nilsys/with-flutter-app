@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:with_app/ui/views/home.view.dart';
+import 'package:with_app/ui/views/home/home.view.dart';
 import 'package:with_app/ui/shared/all.dart';
 import '../auth_hero.view.dart';
 

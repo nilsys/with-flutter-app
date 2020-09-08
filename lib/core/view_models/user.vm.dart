@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:with_app/core/models/user_stories.model.dart';
 import '../services/api.dart';
 import '../models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -34,7 +35,10 @@ class UserVM extends ChangeNotifier {
   }
 
   Future<void> updateUser(UserModel data, String id) async {
-    await _api.updateDocument(data.toJson(), id);
+    Map<String, dynamic> _data = data.toJson();
+    _data['stories'] = _data['stories'].toJson();
+    print(_data);
+    await _api.updateDocument(_data, id);
     return;
   }
 

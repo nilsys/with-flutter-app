@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:with_app/core/models/story.model.dart';
+import 'package:with_app/ui/views/story/story.view.dart';
 
 class StoryCard extends StatelessWidget {
   final Story storyDetails;
@@ -9,10 +10,9 @@ class StoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // onTap: () {
-      //   Navigator.push(context,
-      //       MaterialPageRoute(builder: (_) => StoryView(story: storyDetails)));
-      // },
+      onTap: () {
+        Navigator.pushNamed(context, '${StoryView.route}/${storyDetails.id}');
+      },
       child: Padding(
         padding: EdgeInsets.all(8),
         child: Card(
