@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'sub_views/auth_footer.view.dart';
 import 'sub_views/signup/signup.view.dart';
 import 'sub_views/login/login.view.dart';
+import 'package:flutter/services.dart';
 
 class AuthView extends StatefulWidget {
   static const String route = '/auth';
@@ -18,11 +19,20 @@ class _AuthViewState extends State<AuthView> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     super.dispose();
   }
 
