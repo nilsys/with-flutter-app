@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:with_app/core/models/story.model.dart';
-import 'package:with_app/ui/views/story.view.dart';
 
 class StoryCard extends StatelessWidget {
   final Story storyDetails;

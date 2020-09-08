@@ -1,0 +1,76 @@
+{
+  "name": "With",
+  "css_prefix_text": "",
+  "css_use_suffix": false,
+  "hinting": true,
+  "units_per_em": 1000,
+  "ascent": 850,
+  "glyphs": [
+    {
+      "uid": "9366c4135ec6e20621ad1c4df55fdbc6",
+      "css": "fairy_wand",
+      "code": 59830,
+      "src": "rpgawesome"
+    },
+    {
+      "uid": "456269d7808904b960032630156fe808",
+      "css": "power_settings_new",
+      "code": 59393,
+      "src": "material"
+    },
+    {
+      "uid": "f22c7d0f53da6149318928e2c3deb805",
+      "css": "gavel",
+      "code": 59395,
+      "src": "material"
+    },
+    {
+      "uid": "552429e70bf6761e29a91584a3c1c6d6",
+      "css": "lock_outline",
+      "code": 59392,
+      "src": "material"
+    },
+    {
+      "uid": "e9f1a49d968111eab72aacfdce5a3d9f",
+      "css": "stop",
+      "code": 62297,
+      "src": "octicons"
+    },
+    {
+      "uid": "7cf0c6fefa5327473dec91427434ae26",
+      "css": "block",
+      "code": 59396,
+      "src": "iconic"
+    },
+    {
+      "uid": "4b0e8023fe49a8ec3f640a4e58fda969",
+      "css": "face",
+      "code": 59398,
+      "src": "material"
+    },
+    {
+      "uid": "fe117d6ac5580ba799b2301053a8581d",
+      "css": "google",
+      "code": 61856,
+      "src": "fontawesome5"
+    },
+    {
+      "uid": "c2b93e53641f7d8eb542120fa6996700",
+      "css": "facebook",
+      "code": 62366,
+      "src": "fontawesome5"
+    },
+    {
+      "uid": "fd3128bf109153952b1b775ea574504b",
+      "css": "user",
+      "code": 59394,
+      "src": "websymbols"
+    },
+    {
+      "uid": "f0d3240bfd86fc0db9bb684c5cb6e316",
+      "css": "question",
+      "code": 61736,
+      "src": "fontawesome5"
+    }
+  ]
+}

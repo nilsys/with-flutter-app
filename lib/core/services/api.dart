@@ -22,15 +22,27 @@ class Api {
     return ref.doc(id).get();
   }
 
+  Stream<DocumentSnapshot> streamDoc(String id) {
+    return ref.doc(id).snapshots();
+  }
+
   Future<void> removeDocument(String id) {
     return ref.doc(id).delete();
   }
 
-  Future<DocumentReference> addDocument(Map data) {
+  Future<void> addDocument(Map data, {String id}) {
+    if (id != null) {
+      print('id: $id');
+      return ref.doc(id).set(data);
+    }
     return ref.add(data);
   }
 
   Future<void> updateDocument(Map data, String id) {
-    return ref.doc(id).update(data);
+    return ref.doc(id).set(
+        data,
+        SetOptions(
+          merge: true,
+        ));
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:with_app/core/models/story.model.dart';
-import 'package:with_app/core/view_models/story_CRUDModel.dart';
+import 'package:with_app/core/view_models/story.vm.dart';
 // import 'package:with_app/ui/views/ModifyStory.dart';
 import 'package:provider/provider.dart';
 
@@ -11,7 +11,7 @@ class StoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final storyProvider = Provider.of<StoryCRUDModel>(context);
+    final storyProvider = Provider.of<StoryVM>(context);
 
     return Scaffold(
       appBar: AppBar(
