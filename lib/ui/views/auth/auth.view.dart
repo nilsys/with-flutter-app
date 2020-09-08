@@ -63,8 +63,8 @@ class _AuthViewState extends State<AuthView> {
                   physics: const NeverScrollableScrollPhysics(),
                   controller: _pageController,
                   children: [
-                    Login(),
                     Signup(),
+                    Login(),
                   ],
                 ),
               ],

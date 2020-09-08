@@ -25,6 +25,7 @@ class AuthHero extends StatelessWidget {
         ),
         Text(
           text,
+          key: Key('hero_header'),
           style: Theme.of(context).textTheme.headline4,
         ),
         SizedBox(

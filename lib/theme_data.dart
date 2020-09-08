@@ -3,10 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 class WithTheme {
   static data(BuildContext context) {
+    final Color accentColor = Colors.limeAccent[100];
     return ThemeData(
       brightness: Brightness.dark,
       primaryColor: new Color.fromRGBO(31, 107, 137, 1),
       backgroundColor: Colors.white.withAlpha(40),
+      accentColor: accentColor,
       fontFamily: 'Hind',
       textTheme: GoogleFonts.latoTextTheme(Theme.of(context).textTheme)
           .copyWith(
@@ -21,7 +23,7 @@ class WithTheme {
             bodyText1: TextStyle(fontSize: 14.0),
           )
           .apply(
-            displayColor: Colors.tealAccent[200],
+            displayColor: accentColor,
           ),
       cursorColor: Colors.white,
       inputDecorationTheme: InputDecorationTheme(
@@ -37,7 +39,7 @@ class WithTheme {
         ),
         focusColor: Colors.white,
       ),
-      buttonColor: Colors.tealAccent[200],
+      buttonColor: accentColor,
       buttonTheme: ButtonThemeData(
         buttonColor: Colors.tealAccent[200],
         height: 45,
