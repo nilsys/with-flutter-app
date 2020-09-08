@@ -9,7 +9,6 @@ class Spinner extends StatelessWidget {
         appearance: CircularSliderAppearance(
           spinnerMode: true,
           size: 60,
-          // trackWidth: 0,
           customColors: CustomSliderColors(
             trackColor: Colors.white.withAlpha(0),
             progressBarColors: [

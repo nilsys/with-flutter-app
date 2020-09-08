@@ -28,7 +28,6 @@ class Credentials extends StatelessWidget {
             return EmailValidator.validate(value.trim());
           },
           placeHolder: 'Email',
-          // iconData: Icons.alternate_email_outlined,
         ),
         VerticalSpacer(),
         CustomTextInput(
@@ -41,7 +40,6 @@ class Credentials extends StatelessWidget {
             return value.length >= 7;
           },
           placeHolder: 'Password',
-          // iconData: Icons.lock_outlined,
         ),
         SizedBox(
           height: 10,

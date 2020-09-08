@@ -14,12 +14,10 @@ class Age extends StatelessWidget {
     return Transform.translate(
       offset: Offset(0, -18),
       child: DatePickerWidget(
-        looping: false, // default is not looping
         firstDate: DateTime(now.year - 120),
         lastDate: DateTime(now.year - 13),
         initialDate: DateTime(now.year - 20),
         dateFormat: "dd-MMMM-yyyy",
-        // locale: DatePicker.localeFromString('he'),
         onChange: onChange,
         pickerTheme: DateTimePickerTheme(
           backgroundColor: Colors.transparent,

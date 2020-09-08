@@ -62,7 +62,6 @@ class _LoginState extends State<Login> {
           _working = false;
         });
         Toaster(
-          // titleText: Text("Oops..."),
           icon: Icon(Icons.error),
           content: Text(err.message),
         )..show(context);
@@ -83,7 +82,6 @@ class _LoginState extends State<Login> {
         return EmailValidator.validate(value.trim());
       },
       placeHolder: 'Email',
-      // iconData: Icons.alternate_email_outlined,
       onTap: scrollController.scrollToBottom,
     );
 
@@ -102,7 +100,6 @@ class _LoginState extends State<Login> {
         return value.length >= 7;
       },
       placeHolder: 'Password',
-      // iconData: Icons.lock_outlined,
     );
 
     final Widget submit = SizedBox(
@@ -110,7 +107,6 @@ class _LoginState extends State<Login> {
       child: RaisedButton(
         onPressed: _emailIsValid && _passwordIsValid ? _tryLogin : null,
         child: Text('LOGIN'),
-        // color: Theme.of(context).accentColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
@@ -137,7 +133,6 @@ class _LoginState extends State<Login> {
                   _working = false;
                 });
                 Toaster(
-                  // titleText: Text("Oops..."),
                   icon: Icon(Icons.error),
                   content: Text(err.message),
                 )..show(context);
@@ -196,14 +191,12 @@ class _LoginState extends State<Login> {
 
     return GestureDetector(
       onTap: () {
-        // FocusScope.of(context).requestFocus(new FocusNode());
         FocusScope.of(this.context).unfocus();
       },
       child: SingleChildScrollView(
         controller: scrollController.controller,
         padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             AuthHero(
               text: 'Login',

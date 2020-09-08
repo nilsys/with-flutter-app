@@ -36,7 +36,6 @@ class _AuthFooterState extends State<AuthFooter> {
           top: BorderSide(width: 1, color: Colors.black.withAlpha(30)),
         ),
       ),
-      // height: 67,
       child: Padding(
         padding: const EdgeInsets.only(top: 7.0),
         child: BottomNavigationBar(
@@ -47,8 +46,6 @@ class _AuthFooterState extends State<AuthFooter> {
           unselectedFontSize: 14,
           onTap: _onItemTapped,
           elevation: 0,
-          // showSelectedLabels: false,
-          // showUnselectedLabels: false,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(

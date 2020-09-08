@@ -51,7 +51,6 @@ class NameAndPhoto extends StatelessWidget {
                   Icon(
                     Icons.camera_alt,
                     size: 25.0,
-                    // color: Theme.of(context).accentColor,
                   ),
                   SizedBox(
                     width: 12,
@@ -80,7 +79,6 @@ class NameAndPhoto extends StatelessWidget {
                   Icon(
                     Icons.phone_android,
                     size: 25.0,
-                    // color: Theme.of(context).accentColor,
                   ),
                   SizedBox(
                     width: 12,
@@ -96,7 +94,6 @@ class NameAndPhoto extends StatelessWidget {
 
     Widget discardBtn = FlatButton(
       color: Colors.white.withAlpha(0),
-      // padding: EdgeInsets.all(0),
       onPressed: () {
         onFileChange(null);
       },
@@ -108,8 +105,6 @@ class NameAndPhoto extends StatelessWidget {
         children: [
           Icon(
             Icons.close,
-            // size: 25.0,
-            // color: Theme.of(context).accentColor,
           ),
           SizedBox(
             width: 7,

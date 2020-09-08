@@ -10,7 +10,6 @@ import 'package:with_app/ui/shared/all.dart';
 import 'package:with_app/ui/views/home.view.dart';
 import '../auth_hero.view.dart';
 import 'sub_views/credentials.view.dart';
-// import 'sub_views/second_step.view.dart';
 import 'sub_views/name_and_photo.view.dart';
 import 'sub_views/age.view.dart';
 
@@ -31,8 +30,6 @@ class _SignupState extends State<Signup> {
   bool _emailIsValid = false;
   bool _passwordIsValid = false;
   bool _displayNameIsValid = false;
-  // bool ageConfirmed = false;
-  // bool termsConfirmed = false;
   DateTime _dayOfBirth;
   int _currentStep = 0;
   File _selfie;
@@ -58,15 +55,10 @@ class _SignupState extends State<Signup> {
         }
       });
     }
-    // fbHandler = FirebaseHandler();
-    // setDeeplinkClickHandler(fbHandler);
-    // setDeeplinkBGHandler(fbHandler);
   }
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is removed from the
-    // widget tree.
     controllers['email'].dispose();
     controllers['password'].dispose();
     controllers['display_name'].dispose();
@@ -77,11 +69,7 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     Future<void> _trySubmit() async {
-      final isValid = _emailIsValid &&
-          _passwordIsValid &&
-          // ageConfirmed &&
-          // termsConfirmed &&
-          _displayNameIsValid;
+      final isValid = _emailIsValid && _passwordIsValid && _displayNameIsValid;
       FocusScope.of(this.context).unfocus();
 
       if (isValid) {
@@ -108,7 +96,6 @@ class _SignupState extends State<Signup> {
           print(err);
         } catch (err) {
           Toaster(
-            // titleText: Text("Oops..."),
             icon: Icon(Icons.error),
             content: Text(err.message),
           )..show(context);
@@ -131,17 +118,6 @@ class _SignupState extends State<Signup> {
           }
           return null;
         case 1:
-          // if (ageConfirmed && termsConfirmed) {
-          //   return () {
-          //     setState(() {
-          //       _currentStep++;
-          //       Future.delayed(Duration(milliseconds: 200), () {
-          //         FocusScope.of(this.context).unfocus();
-          //       });
-          //     });
-          //   };
-          // }
-          // return null;
           return () {
             setState(() {
               _currentStep++;

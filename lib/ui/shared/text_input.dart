@@ -8,7 +8,6 @@ class CustomTextInput extends StatelessWidget {
   final Function onChange;
   final RegExp deny;
   final String placeHolder;
-  // final IconData iconData;
   final bool obscureText;
   final Function onTap;
 
@@ -19,7 +18,6 @@ class CustomTextInput extends StatelessWidget {
     @required this.validator,
     @required this.onChange,
     @required this.controller,
-    // @required this.iconData,
     this.obscureText = false,
     this.onTap,
   }) : super(key: key);
@@ -37,7 +35,6 @@ class CustomTextInput extends StatelessWidget {
         floatingLabelBehavior: FloatingLabelBehavior.never,
         labelText: placeHolder,
         contentPadding: EdgeInsets.fromLTRB(17.0, 0, 0, 0),
-        // prefixIcon: Icon(iconData),
         suffixIcon: validator(controller.value.text)
             ? Icon(
                 Icons.check,
