@@ -11,6 +11,7 @@ class WithTheme {
       backgroundColor: Color.fromRGBO(249, 248, 251, 1),
       accentColor: accentColor,
       fontFamily: 'Hind',
+      appBarTheme: AppBarTheme(),
       textTheme: GoogleFonts.latoTextTheme(Theme.of(context).textTheme)
           .copyWith(
             headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
@@ -18,7 +19,9 @@ class WithTheme {
             headline3: TextStyle(fontSize: 16.0),
             headline4:
                 GoogleFonts.satisfy(textStyle: TextStyle(fontSize: 20.0)),
-            headline5: TextStyle(fontSize: 16.0),
+            headline5: TextStyle(
+              fontSize: 16.0,
+            ),
             bodyText2:
                 TextStyle(fontSize: 14.0, color: Colors.white, height: 1.5),
             bodyText1:

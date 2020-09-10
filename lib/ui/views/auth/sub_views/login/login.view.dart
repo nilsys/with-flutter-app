@@ -160,7 +160,7 @@ class _LoginState extends State<Login> {
         style: TextStyle(
           color: Theme.of(context)
               .textTheme
-              .bodyText1
+              .bodyText2
               .color
               .withAlpha(_emailIsValid ? 255 : 120),
         ),

@@ -20,15 +20,15 @@ class UserModel {
     @required this.profileImage,
   });
 
-  UserModel.fromMap(Map snapshot, String id)
+  UserModel.fromMap(Map<String, dynamic> data, String id)
       : id = id ?? '',
-        displayName = snapshot['display_name'],
-        email = snapshot['email'],
-        stories = snapshot['storeis'] ?? UserStories(),
-        leads = snapshot['leads'] ?? List(),
+        displayName = data['display_name'],
+        email = data['email'],
+        stories = data['storeis'] ?? UserStories(),
+        leads = data['leads'] ?? List(),
         dayOfBirth =
-            snapshot['day_of_birth'] ? snapshot['day_of_birth'].toDate() : null,
-        profileImage = snapshot['profile_image'];
+            data['day_of_birth'] != null ? data['day_of_birth'].toDate() : null,
+        profileImage = data['profile_image'];
 
   toJson() {
     return {

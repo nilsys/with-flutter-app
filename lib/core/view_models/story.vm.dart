@@ -20,6 +20,10 @@ class StoryVM extends ChangeNotifier {
     return _api.streamDataCollection();
   }
 
+  Stream<DocumentSnapshot> fetchStoryAsStream(String storyId) {
+    return _api.streamDoc(storyId);
+  }
+
   Future<Story> getStoryById(String id) async {
     var doc = await _api.getDocumentById(id);
     return Story.fromMap(doc.data(), doc.id);

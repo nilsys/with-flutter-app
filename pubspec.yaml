@@ -45,6 +45,8 @@ dependencies:
   timeago: ^2.0.27 #https://pub.dev/packages/timeago
   flutter_facebook_login: ^3.0.0 #https://pub.dev/packages/flutter_facebook_login
   google_sign_in: ^4.5.3 #https://pub.dev/packages/google_sign_in
+  skeleton_loader: ^1.0.2+1 #https://pub.dev/packages/skeleton_loader
+  tinycolor: ^1.0.3 #https://pub.dev/packages/tinycolor
 
 dev_dependencies:
   flutter_test:
