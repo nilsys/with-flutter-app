@@ -5,8 +5,9 @@ import 'package:tinycolor/tinycolor.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/models/user.model.dart';
 import 'package:skeleton_loader/skeleton_loader.dart';
+import 'package:with_app/ui/shared/all.dart';
 
-const double expandedHeight = 155.0;
+const double expandedHeight = 150.0;
 const double collapsedHeight = 90.0;
 
 class TimelineHero extends StatefulWidget {
@@ -104,23 +105,12 @@ class _TimelineHeroState extends State<TimelineHero> {
               opacity: 1 * squeeze,
               child: Transform.scale(
                 scale: 1 * squeeze,
+                alignment: Alignment.bottomCenter,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(5.0),
-                      child: CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.white.withAlpha(150),
-                        child: ClipOval(
-                          child: Image.network(
-                            widget.user.profileImage,
-                            fit: BoxFit.cover,
-                            width: 57.0,
-                            height: 57.0,
-                          ),
-                        ),
-                      ),
+                    Avatar(
+                      src: widget.user.profileImage,
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 15.0),
