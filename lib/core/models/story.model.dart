@@ -11,10 +11,12 @@ class Story {
   final List<String> viewers;
   final int views;
   final String heroImage;
+  final String description;
 
   Story({
     this.id,
     this.heroImage,
+    this.description,
     @required this.createdAt,
     @required this.closedAt,
     @required this.owner,
@@ -35,7 +37,8 @@ class Story {
         title = snapshot['title'],
         followers = snapshot['followers'].cast<String>(),
         viewers = snapshot['viewers'].cast<String>(),
-        views = snapshot['views'];
+        views = snapshot['views'],
+        description = snapshot['description'];
 
   toJson() {
     return {
@@ -47,6 +50,7 @@ class Story {
       "viewers": viewers,
       "views": views,
       "hero_image": heroImage,
+      "description": description,
     };
   }
 }

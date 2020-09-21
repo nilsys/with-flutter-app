@@ -30,7 +30,8 @@ class _HomeViewState extends State<HomeView> {
       //   child: Icon(Icons.add),
       // ),
       appBar: AppBar(
-        title: Center(child: Text('Home')),
+        centerTitle: true,
+        title: Text('Home'),
         leading: IconButton(
           iconSize: 19,
           icon: Icon(

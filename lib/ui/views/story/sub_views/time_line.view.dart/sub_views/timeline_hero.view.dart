@@ -7,7 +7,7 @@ import 'package:with_app/core/models/user.model.dart';
 import 'package:skeleton_loader/skeleton_loader.dart';
 import 'package:with_app/ui/shared/all.dart';
 
-const double expandedHeight = 150.0;
+const double expandedHeight = 200.0;
 const double collapsedHeight = 90.0;
 
 class TimelineHero extends StatefulWidget {
@@ -103,54 +103,71 @@ class _TimelineHeroState extends State<TimelineHero> {
             height: double.infinity,
             child: Opacity(
               opacity: 1 * squeeze,
-              child: Transform.scale(
-                scale: 1 * squeeze,
-                alignment: Alignment.bottomCenter,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: widget.user != null
-                      ? [
-                          Avatar(
-                            src: widget.user.profileImage,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 15.0),
-                            child: Text(widget.user.displayName),
-                          ),
-                        ]
-                      : [
-                          SkeletonLoader(
-                            builder: Column(
-                              children: [
-                                Container(
-                                  width: 50.0,
-                                  height: 50.0,
-                                  margin: EdgeInsets.only(bottom: 5.0),
-                                  decoration: new BoxDecoration(
-                                    color: Colors.black,
-                                    shape: BoxShape.circle,
-                                  ),
+              child: OverflowBox(
+                alignment: Alignment.topLeft,
+                maxHeight: expandedHeight,
+                child: SizedBox(
+                  height: expandedHeight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: widget.story != null
+                          ? [
+                              // Padding(
+                              //   padding: const EdgeInsets.only(bottom: 15.0),
+                              //   child: Text(widget.user.displayName),
+                              // ),
+                              Text(
+                                widget.story.title,
+                                style: TextStyle(
+                                  fontSize: 30.0,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                                Container(
-                                  color: Colors.black,
-                                  width: 160.0,
-                                  height: 18.0,
-                                  margin: EdgeInsets.only(bottom: 15.0),
+                              ),
+                              Text(
+                                widget.story.description,
+                                style: TextStyle(
+                                    // fontSize: 20.0,
+                                    ),
+                              ),
+                            ]
+                          : [
+                              SkeletonLoader(
+                                builder: Column(
+                                  children: [
+                                    Container(
+                                      width: 50.0,
+                                      height: 50.0,
+                                      margin: EdgeInsets.only(bottom: 5.0),
+                                      decoration: new BoxDecoration(
+                                        color: Colors.black,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    Container(
+                                      color: Colors.black,
+                                      width: 160.0,
+                                      height: 18.0,
+                                      margin: EdgeInsets.only(bottom: 15.0),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            items: 1,
-                            period: Duration(seconds: 2),
-                            baseColor:
-                                TinyColor(Theme.of(context).primaryColorLight)
+                                items: 1,
+                                period: Duration(seconds: 2),
+                                baseColor: TinyColor(
+                                        Theme.of(context).primaryColorLight)
                                     .lighten(4)
                                     .color,
-                            hightlightColor:
-                                TinyColor(Theme.of(context).primaryColorLight)
+                                hightlightColor: TinyColor(
+                                        Theme.of(context).primaryColorLight)
                                     .lighten(10)
                                     .color,
-                          ),
-                        ],
+                              ),
+                            ],
+                    ),
+                  ),
                 ),
               ),
             ),
