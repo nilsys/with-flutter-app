@@ -14,11 +14,15 @@ class WithTheme {
       appBarTheme: AppBarTheme(),
       textTheme: GoogleFonts.latoTextTheme(Theme.of(context).textTheme)
           .copyWith(
-            headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-            headline2: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+            headline1: GoogleFonts.robotoSlab(
+                textStyle:
+                    TextStyle(fontSize: 30.0, fontWeight: FontWeight.w500)),
+            headline2: GoogleFonts.robotoSlab(
+                textStyle:
+                    TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500)),
             headline3: TextStyle(fontSize: 16.0),
             headline4:
-                GoogleFonts.satisfy(textStyle: TextStyle(fontSize: 20.0)),
+                GoogleFonts.robotoSlab(textStyle: TextStyle(fontSize: 20.0)),
             headline5: TextStyle(
               fontSize: 16.0,
             ),
@@ -28,7 +32,7 @@ class WithTheme {
                 TextStyle(fontSize: 14.0, color: Colors.black, height: 1.5),
           )
           .apply(
-            displayColor: accentColor,
+            displayColor: Colors.white,
           ),
       cursorColor: Colors.white,
       inputDecorationTheme: InputDecorationTheme(

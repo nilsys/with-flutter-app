@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:math';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 import 'package:tinycolor/tinycolor.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/models/user.model.dart';
@@ -28,6 +31,7 @@ class TimelineHero extends StatefulWidget {
 
 class _TimelineHeroState extends State<TimelineHero> {
   bool _isCollapsed = false;
+  bool sharing = false;
 
   @override
   void initState() {
@@ -49,10 +53,16 @@ class _TimelineHeroState extends State<TimelineHero> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(toCurrencyString(
-            '$val',
-            mantissaLength: 0,
-          )),
+          Text(
+            toCurrencyString(
+              '$val',
+              mantissaLength: 0,
+            ),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              height: 0.6,
+            ),
+          ),
           Text(name),
         ],
       );
@@ -118,7 +128,7 @@ class _TimelineHeroState extends State<TimelineHero> {
     }
 
     Widget stats = Padding(
-      padding: EdgeInsets.fromLTRB(8.0, 15.0, 8.0, 0.0),
+      padding: EdgeInsets.fromLTRB(8.0, 22.0, 8.0, 0.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -130,25 +140,20 @@ class _TimelineHeroState extends State<TimelineHero> {
           Spacer(
             flex: 5,
           ),
-          Container(
-            margin: EdgeInsets.only(top: 3.0),
-            padding: const EdgeInsets.fromLTRB(
-              15.0,
-              5.0,
-              15.0,
-              7.0,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-              ),
-              borderRadius: BorderRadius.all(
-                Radius.circular(3.0),
-              ),
-            ),
-            child: Text(
-              widget.story.private ? 'Private' : 'Public',
+          Transform.translate(
+            offset: Offset(0.0, -4.0),
+            child: Row(
+              children: [
+                Icon(widget.story.private
+                    ? Icons.supervised_user_circle
+                    : Icons.public),
+                SizedBox(
+                  width: 10.0,
+                ),
+                Text(
+                  widget.story.private ? 'Private' : 'Public',
+                )
+              ],
             ),
           )
         ],
@@ -158,31 +163,29 @@ class _TimelineHeroState extends State<TimelineHero> {
     List<Widget> flexibleContent = [
       Text(
         widget.story.title,
-        style: TextStyle(
-          fontSize: 30.0,
-          fontWeight: FontWeight.w500,
-        ),
+        style: Theme.of(context).textTheme.headline1,
       ),
       Text(widget.story.description),
       SizedBox(
-        height: 20.0,
+        height: 24.0,
       ),
       Divider(
         height: 0.0,
         color: Colors.white.withOpacity(0.5),
+      ),
+      SizedBox(
+        height: 10.0,
       ),
       stats,
     ];
 
     Widget title = widget.user != null
         ? Transform.translate(
-            offset: Offset(_isCollapsed ? 0.0 : -15.0, 0.0),
+            offset: Offset(-15.0, 0.0),
             child: _isCollapsed
                 ? Text(
                     widget.story.title,
-                    style: TextStyle(
-                      fontSize: 20.0,
-                    ),
+                    style: Theme.of(context).textTheme.headline2,
                   )
                 : Row(
                     mainAxisAlignment: _isCollapsed
@@ -220,6 +223,78 @@ class _TimelineHeroState extends State<TimelineHero> {
                 .color,
           );
 
+    @swidget
+    Widget listItem(String text, IconData iconData, Function onPressed) {
+      return SizedBox(
+        width: double.infinity,
+        child: FlatButton(
+          child: Row(
+            children: [
+              SizedBox(
+                width: 5.0,
+              ),
+              Icon(iconData),
+              SizedBox(
+                width: 15.0,
+              ),
+              Text(
+                text,
+                style: Theme.of(context).textTheme.bodyText2,
+              ),
+            ],
+          ),
+          onPressed: onPressed,
+        ),
+      );
+    }
+
+    final Function shareStoryLink = () async {
+      final DynamicLinkParameters parameters = DynamicLinkParameters(
+        uriPrefix: 'https://withapp.page.link',
+        link: Uri.parse('https://withapp.io/go-to-story?id=${widget.story.id}'),
+        androidParameters: AndroidParameters(
+          packageName: 'io.withapp.android',
+          minimumVersion: 125,
+        ),
+        iosParameters: IosParameters(
+          bundleId: 'io.withapp.ios',
+          minimumVersion: '1.0.1',
+          appStoreId: '123456789',
+        ),
+        // googleAnalyticsParameters: GoogleAnalyticsParameters(
+        //   campaign: 'example-promo',
+        //   medium: 'social',
+        //   source: 'orkut',
+        // ),
+        // itunesConnectAnalyticsParameters:
+        //     ItunesConnectAnalyticsParameters(
+        //   providerToken: '123456',
+        //   campaignToken: 'example-promo',
+        // ),
+        socialMetaTagParameters: SocialMetaTagParameters(
+          title: widget.story.title,
+          description: 'This story was created on with-app',
+        ),
+      );
+      final ShortDynamicLink shortDynamicLink =
+          await parameters.buildShortLink();
+      final Uri shortUrl = shortDynamicLink.shortUrl;
+      print(shortUrl);
+      // final Uri dynamicUrl = await parameters.buildUrl();
+      if (sharing == false) {
+        Share.share('Check out my story\n\n$shortUrl',
+            subject: widget.story.title);
+      }
+      setState(() {
+        sharing = true;
+      });
+      Timer(Duration(milliseconds: 1000), () {
+        setState(() {
+          sharing = false;
+        });
+      });
+    };
+
     return SliverAppBar(
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
@@ -228,7 +303,7 @@ class _TimelineHeroState extends State<TimelineHero> {
         },
       ),
       title: title,
-      centerTitle: _isCollapsed,
+      // centerTitle: _isCollapsed,
       backgroundColor: Theme.of(context).primaryColorLight.darken(),
       expandedHeight: expandedHeight,
       actions: <Widget>[
@@ -236,7 +311,18 @@ class _TimelineHeroState extends State<TimelineHero> {
           icon: Icon(Icons.more_vert),
           tooltip: 'Open shopping cart',
           onPressed: () {
-            widget.scaffoldKey.currentState.openEndDrawer();
+            // widget.scaffoldKey.currentState.openEndDrawer();
+            showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return Column(
+                    children: [
+                      listItem('Settings', Icons.settings, () {}),
+                      listItem('Share', Icons.share,
+                          sharing == false ? shareStoryLink : null),
+                    ],
+                  );
+                });
           },
         ),
       ],
