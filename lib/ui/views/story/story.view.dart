@@ -68,15 +68,15 @@ class _StoryViewState extends State<StoryView> {
               child: Spinner(),
             );
           }),
-      bottomNavigationBar: StoryFooter(
-        onChange: (pageIndex) {
-          _pageController.animateToPage(
-            pageIndex,
-            duration: Duration(milliseconds: 400),
-            curve: Curves.easeInOutCubic,
-          );
-        },
-      ),
+      // bottomNavigationBar: StoryFooter(
+      //   onChange: (pageIndex) {
+      //     _pageController.animateToPage(
+      //       pageIndex,
+      //       duration: Duration(milliseconds: 400),
+      //       curve: Curves.easeInOutCubic,
+      //     );
+      //   },
+      // ),
     );
   }
 }

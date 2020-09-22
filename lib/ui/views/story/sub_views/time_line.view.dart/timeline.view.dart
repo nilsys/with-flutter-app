@@ -67,6 +67,7 @@ class _TimelineState extends State<Timeline> {
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       return Container(
+                        color: Colors.white,
                         child: Column(
                           children: [
                             Text(
