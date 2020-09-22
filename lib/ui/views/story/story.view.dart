@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:with_app/core/models/story.model.dart';
@@ -6,6 +9,7 @@ import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
 import 'package:tinycolor/tinycolor.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
+import 'package:share/share.dart';
 // import 'sub_views/story_footer.view.dart';
 import 'sub_views/story_settings.view.dart/story_settings.view.dart';
 import 'sub_views/time_line.view.dart/timeline.view.dart';
@@ -27,6 +31,7 @@ class _StoryViewState extends State<StoryView> {
   final _pageController = PageController(
     initialPage: 0,
   );
+  bool sharing = false;
 
   @override
   void initState() {
@@ -81,7 +86,60 @@ class _StoryViewState extends State<StoryView> {
             child: Column(
               children: [
                 listItem('Settings', Icons.settings, () {}),
-                listItem('Share', Icons.share, () {}),
+                listItem(
+                    'Share',
+                    Icons.share,
+                    sharing == false
+                        ? () async {
+                            final DynamicLinkParameters parameters =
+                                DynamicLinkParameters(
+                              uriPrefix: 'https://withapp.page.link',
+                              link: Uri.parse(
+                                  'https://withapp.io/go-to-story?id=${story.id}'),
+                              androidParameters: AndroidParameters(
+                                packageName: 'io.withapp.android',
+                                minimumVersion: 125,
+                              ),
+                              iosParameters: IosParameters(
+                                bundleId: 'io.withapp.ios',
+                                minimumVersion: '1.0.1',
+                                appStoreId: '123456789',
+                              ),
+                              // googleAnalyticsParameters: GoogleAnalyticsParameters(
+                              //   campaign: 'example-promo',
+                              //   medium: 'social',
+                              //   source: 'orkut',
+                              // ),
+                              // itunesConnectAnalyticsParameters:
+                              //     ItunesConnectAnalyticsParameters(
+                              //   providerToken: '123456',
+                              //   campaignToken: 'example-promo',
+                              // ),
+                              socialMetaTagParameters: SocialMetaTagParameters(
+                                title: story.title,
+                                description:
+                                    'This story was created on with-app',
+                              ),
+                            );
+                            final ShortDynamicLink shortDynamicLink =
+                                await parameters.buildShortLink();
+                            final Uri shortUrl = shortDynamicLink.shortUrl;
+                            print(shortUrl);
+                            // final Uri dynamicUrl = await parameters.buildUrl();
+                            if (sharing == false) {
+                              Share.share('Check out my story\n\n$shortUrl',
+                                  subject: story.title);
+                            }
+                            setState(() {
+                              sharing = true;
+                            });
+                            Timer(Duration(milliseconds: 1000), () {
+                              setState(() {
+                                sharing = false;
+                              });
+                            });
+                          }
+                        : null),
               ],
             ),
           ),
