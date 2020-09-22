@@ -4,8 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
-
-import 'sub_views/story_footer.view.dart';
+import 'package:tinycolor/tinycolor.dart';
+import 'package:functional_widget_annotation/functional_widget_annotation.dart';
+// import 'sub_views/story_footer.view.dart';
 import 'sub_views/story_settings.view.dart/story_settings.view.dart';
 import 'sub_views/time_line.view.dart/timeline.view.dart';
 
@@ -38,6 +39,31 @@ class _StoryViewState extends State<StoryView> {
     super.dispose();
   }
 
+  @swidget
+  Widget listItem(String text, IconData iconData, Function onPressed) {
+    return SizedBox(
+      width: double.infinity,
+      child: FlatButton(
+        child: Row(
+          children: [
+            SizedBox(
+              width: 5.0,
+            ),
+            Icon(iconData),
+            SizedBox(
+              width: 15.0,
+            ),
+            Text(
+              text,
+              style: Theme.of(context).textTheme.bodyText2,
+            ),
+          ],
+        ),
+        onPressed: onPressed,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final storyProvider = Provider.of<StoryVM>(context);
@@ -46,7 +72,21 @@ class _StoryViewState extends State<StoryView> {
     return Scaffold(
       key: widget._key,
       backgroundColor: Theme.of(context).backgroundColor,
-      endDrawer: Drawer(),
+      endDrawer: Container(
+        width: 200.0,
+        child: Drawer(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 40.0),
+            color: Theme.of(context).primaryColorLight.darken(),
+            child: Column(
+              children: [
+                listItem('Settings', Icons.settings, () {}),
+                listItem('Share', Icons.share, () {}),
+              ],
+            ),
+          ),
+        ),
+      ),
       body: StreamBuilder<DocumentSnapshot>(
           stream: storyProvider.fetchStoryAsStream(widget.id),
           builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
