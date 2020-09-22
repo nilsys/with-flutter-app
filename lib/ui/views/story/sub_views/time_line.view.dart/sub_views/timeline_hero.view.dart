@@ -105,6 +105,7 @@ class _TimelineHeroState extends State<TimelineHero> {
               opacity: 1 * squeeze,
               child: OverflowBox(
                 alignment: Alignment.topLeft,
+                minHeight: 0.0,
                 maxHeight: expandedHeight,
                 child: SizedBox(
                   height: expandedHeight,
