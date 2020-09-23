@@ -50,6 +50,7 @@ dependencies:
   functional_widget_annotation: ^0.8.0 #https://pub.dev/packages/functional_widget_annotation
   flutter_multi_formatter: ^1.1.6 #https://pub.dev/packages/flutter_multi_formatter
   flutter_fadein: ^1.1.1 #https://pub.dev/packages/flutter_fadein
+  fade: ^1.0.0 #https://pub.dev/packages/fade
   no_context_navigation: ^1.0.3 #https://pub.dev/packages/no_context_navigation
   share: ^0.6.5+1 #https://pub.dev/packages/share
 

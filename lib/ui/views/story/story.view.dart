@@ -16,7 +16,6 @@ import 'sub_views/time_line.view.dart/timeline.view.dart';
 
 class StoryView extends StatefulWidget {
   static const String route = 'story';
-  final GlobalKey<ScaffoldState> _key = GlobalKey();
   final String id;
 
   StoryView({
@@ -44,107 +43,13 @@ class _StoryViewState extends State<StoryView> {
     super.dispose();
   }
 
-  @swidget
-  Widget listItem(String text, IconData iconData, Function onPressed) {
-    return SizedBox(
-      width: double.infinity,
-      child: FlatButton(
-        child: Row(
-          children: [
-            SizedBox(
-              width: 5.0,
-            ),
-            Icon(iconData),
-            SizedBox(
-              width: 15.0,
-            ),
-            Text(
-              text,
-              style: Theme.of(context).textTheme.bodyText2,
-            ),
-          ],
-        ),
-        onPressed: onPressed,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final storyProvider = Provider.of<StoryVM>(context);
     Story story;
 
     return Scaffold(
-      key: widget._key,
       backgroundColor: Theme.of(context).backgroundColor,
-      endDrawer: Container(
-        width: 200.0,
-        child: Drawer(
-          child: Container(
-            padding: EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 40.0),
-            color: Theme.of(context).primaryColorLight.darken(),
-            child: Column(
-              children: [
-                listItem('Settings', Icons.settings, () {}),
-                listItem(
-                    'Share',
-                    Icons.share,
-                    sharing == false
-                        ? () async {
-                            final DynamicLinkParameters parameters =
-                                DynamicLinkParameters(
-                              uriPrefix: 'https://withapp.page.link',
-                              link: Uri.parse(
-                                  'https://withapp.io/go-to-story?id=${story.id}'),
-                              androidParameters: AndroidParameters(
-                                packageName: 'io.withapp.android',
-                                minimumVersion: 125,
-                              ),
-                              iosParameters: IosParameters(
-                                bundleId: 'io.withapp.ios',
-                                minimumVersion: '1.0.1',
-                                appStoreId: '123456789',
-                              ),
-                              // googleAnalyticsParameters: GoogleAnalyticsParameters(
-                              //   campaign: 'example-promo',
-                              //   medium: 'social',
-                              //   source: 'orkut',
-                              // ),
-                              // itunesConnectAnalyticsParameters:
-                              //     ItunesConnectAnalyticsParameters(
-                              //   providerToken: '123456',
-                              //   campaignToken: 'example-promo',
-                              // ),
-                              socialMetaTagParameters: SocialMetaTagParameters(
-                                title: story.title,
-                                description:
-                                    'This story was created on with-app',
-                              ),
-                            );
-                            final ShortDynamicLink shortDynamicLink =
-                                await parameters.buildShortLink();
-                            final Uri shortUrl = shortDynamicLink.shortUrl;
-                            print(shortUrl);
-                            // final Uri dynamicUrl = await parameters.buildUrl();
-                            if (sharing == false) {
-                              Share.share('Check out my story\n\n$shortUrl',
-                                  subject: story.title);
-                            }
-                            setState(() {
-                              sharing = true;
-                            });
-                            Timer(Duration(milliseconds: 1000), () {
-                              setState(() {
-                                sharing = false;
-                              });
-                            });
-                          }
-                        : null),
-              ],
-            ),
-          ),
-        ),
-      ),
       body: StreamBuilder<DocumentSnapshot>(
           stream: storyProvider.fetchStoryAsStream(widget.id),
           builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -156,7 +61,6 @@ class _StoryViewState extends State<StoryView> {
                 children: [
                   Timeline(
                     story: story,
-                    scaffoldKey: widget._key,
                   ),
                   StorySettings(),
                 ],

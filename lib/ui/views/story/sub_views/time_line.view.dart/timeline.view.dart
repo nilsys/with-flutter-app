@@ -11,12 +11,10 @@ import 'sub_views/timeline_hero.view.dart';
 
 class Timeline extends StatefulWidget {
   final Story story;
-  final GlobalKey<ScaffoldState> scaffoldKey;
 
   Timeline({
     Key key,
     @required this.story,
-    @required this.scaffoldKey,
   }) : super(key: key);
 
   @override
@@ -60,7 +58,6 @@ class _TimelineState extends State<Timeline> {
                 TimelineHero(
                   user: user,
                   story: widget.story,
-                  scaffoldKey: widget.scaffoldKey,
                 ),
                 // Skeleton(),
                 SliverList(
