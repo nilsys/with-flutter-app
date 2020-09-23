@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
+import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
 import 'package:tinycolor/tinycolor.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
@@ -46,7 +47,10 @@ class _StoryViewState extends State<StoryView> {
   @override
   Widget build(BuildContext context) {
     final storyProvider = Provider.of<StoryVM>(context);
+    final userProvider = Provider.of<UserVM>(context);
     Story story;
+    UserModel currentUser;
+    UserModel author;
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
@@ -55,20 +59,37 @@ class _StoryViewState extends State<StoryView> {
           builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
             if (snapshot.hasData) {
               story = Story.fromMap(snapshot.data.data(), widget.id);
-              return PageView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: _pageController,
-                children: [
-                  Timeline(
-                    story: story,
-                  ),
-                  StorySettings(),
-                ],
-              );
             }
-            return Center(
-              child: Spinner(),
-            );
+            return StreamBuilder<DocumentSnapshot>(
+                stream: userProvider.fetchCurrentUserAsStream(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    currentUser =
+                        UserModel.fromMap(snapshot.data.data(), story.owner);
+                  }
+                  return story != null
+                      ? StreamBuilder<DocumentSnapshot>(
+                          stream: userProvider.fetchUserAsStream(story.owner),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              author = UserModel.fromMap(
+                                  snapshot.data.data(), story.owner);
+                            }
+                            return PageView(
+                              physics: const NeverScrollableScrollPhysics(),
+                              controller: _pageController,
+                              children: [
+                                Timeline(
+                                  story: story,
+                                  currentUser: currentUser,
+                                  author: author,
+                                ),
+                                StorySettings(),
+                              ],
+                            );
+                          })
+                      : Spinner();
+                });
           }),
       // bottomNavigationBar: StoryFooter(
       //   onChange: (pageIndex) {

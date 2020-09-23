@@ -53,12 +53,32 @@ class StoryVM extends ChangeNotifier {
     return;
   }
 
-  Future follow(Story story) async {
-    story.followers.add(_auth.currentUser.uid);
-    final _update = Map<String, dynamic>.from({
-      'followers': story.followers.toSet().toList(),
-    });
-    await _api.updateDocument(_update, story.id);
+  Future addFollower(Story story) async {
+    String exsistingId = story.followers.firstWhere(
+      (element) => element == _auth.currentUser.uid,
+      orElse: () => null,
+    );
+    if (exsistingId == null) {
+      story.followers.add(_auth.currentUser.uid);
+      final _update = Map<String, dynamic>.from({
+        'followers': story.followers,
+      });
+      await _api.updateDocument(_update, story.id);
+    }
+  }
+
+  Future removeFollower(Story story) async {
+    String exsistingId = story.followers.firstWhere(
+      (element) => element == _auth.currentUser.uid,
+      orElse: () => null,
+    );
+    if (exsistingId != null) {
+      story.followers.remove(_auth.currentUser.uid);
+      final _update = Map<String, dynamic>.from({
+        'followers': story.followers,
+      });
+      await _api.updateDocument(_update, story.id);
+    }
   }
 
   // Future addStory(Story data) async {

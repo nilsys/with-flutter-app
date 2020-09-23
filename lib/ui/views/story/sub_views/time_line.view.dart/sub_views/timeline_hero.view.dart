@@ -15,12 +15,14 @@ import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
 
 class TimelineHero extends StatefulWidget {
-  final UserModel user;
+  final UserModel author;
   final Story story;
+  final UserModel currentUser;
 
   TimelineHero({
-    this.user,
+    this.author,
     this.story,
+    this.currentUser,
   });
 
   @override
@@ -174,12 +176,21 @@ class _TimelineHeroState extends State<TimelineHero> {
     );
 
     final Function followStory = () {
-      storyProvider.follow(widget.story);
-      userProvider.followStory(widget.user, widget.story.id);
+      storyProvider.addFollower(widget.story);
+      userProvider.followStory(widget.story.id, widget.currentUser);
+    };
+
+    final Function unFollowStory = () {
+      storyProvider.removeFollower(widget.story);
+      userProvider.unFollowStory(widget.story.id, widget.currentUser);
     };
 
     @swidget
     Widget followBtn(bool condensed) {
+      String exsistingId = widget.currentUser.stories.following.firstWhere(
+        (element) => element == widget.story.id,
+        orElse: () => null,
+      );
       return condensed
           ? InkWell(
               child: Padding(
@@ -189,46 +200,46 @@ class _TimelineHeroState extends State<TimelineHero> {
                   child: Transform.translate(
                     offset: Offset(0.0, -3.0),
                     child: Icon(
-                      Icons.bookmark_border,
+                      exsistingId == null
+                          ? Icons.bookmark_border
+                          : Icons.bookmark,
                       size: 24.0,
                       color: Colors.white,
                     ),
                   ),
                 ),
               ),
-              onTap: followStory,
+              onTap: exsistingId == null ? followStory : unFollowStory,
             )
           : SizedBox(
               height: 34.0,
-              width: 110.0,
+              width: exsistingId == null ? 110.0 : 130.0,
               child: RaisedButton(
                 textColor: Theme.of(context).primaryColorLight,
                 padding: EdgeInsets.fromLTRB(5.0, 0.0, 10.0, 0.0),
-                onPressed: followStory,
+                onPressed: exsistingId == null ? followStory : unFollowStory,
                 color: Colors.white,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.bookmark_border,
+                      exsistingId == null
+                          ? Icons.bookmark_border
+                          : Icons.bookmark,
                       size: 20.0,
                     ),
                     SizedBox(
                       width: 6.0,
                     ),
                     Text(
-                      'FOLLOW',
+                      exsistingId == null ? 'FOLLOW' : 'FOLLOWING',
                       style: TextStyle(
                         fontSize: 11.0,
                         fontWeight: FontWeight.bold,
-                        // letterSpacing: 1.0,
                       ),
                     ),
                   ],
                 ),
-                // borderSide: BorderSide(
-                //   color: Colors.white,
-                // ),
               ),
             );
     }
@@ -263,7 +274,7 @@ class _TimelineHeroState extends State<TimelineHero> {
       stats,
     ];
 
-    Widget title = widget.user != null
+    Widget title = widget.author != null
         ? Transform.translate(
             offset: Offset(-15.0, 0.0),
             child: _isCollapsed
@@ -280,14 +291,14 @@ class _TimelineHeroState extends State<TimelineHero> {
                         : MainAxisAlignment.start,
                     children: [
                       Avatar(
-                        src: widget.user.profileImage,
+                        src: widget.author.profileImage,
                         radius: 18.0,
                       ),
                       SizedBox(
                         width: 15.0,
                       ),
                       Text(
-                        widget.user.displayName,
+                        widget.author.displayName,
                         style: Theme.of(context).textTheme.bodyText2,
                       ),
                     ],
@@ -371,6 +382,7 @@ class _TimelineHeroState extends State<TimelineHero> {
       });
     };
 
+    print('rendering');
     return SliverAppBar(
       leading: IconButton(
         icon: Icon(Icons.arrow_back),

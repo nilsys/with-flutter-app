@@ -25,7 +25,7 @@ class UserModel {
       : id = id ?? '',
         displayName = data['display_name'],
         email = data['email'],
-        stories = data['storeis'] ?? UserStories(),
+        stories = UserStories.fromMap(data['stories']),
         leads = data['leads'] ?? List(),
         dayOfBirth =
             data['day_of_birth'] != null ? data['day_of_birth'].toDate() : null,

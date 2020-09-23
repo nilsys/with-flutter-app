@@ -1,9 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:floating_pullup_card/floating_layout.dart';
-import 'package:floating_pullup_card/pullup_card.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/models/user.model.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
@@ -14,10 +10,14 @@ import 'sub_views/timeline_hero.view.dart';
 
 class Timeline extends StatefulWidget {
   final Story story;
+  final UserModel currentUser;
+  final UserModel author;
 
   Timeline({
     Key key,
-    @required this.story,
+    this.story,
+    this.currentUser,
+    this.author,
   }) : super(key: key);
 
   @override
@@ -41,10 +41,6 @@ class _TimelineState extends State<Timeline> {
 
   @override
   Widget build(BuildContext context) {
-    final _auth = FirebaseAuth.instance;
-    final uid = _auth.currentUser.uid;
-    final userProvider = Provider.of<UserVM>(context);
-    //
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: FloatingPullUpCardLayout(
@@ -64,41 +60,33 @@ class _TimelineState extends State<Timeline> {
             onTap: () {
               FocusScope.of(this.context).unfocus();
             },
-            child: StreamBuilder<DocumentSnapshot>(
-                stream: userProvider.fetchUserAsStream(widget.story.owner),
-                builder: (context, snapshot) {
-                  UserModel user;
-                  if (snapshot.hasData) {
-                    user = UserModel.fromMap(
-                        snapshot.data.data(), widget.story.owner);
-                  }
-                  return CustomScrollView(
-                    slivers: <Widget>[
-                      TimelineHero(
-                        user: user,
-                        story: widget.story,
-                      ),
-                      // Skeleton(),
-                      SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            return Container(
-                              // color: Colors.green,
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 22.0,
-                                  ),
-                                  PostCard(),
-                                ],
-                              ),
-                            );
-                          },
+            child: CustomScrollView(
+              slivers: <Widget>[
+                TimelineHero(
+                  author: widget.author,
+                  story: widget.story,
+                  currentUser: widget.currentUser,
+                ),
+                // Skeleton(),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return Container(
+                        // color: Colors.green,
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 22.0,
+                            ),
+                            PostCard(),
+                          ],
                         ),
-                      ),
-                    ],
-                  );
-                }),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
