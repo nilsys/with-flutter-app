@@ -64,8 +64,8 @@ class _StoryViewState extends State<StoryView> {
                 stream: userProvider.fetchCurrentUserAsStream(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    currentUser =
-                        UserModel.fromMap(snapshot.data.data(), story.owner);
+                    currentUser = UserModel.fromMap(
+                        snapshot.data.data(), snapshot.data.id);
                   }
                   return story != null
                       ? StreamBuilder<DocumentSnapshot>(

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:fade/fade.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
@@ -34,6 +35,7 @@ class _TimelineHeroState extends State<TimelineHero> {
   bool sharing = false;
   GlobalKey _descriptionKey = GlobalKey();
   double expandedHeight = 0.0;
+  double descriptionHeight = 0.0;
 
   @override
   void initState() {
@@ -51,13 +53,26 @@ class _TimelineHeroState extends State<TimelineHero> {
     final double _appBarHeight = AppBar().preferredSize.height;
     final storyProvider = Provider.of<StoryVM>(context);
     final userProvider = Provider.of<UserVM>(context);
+    final Function followStory = () {
+      storyProvider.addFollower(widget.story);
+      userProvider.followStory(widget.story.id, widget.currentUser);
+    };
+
+    final Function unFollowStory = () {
+      storyProvider.removeFollower(widget.story);
+      userProvider.unFollowStory(widget.story.id, widget.currentUser);
+    };
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final keyContext = _descriptionKey.currentContext;
       final _descriptionBox = keyContext.findRenderObject() as RenderBox;
-      setState(() {
-        expandedHeight = 268.0 + _descriptionBox.size.height;
-      });
+      final double newHeight = _descriptionBox.size.height;
+      if (newHeight != descriptionHeight) {
+        setState(() {
+          expandedHeight = 268.0 + _descriptionBox.size.height;
+          descriptionHeight = _descriptionBox.size.height;
+        });
+      }
     });
 
     @swidget
@@ -80,65 +95,6 @@ class _TimelineHeroState extends State<TimelineHero> {
           ),
           Text(name),
         ],
-      );
-    }
-
-    @swidget
-    Widget flexibleContainer(List<Widget> children, double squeeze) {
-      return Opacity(
-        opacity: 1 * squeeze,
-        child: ClipRect(
-          child: OverflowBox(
-            alignment: Alignment.topLeft,
-            minHeight: 0.0,
-            maxHeight: double.infinity,
-            child: Container(
-              margin: EdgeInsets.only(top: _paddingTop + _appBarHeight),
-              // height: expandedHeight,
-              padding: const EdgeInsets.fromLTRB(22.0, 16.0, 22.0, 26.0),
-              color: Theme.of(context).primaryColorLight,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: widget.story != null
-                    ? children
-                    : [
-                        SkeletonLoader(
-                          builder: Column(
-                            children: [
-                              Container(
-                                width: 50.0,
-                                height: 50.0,
-                                margin: EdgeInsets.only(bottom: 5.0),
-                                decoration: new BoxDecoration(
-                                  color: Colors.black,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              Container(
-                                color: Colors.black,
-                                width: 160.0,
-                                height: 18.0,
-                                margin: EdgeInsets.only(bottom: 15.0),
-                              ),
-                            ],
-                          ),
-                          items: 1,
-                          period: Duration(seconds: 2),
-                          baseColor:
-                              TinyColor(Theme.of(context).primaryColorLight)
-                                  .lighten(4)
-                                  .color,
-                          hightlightColor:
-                              TinyColor(Theme.of(context).primaryColorLight)
-                                  .lighten(10)
-                                  .color,
-                        ),
-                      ],
-              ),
-            ),
-          ),
-        ),
       );
     }
 
@@ -174,16 +130,6 @@ class _TimelineHeroState extends State<TimelineHero> {
         ],
       ),
     );
-
-    final Function followStory = () {
-      storyProvider.addFollower(widget.story);
-      userProvider.followStory(widget.story.id, widget.currentUser);
-    };
-
-    final Function unFollowStory = () {
-      storyProvider.removeFollower(widget.story);
-      userProvider.unFollowStory(widget.story.id, widget.currentUser);
-    };
 
     @swidget
     Widget followBtn(bool condensed) {
@@ -273,6 +219,65 @@ class _TimelineHeroState extends State<TimelineHero> {
       ),
       stats,
     ];
+
+    @swidget
+    Widget flexibleContainer(double squeeze) {
+      return Opacity(
+        opacity: 1 * squeeze,
+        child: ClipRect(
+          child: OverflowBox(
+            alignment: Alignment.topLeft,
+            minHeight: 0.0,
+            maxHeight: double.infinity,
+            child: Container(
+              margin: EdgeInsets.only(top: _paddingTop + _appBarHeight),
+              // height: expandedHeight,
+              padding: const EdgeInsets.fromLTRB(22.0, 16.0, 22.0, 26.0),
+              color: Theme.of(context).primaryColorLight,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widget.story != null
+                    ? flexibleContent
+                    : [
+                        SkeletonLoader(
+                          builder: Column(
+                            children: [
+                              Container(
+                                width: 50.0,
+                                height: 50.0,
+                                margin: EdgeInsets.only(bottom: 5.0),
+                                decoration: new BoxDecoration(
+                                  color: Colors.black,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              Container(
+                                color: Colors.black,
+                                width: 160.0,
+                                height: 18.0,
+                                margin: EdgeInsets.only(bottom: 15.0),
+                              ),
+                            ],
+                          ),
+                          items: 1,
+                          period: Duration(seconds: 2),
+                          baseColor:
+                              TinyColor(Theme.of(context).primaryColorLight)
+                                  .lighten(4)
+                                  .color,
+                          hightlightColor:
+                              TinyColor(Theme.of(context).primaryColorLight)
+                                  .lighten(10)
+                                  .color,
+                        ),
+                      ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     Widget title = widget.author != null
         ? Transform.translate(
@@ -382,7 +387,6 @@ class _TimelineHeroState extends State<TimelineHero> {
       });
     };
 
-    print('rendering');
     return SliverAppBar(
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
@@ -439,20 +443,23 @@ class _TimelineHeroState extends State<TimelineHero> {
               max(constraints.biggest.height - _paddingTop - _appBarHeight, 0);
           if (_height == 0) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              setState(() {
-                _isCollapsed = true;
-              });
+              if (!_isCollapsed) {
+                setState(() {
+                  _isCollapsed = true;
+                });
+              }
             });
           } else if (_isCollapsed == true) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              setState(() {
-                _isCollapsed = false;
-              });
+              if (_isCollapsed) {
+                setState(() {
+                  _isCollapsed = false;
+                });
+              }
             });
           }
           final squeeze = _height / (expandedHeight - _appBarHeight);
           return flexibleContainer(
-            flexibleContent,
             squeeze,
           );
         },
