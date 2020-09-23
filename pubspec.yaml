@@ -53,6 +53,7 @@ dependencies:
   fade: ^1.0.0 #https://pub.dev/packages/fade
   no_context_navigation: ^1.0.3 #https://pub.dev/packages/no_context_navigation
   share: ^0.6.5+1 #https://pub.dev/packages/share
+  floating_pullup_card: ^0.2.2 #https://pub.dev/packages/floating_pullup_card
 
 dev_dependencies:
   flutter_test:

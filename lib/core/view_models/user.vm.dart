@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 // import 'package:with_app/core/models/user_stories.model.dart';
 import '../services/api.dart';
@@ -9,6 +11,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class UserVM extends ChangeNotifier {
   Api _api = Api('users');
+  final _auth = FirebaseAuth.instance;
 
   List<UserModel> users;
 
@@ -53,7 +56,25 @@ class UserVM extends ChangeNotifier {
   }
 
   Future addUser(UserModel data, String uid) async {
-    await _api.addDocument(data.toJson(), id: uid);
+    Map<String, dynamic> _data = data.toJson();
+    _data['stories'] = _data['stories'].toJson();
+    await _api.addDocument(_data, id: uid);
     return;
+  }
+
+  Future followStory(UserModel user, String storyId) async {
+    var stories = user.stories;
+    // stories.following.add(StoryStatus(
+    //   id: storyId,
+    //   lastViewedAt: DateTime.now(),
+    //   newPosts: 0,
+    //   newComments: 0,
+    //   newReactions: 0,
+    // ));
+    print(stories.toJson());
+    final _update = Map<String, dynamic>.from({
+      'stories': stories.toJson(),
+    });
+    await _api.updateDocument(_update, _auth.currentUser.uid);
   }
 }

@@ -10,6 +10,8 @@ import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/models/user.model.dart';
 import 'package:skeleton_loader/skeleton_loader.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
+import 'package:with_app/core/view_models/story.vm.dart';
+import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
 
 class TimelineHero extends StatefulWidget {
@@ -45,6 +47,9 @@ class _TimelineHeroState extends State<TimelineHero> {
   SliverAppBar build(context) {
     final double _paddingTop = MediaQuery.of(context).padding.top;
     final double _appBarHeight = AppBar().preferredSize.height;
+    final storyProvider = Provider.of<StoryVM>(context);
+    final userProvider = Provider.of<UserVM>(context);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final keyContext = _descriptionKey.currentContext;
       final _descriptionBox = keyContext.findRenderObject() as RenderBox;
@@ -168,6 +173,11 @@ class _TimelineHeroState extends State<TimelineHero> {
       ),
     );
 
+    final Function followStory = () {
+      storyProvider.follow(widget.story);
+      userProvider.followStory(widget.user, widget.story.id);
+    };
+
     @swidget
     Widget followBtn(bool condensed) {
       return condensed
@@ -186,22 +196,35 @@ class _TimelineHeroState extends State<TimelineHero> {
                   ),
                 ),
               ),
-              onTap: () {},
+              onTap: followStory,
             )
-          : Container(
-              height: 32.0,
+          : SizedBox(
+              height: 34.0,
+              width: 110.0,
               child: RaisedButton(
                 textColor: Theme.of(context).primaryColorLight,
-                padding: EdgeInsets.only(bottom: 1.0),
-                onPressed: () {},
+                padding: EdgeInsets.fromLTRB(5.0, 0.0, 10.0, 0.0),
+                onPressed: followStory,
                 color: Colors.white,
-                child: Text(
-                  'FOLLOW',
-                  style: TextStyle(
-                    fontSize: 11.0,
-                    fontWeight: FontWeight.bold,
-                    // letterSpacing: 1.0,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.bookmark_border,
+                      size: 20.0,
+                    ),
+                    SizedBox(
+                      width: 6.0,
+                    ),
+                    Text(
+                      'FOLLOW',
+                      style: TextStyle(
+                        fontSize: 11.0,
+                        fontWeight: FontWeight.bold,
+                        // letterSpacing: 1.0,
+                      ),
+                    ),
+                  ],
                 ),
                 // borderSide: BorderSide(
                 //   color: Colors.white,
@@ -211,22 +234,15 @@ class _TimelineHeroState extends State<TimelineHero> {
     }
 
     List<Widget> flexibleContent = [
-      Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width - 60.0,
-            child: Text(
-              widget.story.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              softWrap: false,
-              style: Theme.of(context).textTheme.headline1,
-            ),
-          ),
-          // Spacer(),
-          // followBtn(false),
-        ],
+      SizedBox(
+        width: MediaQuery.of(context).size.width - 60.0,
+        child: Text(
+          widget.story.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          softWrap: false,
+          style: Theme.of(context).textTheme.headline1,
+        ),
       ),
       SizedBox(
         height: 6.0,
@@ -391,6 +407,9 @@ class _TimelineHeroState extends State<TimelineHero> {
                       child: Column(
                         children: [
                           listItem('SETTINGS', Icons.settings, () {}),
+                          SizedBox(
+                            height: 15.0,
+                          ),
                           listItem('SHARE', Icons.share,
                               sharing == false ? shareStoryLink : null),
                         ],

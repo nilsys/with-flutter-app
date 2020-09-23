@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../services/api.dart';
 import '../models/story.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+export 'package:provider/provider.dart';
 
 class StoryVM extends ChangeNotifier {
   Api _api = Api('stories');
+  final _auth = FirebaseAuth.instance;
 
   List<Story> stories;
 
@@ -37,6 +40,25 @@ class StoryVM extends ChangeNotifier {
   Future updateStory(Story data, String id) async {
     await _api.updateDocument(data.toJson(), id);
     return;
+  }
+
+  Future duplicateStory(Story story) async {
+    Map<String, dynamic> _data = story.toJson();
+    await _api.addDocument(_data);
+    return;
+  }
+
+  Future deleteStory(String storyId) async {
+    await _api.removeDocument(storyId);
+    return;
+  }
+
+  Future follow(Story story) async {
+    story.followers.add(_auth.currentUser.uid);
+    final _update = Map<String, dynamic>.from({
+      'followers': story.followers.toSet().toList(),
+    });
+    await _api.updateDocument(_update, story.id);
   }
 
   // Future addStory(Story data) async {

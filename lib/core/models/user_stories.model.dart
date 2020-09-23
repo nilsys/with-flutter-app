@@ -1,4 +1,5 @@
 import 'package:with_app/core/models/story_status.model.dart';
+export 'package:with_app/core/models/story_status.model.dart';
 
 class UserStories {
   final List<StoryStatus> owner;
@@ -18,9 +19,9 @@ class UserStories {
 
   toJson() {
     return {
-      "owner": owner,
-      "following": following,
-      "viewing": viewing,
+      "owner": owner.map((e) => e.toJson()).toList(),
+      "following": following.map((e) => e.toJson()).toList(),
+      "viewing": viewing.map((e) => e.toJson()).toList(),
     };
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:with_app/core/models/user_stories.model.dart';
+export 'package:with_app/core/models/user_stories.model.dart';
 
 class UserModel {
   final String id;

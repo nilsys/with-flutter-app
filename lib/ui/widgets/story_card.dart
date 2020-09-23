@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:with_app/core/models/story.model.dart';
+import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/ui/views/story/story.view.dart';
 
 class StoryCard extends StatelessWidget {
   final Story storyDetails;
+  final bool enableDelete;
 
-  StoryCard({@required this.storyDetails});
+  StoryCard({@required this.storyDetails, this.enableDelete = true});
 
   @override
   Widget build(BuildContext context) {
+    final storyProvider = Provider.of<StoryVM>(context);
+
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, '${StoryView.route}/${storyDetails.id}');
@@ -99,6 +103,31 @@ class StoryCard extends StatelessWidget {
                         ),
                         Text(
                           storyDetails.id,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 22.0,
+                    ),
+                    Row(
+                      children: [
+                        RaisedButton(
+                          onPressed: () {
+                            storyProvider.duplicateStory(storyDetails);
+                          },
+                          child: Text('Duplicate'),
+                        ),
+                        SizedBox(
+                          width: 20.0,
+                        ),
+                        RaisedButton(
+                          color: Colors.red,
+                          onPressed: enableDelete
+                              ? () {
+                                  storyProvider.deleteStory(storyDetails.id);
+                                }
+                              : null,
+                          child: Text('Delete'),
                         ),
                       ],
                     ),

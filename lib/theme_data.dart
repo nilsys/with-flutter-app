@@ -8,7 +8,7 @@ class WithTheme {
       brightness: Brightness.dark,
       primaryColor: Color.fromRGBO(31, 107, 137, 1), // deep blue
       primaryColorLight: Color.fromRGBO(105, 81, 174, 1), // bright purple
-      backgroundColor: Color.fromRGBO(249, 248, 251, 1),
+      backgroundColor: Color.fromRGBO(245, 245, 245, 1),
       accentColor: accentColor,
       fontFamily: 'Hind',
       appBarTheme: AppBarTheme(),
