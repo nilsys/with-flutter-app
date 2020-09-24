@@ -75,18 +75,21 @@ class _StoryViewState extends State<StoryView> {
                               author = UserModel.fromMap(
                                   snapshot.data.data(), story.owner);
                             }
-                            return PageView(
-                              physics: const NeverScrollableScrollPhysics(),
-                              controller: _pageController,
-                              children: [
-                                Timeline(
-                                  story: story,
-                                  currentUser: currentUser,
-                                  author: author,
-                                ),
-                                StorySettings(),
-                              ],
-                            );
+                            return author != null
+                                ? PageView(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    controller: _pageController,
+                                    children: [
+                                      Timeline(
+                                        story: story,
+                                        currentUser: currentUser,
+                                        author: author,
+                                      ),
+                                      StorySettings(),
+                                    ],
+                                  )
+                                : Spinner();
                           })
                       : Spinner();
                 });

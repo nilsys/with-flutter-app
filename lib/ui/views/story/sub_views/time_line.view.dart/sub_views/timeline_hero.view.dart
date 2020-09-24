@@ -53,6 +53,7 @@ class _TimelineHeroState extends State<TimelineHero> {
     final double _appBarHeight = AppBar().preferredSize.height;
     final storyProvider = Provider.of<StoryVM>(context);
     final userProvider = Provider.of<UserVM>(context);
+    bool isAuthor = widget.author?.id == widget.currentUser?.id;
     final Function followStory = () {
       storyProvider.addFollower(widget.story);
       userProvider.followStory(widget.story.id, widget.currentUser);
@@ -65,13 +66,16 @@ class _TimelineHeroState extends State<TimelineHero> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final keyContext = _descriptionKey.currentContext;
-      final _descriptionBox = keyContext.findRenderObject() as RenderBox;
-      final double newHeight = _descriptionBox.size.height;
-      if (newHeight != descriptionHeight) {
-        setState(() {
-          expandedHeight = 268.0 + _descriptionBox.size.height;
-          descriptionHeight = _descriptionBox.size.height;
-        });
+      if (keyContext != null) {
+        final _descriptionBox = keyContext.findRenderObject() as RenderBox;
+        final double newHeight = _descriptionBox.size.height;
+        if (newHeight != descriptionHeight) {
+          final staticHeight = isAuthor ? 228.0 : 268.0;
+          setState(() {
+            expandedHeight = staticHeight + _descriptionBox.size.height;
+            descriptionHeight = _descriptionBox.size.height;
+          });
+        }
       }
     });
 
@@ -132,6 +136,40 @@ class _TimelineHeroState extends State<TimelineHero> {
     );
 
     @swidget
+    Widget followBtnState(bool follow, int valueKey) {
+      return SizedBox(
+        key: ValueKey(valueKey),
+        height: 34.0,
+        width: follow ? 110.0 : 130.0,
+        child: RaisedButton(
+          textColor: Theme.of(context).primaryColorLight,
+          padding: EdgeInsets.fromLTRB(5.0, 0.0, 10.0, 0.0),
+          onPressed: follow ? followStory : unFollowStory,
+          color: Colors.white,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                follow ? Icons.bookmark_border : Icons.bookmark,
+                size: 20.0,
+              ),
+              SizedBox(
+                width: 6.0,
+              ),
+              Text(
+                follow ? 'FOLLOW' : 'UNFOLLOW',
+                style: TextStyle(
+                  fontSize: 11.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    @swidget
     Widget followBtn(bool condensed) {
       String exsistingId = widget.currentUser.stories.following.firstWhere(
         (element) => element == widget.story.id,
@@ -157,36 +195,20 @@ class _TimelineHeroState extends State<TimelineHero> {
               ),
               onTap: exsistingId == null ? followStory : unFollowStory,
             )
-          : SizedBox(
-              height: 34.0,
-              width: exsistingId == null ? 110.0 : 130.0,
-              child: RaisedButton(
-                textColor: Theme.of(context).primaryColorLight,
-                padding: EdgeInsets.fromLTRB(5.0, 0.0, 10.0, 0.0),
-                onPressed: exsistingId == null ? followStory : unFollowStory,
-                color: Colors.white,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      exsistingId == null
-                          ? Icons.bookmark_border
-                          : Icons.bookmark,
-                      size: 20.0,
-                    ),
-                    SizedBox(
-                      width: 6.0,
-                    ),
-                    Text(
-                      exsistingId == null ? 'FOLLOW' : 'FOLLOWING',
-                      style: TextStyle(
-                        fontSize: 11.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+          : AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              transitionBuilder: (Widget child, Animation<double> animation) =>
+                  ScaleTransition(
+                scale: animation,
+                child: child,
               ),
+              layoutBuilder:
+                  (Widget currentChild, List<Widget> previousChildren) {
+                return currentChild;
+              },
+              child: exsistingId == null
+                  ? followBtnState(true, 1)
+                  : followBtnState(false, 2),
             );
     }
 
@@ -206,9 +228,9 @@ class _TimelineHeroState extends State<TimelineHero> {
       ),
       Text(widget.story.description, key: _descriptionKey),
       SizedBox(
-        height: 18.0,
+        height: isAuthor ? 8.0 : 18.0,
       ),
-      followBtn(false),
+      isAuthor ? SizedBox() : followBtn(false),
       SizedBox(
         height: 24.0,
       ),
@@ -282,32 +304,44 @@ class _TimelineHeroState extends State<TimelineHero> {
     Widget title = widget.author != null
         ? Transform.translate(
             offset: Offset(-15.0, 0.0),
-            child: _isCollapsed
-                ? Transform.translate(
-                    offset: Offset(0.0, -2.0),
-                    child: Text(
-                      widget.story.title,
-                      style: Theme.of(context).textTheme.headline2,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              // transitionBuilder: (Widget child, Animation<double> animation) =>
+              //     ScaleTransition(
+              //   scale: animation,
+              //   child: child,
+              // ),
+              layoutBuilder:
+                  (Widget currentChild, List<Widget> previousChildren) {
+                return currentChild;
+              },
+              child: _isCollapsed
+                  ? Transform.translate(
+                      offset: Offset(0.0, -2.0),
+                      child: Text(
+                        widget.story.title,
+                        style: Theme.of(context).textTheme.headline2,
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: _isCollapsed
+                          ? MainAxisAlignment.center
+                          : MainAxisAlignment.start,
+                      children: [
+                        Avatar(
+                          src: widget.author.profileImage,
+                          radius: 18.0,
+                        ),
+                        SizedBox(
+                          width: 15.0,
+                        ),
+                        Text(
+                          widget.author.displayName,
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                      ],
                     ),
-                  )
-                : Row(
-                    mainAxisAlignment: _isCollapsed
-                        ? MainAxisAlignment.center
-                        : MainAxisAlignment.start,
-                    children: [
-                      Avatar(
-                        src: widget.author.profileImage,
-                        radius: 18.0,
-                      ),
-                      SizedBox(
-                        width: 15.0,
-                      ),
-                      Text(
-                        widget.author.displayName,
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                    ],
-                  ),
+            ),
           )
         : SkeletonLoader(
             builder: Transform.translate(
