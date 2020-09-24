@@ -1,17 +1,10 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
-import 'package:tinycolor/tinycolor.dart';
-import 'package:functional_widget_annotation/functional_widget_annotation.dart';
-import 'package:share/share.dart';
-// import 'sub_views/story_footer.view.dart';
 import 'sub_views/story_settings.view.dart/story_settings.view.dart';
 import 'sub_views/time_line.view.dart/timeline.view.dart';
 

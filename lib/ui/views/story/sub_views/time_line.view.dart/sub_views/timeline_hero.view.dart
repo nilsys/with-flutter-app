@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:fade/fade.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
