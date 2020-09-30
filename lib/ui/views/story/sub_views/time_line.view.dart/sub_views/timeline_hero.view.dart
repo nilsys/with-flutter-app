@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:fade/fade.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
@@ -53,6 +52,10 @@ class _TimelineHeroState extends State<TimelineHero> {
     final storyProvider = Provider.of<StoryVM>(context);
     final userProvider = Provider.of<UserVM>(context);
     bool isAuthor = widget.author?.id == widget.currentUser?.id;
+    String isFollower = widget.currentUser.stories.following.firstWhere(
+      (element) => element == widget.story.id,
+      orElse: () => null,
+    );
     final Function followStory = () {
       storyProvider.addFollower(widget.story);
       userProvider.followStory(widget.story.id, widget.currentUser);
@@ -80,55 +83,50 @@ class _TimelineHeroState extends State<TimelineHero> {
 
     @swidget
     Widget counter(String name, num val) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            toCurrencyString(
-              '$val',
-              mantissaLength: 0,
+      return Padding(
+        padding: const EdgeInsets.only(right: 21.0),
+        child: Row(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              toCurrencyString(
+                '$val',
+                mantissaLength: 0,
+              ),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              height: 0.6,
+            SizedBox(
+              width: 7.0,
             ),
-          ),
-          SizedBox(
-            height: 2.0,
-          ),
-          Text(name),
-        ],
+            Text(name),
+          ],
+        ),
       );
     }
 
     Widget stats = Padding(
-      padding: EdgeInsets.fromLTRB(8.0, 22.0, 8.0, 0.0),
+      padding: EdgeInsets.fromLTRB(0.0, 15.0, 0, 32.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           counter('posts', widget.story.posts),
-          Spacer(),
           counter('followers', widget.story.followers.length),
-          Spacer(),
           counter('views', widget.story.views),
-          Spacer(
-            flex: 5,
-          ),
-          Transform.translate(
-            offset: Offset(0.0, -4.0),
-            child: Row(
-              children: [
-                Icon(widget.story.private
-                    ? Icons.supervised_user_circle
-                    : Icons.public),
-                SizedBox(
-                  width: 10.0,
-                ),
-                Text(
-                  widget.story.private ? 'Private' : 'Public',
-                )
-              ],
-            ),
+          Spacer(),
+          Row(
+            children: [
+              Icon(widget.story.private
+                  ? Icons.supervised_user_circle
+                  : Icons.public),
+              SizedBox(
+                width: 10.0,
+              ),
+              Text(
+                widget.story.private ? 'Private' : 'Public',
+              )
+            ],
           )
         ],
       ),
@@ -178,17 +176,14 @@ class _TimelineHeroState extends State<TimelineHero> {
           ? InkWell(
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
-                child: Fade(
-                  visible: _isCollapsed,
-                  child: Transform.translate(
-                    offset: Offset(0.0, -3.0),
-                    child: Icon(
-                      exsistingId == null
-                          ? Icons.bookmark_border
-                          : Icons.bookmark,
-                      size: 24.0,
-                      color: Colors.white,
-                    ),
+                child: Transform.translate(
+                  offset: Offset(0.0, -3.0),
+                  child: Icon(
+                    exsistingId == null
+                        ? Icons.bookmark_border
+                        : Icons.bookmark,
+                    size: 24.0,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -226,19 +221,44 @@ class _TimelineHeroState extends State<TimelineHero> {
         height: 6.0,
       ),
       Text(widget.story.description, key: _descriptionKey),
-      SizedBox(
-        height: isAuthor ? 8.0 : 18.0,
+      stats,
+      Row(
+        children: [
+          isAuthor
+              ? SizedBox()
+              : OutlineButton(
+                  onPressed: () {},
+                  borderSide: BorderSide(
+                    color: Colors.white, //Color of the border
+                    style: BorderStyle.solid, //Style of the border
+                    width: 1, //width of the border
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        isFollower == null
+                            ? Icons.bookmark_border
+                            : Icons.bookmark,
+                        size: 20.0,
+                      ),
+                      SizedBox(
+                        width: 6.0,
+                      ),
+                      Text(
+                        isFollower == null ? 'FOLLOW' : 'UNFOLLOW',
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+        ],
       ),
-      isAuthor ? SizedBox() : followBtn(false),
       SizedBox(
         height: 24.0,
       ),
-      Divider(
-        height: 0.0,
-        color: Colors.white.withOpacity(0.3),
-        thickness: 1.0,
-      ),
-      stats,
     ];
 
     @swidget
@@ -431,7 +451,7 @@ class _TimelineHeroState extends State<TimelineHero> {
       backgroundColor: Theme.of(context).primaryColorLight.darken(),
       expandedHeight: expandedHeight,
       actions: [
-        followBtn(true),
+        isAuthor ? SizedBox() : followBtn(true),
         InkWell(
           child: Padding(
             padding: const EdgeInsets.all(12.0),

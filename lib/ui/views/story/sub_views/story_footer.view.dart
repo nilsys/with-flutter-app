@@ -52,14 +52,14 @@ class _StoryFooterState extends State<StoryFooter> {
                 With.fairy_wand,
                 size: 20.0,
               ),
-              label: 'Timeline',
+              title: Text('Timeline'),
             ),
             BottomNavigationBarItem(
               icon: Icon(
                 With.power_settings_new,
                 size: 22.0,
               ),
-              label: 'Settings',
+              title: Text('Settings'),
             ),
           ],
         ),

@@ -51,7 +51,17 @@ class WithTheme {
       buttonColor: accentColor,
       buttonTheme: ButtonThemeData(
         buttonColor: accentColor,
-        height: 45,
+        height: 40,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
+
+          // this effects to FlatButton and RaisedButton
+          // side: BorderSide(
+          //   color: Colors.white, //Color of the border
+          //   style: BorderStyle.solid, //Style of the border
+          //   width: 2, //width of the border
+          // ),
+        ),
       ),
       // iconTheme: IconThemeData(
       //   color: Theme.of(context).accentColor,
