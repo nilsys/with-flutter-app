@@ -21,6 +21,7 @@ class TimelineHero extends StatefulWidget {
   final UserModel currentUser;
   final ScrollController scrollController;
   final Function goToSettings;
+  final Function onDiscussionToggle;
 
   TimelineHero({
     this.author,
@@ -28,6 +29,7 @@ class TimelineHero extends StatefulWidget {
     this.currentUser,
     @required this.scrollController,
     @required this.goToSettings,
+    @required this.onDiscussionToggle,
   });
 
   @override
@@ -61,6 +63,7 @@ class _TimelineHeroState extends State<TimelineHero> {
     final storyProvider = Provider.of<StoryVM>(context);
     final userProvider = Provider.of<UserVM>(context);
     bool isAuthor = widget.author?.id == widget.currentUser?.id;
+    final double staticHeight = isAuthor ? 224.0 : 254.0;
     bool isFollower =
         widget.currentUser.stories.following.contains(widget.story.id);
     final Function followStory = () {
@@ -79,7 +82,6 @@ class _TimelineHeroState extends State<TimelineHero> {
         final _descriptionBox = keyContext.findRenderObject() as RenderBox;
         final double newHeight = _descriptionBox.size.height;
         if (newHeight != descriptionHeight) {
-          final staticHeight = isAuthor ? 224.0 : 254.0;
           setState(() {
             expandedHeight = staticHeight + _descriptionBox.size.height;
             descriptionHeight = _descriptionBox.size.height;
@@ -312,10 +314,10 @@ class _TimelineHeroState extends State<TimelineHero> {
             padding: EdgeInsets.all(0.0),
             onPressed: () {
               setState(() {
-                // expandedHeight = staticHeight + _descriptionBox.size.height;
-                // expandedHeight = expandedHeight + 200;
-                showDiscussion = true;
+                showDiscussion = !showDiscussion;
+                expandedHeight += showDiscussion ? 300 : -300;
               });
+              widget.onDiscussionToggle(showDiscussion);
             },
             child: Icon(Icons.mode_comment),
             textColor: Theme.of(context).accentColor,
@@ -561,7 +563,7 @@ class _TimelineHeroState extends State<TimelineHero> {
               }
             });
           }
-          final squeeze = _height / (expandedHeight - _appBarHeight);
+          final squeeze = max(_height / (expandedHeight - _appBarHeight), 0.0);
           return flexibleContainer(
             squeeze,
           );
