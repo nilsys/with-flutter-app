@@ -21,10 +21,26 @@ class StoryView extends StatefulWidget {
 }
 
 class _StoryViewState extends State<StoryView> {
-  final _pageController = PageController(
+  final pageController = PageController(
     initialPage: 0,
   );
   bool sharing = false;
+
+  void goToSettings() {
+    pageController.animateToPage(
+      1,
+      duration: Duration(milliseconds: 400),
+      curve: Curves.easeInOutCubic,
+    );
+  }
+
+  void goToTimeline() {
+    pageController.animateToPage(
+      0,
+      duration: Duration(milliseconds: 400),
+      curve: Curves.easeInOutCubic,
+    );
+  }
 
   @override
   void initState() {
@@ -33,7 +49,7 @@ class _StoryViewState extends State<StoryView> {
 
   @override
   void dispose() {
-    _pageController.dispose();
+    pageController.dispose();
     super.dispose();
   }
 
@@ -72,14 +88,17 @@ class _StoryViewState extends State<StoryView> {
                                 ? PageView(
                                     physics:
                                         const NeverScrollableScrollPhysics(),
-                                    controller: _pageController,
+                                    controller: pageController,
                                     children: [
                                       Timeline(
                                         story: story,
                                         currentUser: currentUser,
                                         author: author,
+                                        goToSettings: goToSettings,
                                       ),
-                                      StorySettings(),
+                                      StorySettings(
+                                        goToTimeline: goToTimeline,
+                                      ),
                                     ],
                                   )
                                 : Spinner();
@@ -89,7 +108,7 @@ class _StoryViewState extends State<StoryView> {
           }),
       // bottomNavigationBar: StoryFooter(
       //   onChange: (pageIndex) {
-      //     _pageController.animateToPage(
+      //     pageController.animateToPage(
       //       pageIndex,
       //       duration: Duration(milliseconds: 400),
       //       curve: Curves.easeInOutCubic,

@@ -6,18 +6,19 @@ import 'package:with_app/core/models/user.model.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'sub_views/post.view.dart';
 import 'sub_views/timeline_hero.view.dart';
-// import 'package:with_app/ui/views/home/home.view.dart';
 
 class Timeline extends StatefulWidget {
   final Story story;
   final UserModel currentUser;
   final UserModel author;
+  final Function goToSettings;
 
   Timeline({
     Key key,
     this.story,
     this.currentUser,
     this.author,
+    @required this.goToSettings,
   }) : super(key: key);
 
   @override
@@ -25,7 +26,6 @@ class Timeline extends StatefulWidget {
 }
 
 class _TimelineState extends State<Timeline> {
-  // ScrollControl scrollController = ScrollControl();
   ScrollController scrollController = ScrollController();
   bool hideDiscussionTab = true;
 
@@ -34,7 +34,6 @@ class _TimelineState extends State<Timeline> {
   @override
   void initState() {
     super.initState();
-    // scrollController.init();
   }
 
   @override
@@ -50,11 +49,6 @@ class _TimelineState extends State<Timeline> {
       body: FloatingPullUpCardLayout(
         cardElevation: 25,
         autoPadding: false,
-        // height: 560.0,
-        // uncollpsedStateOffset: () {
-        //   double maxHeight = 250.0;
-        //   return maxHeight;
-        // },
         state: hideDiscussionTab
             ? FloatingPullUpState.hidden
             : FloatingPullUpState.collapsed,
@@ -88,7 +82,6 @@ class _TimelineState extends State<Timeline> {
                   dragHandler,
                   Expanded(
                     child: Container(
-                      // height: 500.0,
                       width: double.infinity,
                       color: Colors.white,
                       child: body,
@@ -124,16 +117,17 @@ class _TimelineState extends State<Timeline> {
                 controller: scrollController,
                 slivers: <Widget>[
                   TimelineHero(
-                      author: widget.author,
-                      story: widget.story,
-                      currentUser: widget.currentUser,
-                      scrollController: scrollController),
+                    author: widget.author,
+                    story: widget.story,
+                    currentUser: widget.currentUser,
+                    scrollController: scrollController,
+                    goToSettings: widget.goToSettings,
+                  ),
                   // Skeleton(),
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         return Container(
-                          // color: Colors.green,
                           child: Column(
                             children: [
                               SizedBox(

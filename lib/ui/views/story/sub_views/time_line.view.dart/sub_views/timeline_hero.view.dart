@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
@@ -19,12 +20,14 @@ class TimelineHero extends StatefulWidget {
   final Story story;
   final UserModel currentUser;
   final ScrollController scrollController;
+  final Function goToSettings;
 
   TimelineHero({
     this.author,
     this.story,
     this.currentUser,
-    this.scrollController,
+    @required this.scrollController,
+    @required this.goToSettings,
   });
 
   @override
@@ -35,18 +38,20 @@ class _TimelineHeroState extends State<TimelineHero> {
   bool _isCollapsed = false;
   bool sharing = false;
   GlobalKey _descriptionKey = GlobalKey();
-  double expandedHeight = 0.0;
+  double expandedHeight = 100.0;
   double descriptionHeight = 0.0;
   bool showDiscussion = false;
 
   @override
   void initState() {
     super.initState();
+    // SystemChrome.setEnabledSystemUIOverlays([]);
   }
 
   @override
   void dispose() {
     super.dispose();
+    // SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   }
 
   @override
@@ -74,14 +79,62 @@ class _TimelineHeroState extends State<TimelineHero> {
         final _descriptionBox = keyContext.findRenderObject() as RenderBox;
         final double newHeight = _descriptionBox.size.height;
         if (newHeight != descriptionHeight) {
-          final staticHeight = isAuthor ? 228.0 : 258.0;
+          final staticHeight = isAuthor ? 224.0 : 254.0;
           setState(() {
             expandedHeight = staticHeight + _descriptionBox.size.height;
             descriptionHeight = _descriptionBox.size.height;
+            // collapsedHeight = 0.0;
           });
         }
       }
     });
+
+    final Function shareStoryLink = () async {
+      final DynamicLinkParameters parameters = DynamicLinkParameters(
+        uriPrefix: 'https://withapp.page.link',
+        link: Uri.parse('https://withapp.io/go-to-story?id=${widget.story.id}'),
+        androidParameters: AndroidParameters(
+          packageName: 'io.withapp.android',
+          minimumVersion: 125,
+        ),
+        iosParameters: IosParameters(
+          bundleId: 'io.withapp.ios',
+          minimumVersion: '1.0.1',
+          appStoreId: '123456789',
+        ),
+        // googleAnalyticsParameters: GoogleAnalyticsParameters(
+        //   campaign: 'example-promo',
+        //   medium: 'social',
+        //   source: 'orkut',
+        // ),
+        // itunesConnectAnalyticsParameters:
+        //     ItunesConnectAnalyticsParameters(
+        //   providerToken: '123456',
+        //   campaignToken: 'example-promo',
+        // ),
+        socialMetaTagParameters: SocialMetaTagParameters(
+          title: widget.story.title,
+          description: 'This story was created on with-app',
+        ),
+      );
+      final ShortDynamicLink shortDynamicLink =
+          await parameters.buildShortLink();
+      final Uri shortUrl = shortDynamicLink.shortUrl;
+      print(shortUrl);
+      // final Uri dynamicUrl = await parameters.buildUrl();
+      if (sharing == false) {
+        Share.share('Check out my story\n\n$shortUrl',
+            subject: widget.story.title);
+      }
+      setState(() {
+        sharing = true;
+      });
+      Timer(Duration(milliseconds: 1000), () {
+        setState(() {
+          sharing = false;
+        });
+      });
+    };
 
     @swidget
     Widget counter(String name, num val) {
@@ -102,7 +155,10 @@ class _TimelineHeroState extends State<TimelineHero> {
             SizedBox(
               width: 7.0,
             ),
-            Text(name),
+            Opacity(
+              opacity: 0.5,
+              child: Text(name),
+            ),
           ],
         ),
       );
@@ -116,129 +172,154 @@ class _TimelineHeroState extends State<TimelineHero> {
           counter('posts', widget.story.posts),
           counter('followers', widget.story.followers.length),
           counter('views', widget.story.views),
-          Spacer(),
-          Row(
-            children: [
-              Icon(widget.story.private
-                  ? Icons.supervised_user_circle
-                  : Icons.public),
-              SizedBox(
-                width: 10.0,
-              ),
-              Text(
-                widget.story.private ? 'Private' : 'Public',
-              )
-            ],
-          )
         ],
       ),
     );
 
+    // @swidget
+    // actionBtn(Function onPressed, IconData iconData, String label,
+    //     {Color iconColor = Colors.white}) {
+    //   return Container(
+    //     margin: EdgeInsets.only(right: 13.0),
+    //     child: OutlineButton(
+    //       onPressed: onPressed,
+    //       highlightedBorderColor: Colors.white,
+    //       borderSide: BorderSide(
+    //         color: Colors.white, //Color of the border
+    //         style: BorderStyle.solid, //Style of the border
+    //         width: 1, //width of the border
+    //       ),
+    //       child: Row(
+    //         children: [
+    //           Icon(iconData, size: 20.0, color: iconColor),
+    //           SizedBox(
+    //             width: 6.0,
+    //           ),
+    //           Text(
+    //             label,
+    //             style: TextStyle(
+    //               fontSize: 11.0,
+    //               fontWeight: FontWeight.bold,
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   );
+    // }
+
+    // @swidget
+    // Widget followBtn() {
+    //   return actionBtn(
+    //     isFollower ? unFollowStory : followStory,
+    //     isFollower ? Icons.bookmark_border : Icons.bookmark,
+    //     isFollower ? 'UNFOLLOW' : 'FOLLOW',
+    //     iconColor: Colors.white,
+    //   );
+    // }
+
     @swidget
-    Widget followBtnState(bool follow, int valueKey) {
-      return SizedBox(
-        key: ValueKey(valueKey),
-        height: 34.0,
-        width: follow ? 110.0 : 130.0,
-        child: RaisedButton(
-          textColor: Theme.of(context).primaryColor,
-          padding: EdgeInsets.fromLTRB(5.0, 0.0, 10.0, 0.0),
-          onPressed: follow ? followStory : unFollowStory,
-          color: Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                follow ? Icons.bookmark_border : Icons.bookmark,
-                size: 20.0,
-              ),
-              SizedBox(
-                width: 6.0,
-              ),
-              Text(
-                follow ? 'FOLLOW' : 'UNFOLLOW',
-                style: TextStyle(
-                  fontSize: 11.0,
-                  fontWeight: FontWeight.bold,
+    Widget followBtn() => isFollower
+        ? OutlineButton(
+            onPressed: unFollowStory,
+            highlightedBorderColor: Colors.white,
+            borderSide: BorderSide(
+              color: Colors.white, //Color of the border
+              style: BorderStyle.solid, //Style of the border
+              width: 1, //width of the border
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.bookmark_outline,
+                  size: 20.0,
                 ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    @swidget
-    actionBtn(Function onPressed, IconData iconData, String label,
-        {Color iconColor = Colors.white}) {
-      return Container(
-        margin: EdgeInsets.only(right: 13.0),
-        child: OutlineButton(
-          onPressed: onPressed,
-          highlightedBorderColor: Colors.white,
-          borderSide: BorderSide(
-            color: Colors.white, //Color of the border
-            style: BorderStyle.solid, //Style of the border
-            width: 1, //width of the border
-          ),
-          child: Row(
-            children: [
-              Icon(iconData, size: 20.0, color: iconColor),
-              SizedBox(
-                width: 6.0,
-              ),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11.0,
-                  fontWeight: FontWeight.bold,
+                SizedBox(
+                  width: 6.0,
                 ),
-              ),
-            ],
+                Text(
+                  'UNFOLLOW',
+                  style: TextStyle(
+                    fontSize: 11.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          )
+        : RaisedButton(
+            onPressed: followStory,
+            color: Colors.white,
+            textColor: Theme.of(context).primaryColor,
+            child: Row(
+              children: [
+                Icon(
+                  Icons.bookmark,
+                  size: 20.0,
+                ),
+                SizedBox(
+                  width: 6.0,
+                ),
+                Text(
+                  'FOLLOW',
+                  style: TextStyle(
+                    fontSize: 11.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          );
+
+    // @swidget
+    // Widget settingsBtn() {
+    //   return actionBtn(widget.goToSettings, With.settings, 'SETTINGS');
+    // }
+
+    @swidget
+    Widget settingsBtn() => Container(
+          width: 40.0,
+          child: FlatButton(
+            padding: EdgeInsets.all(0.0),
+            onPressed: widget.goToSettings,
+            child: Icon(With.settings),
           ),
-        ),
-      );
-    }
+        );
+
+    // @swidget
+    // Widget shareBtn() {
+    //   return actionBtn(
+    //       sharing == false ? shareStoryLink : null, Icons.share, 'SHARE');
+    // }
 
     @swidget
-    Widget followBtn() {
-      return actionBtn(
-        isFollower ? unFollowStory : followStory,
-        isFollower ? Icons.bookmark : Icons.bookmark_border,
-        isFollower ? 'UNFOLLOW' : 'FOLLOW',
-        iconColor: isFollower ? Theme.of(context).accentColor : Colors.white,
-      );
-    }
-
-    @swidget
-    Widget settingsBtn() {
-      return actionBtn(() {}, With.settings, 'SETTINGS');
-    }
-
-    @swidget
-    Widget shareBtn() {
-      return actionBtn(() {}, Icons.share, 'SHARE');
-    }
+    Widget shareBtn() => Container(
+          width: 40.0,
+          child: FlatButton(
+            padding: EdgeInsets.all(0.0),
+            onPressed: shareStoryLink,
+            child: Icon(Icons.share),
+          ),
+        );
 
     @swidget
     Widget discussionBtn() {
-      return Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.all(Radius.circular(25.0)),
-        clipBehavior: Clip.hardEdge,
-        child: IconButton(
-          splashColor: Colors.white.withAlpha(50),
-          // highlightColor: Colors.white,
-          icon: Icon(Icons.mode_comment),
-          onPressed: () {
-            setState(() {
-              // expandedHeight = staticHeight + _descriptionBox.size.height;
-              // expandedHeight = expandedHeight + 200;
-              showDiscussion = true;
-            });
-          },
-          color: Theme.of(context).accentColor,
-          iconSize: 30.0,
+      return Transform.translate(
+        offset: Offset(10.0, 0.0),
+        child: Container(
+          width: 40.0,
+          child: FlatButton(
+            padding: EdgeInsets.all(0.0),
+            onPressed: () {
+              setState(() {
+                // expandedHeight = staticHeight + _descriptionBox.size.height;
+                // expandedHeight = expandedHeight + 200;
+                showDiscussion = true;
+              });
+            },
+            child: Icon(Icons.mode_comment),
+            textColor: Theme.of(context).accentColor,
+          ),
         ),
       );
     }
@@ -260,13 +341,15 @@ class _TimelineHeroState extends State<TimelineHero> {
       Text(widget.story.description, key: _descriptionKey),
       stats,
       Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           isAuthor ? SizedBox() : followBtn(),
+          SizedBox(
+            width: 8.0,
+          ),
           settingsBtn(),
+          shareBtn(),
           Spacer(),
           discussionBtn(),
-          // shareBtn(),
         ],
       ),
       SizedBox(
@@ -286,9 +369,7 @@ class _TimelineHeroState extends State<TimelineHero> {
             maxHeight: double.infinity,
             child: Container(
               margin: EdgeInsets.only(top: _paddingTop + _appBarHeight),
-              // height: expandedHeight,
-              padding: const EdgeInsets.fromLTRB(22.0, 16.0, 22.0, 26.0),
-              color: Theme.of(context).primaryColor,
+              padding: const EdgeInsets.fromLTRB(22.0, 10.0, 22.0, 26.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -338,11 +419,6 @@ class _TimelineHeroState extends State<TimelineHero> {
             offset: Offset(-15.0, 0.0),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
-              // transitionBuilder: (Widget child, Animation<double> animation) =>
-              //     ScaleTransition(
-              //   scale: animation,
-              //   child: child,
-              // ),
               layoutBuilder:
                   (Widget currentChild, List<Widget> previousChildren) {
                 return currentChild;
@@ -405,53 +481,6 @@ class _TimelineHeroState extends State<TimelineHero> {
       );
     }
 
-    final Function shareStoryLink = () async {
-      final DynamicLinkParameters parameters = DynamicLinkParameters(
-        uriPrefix: 'https://withapp.page.link',
-        link: Uri.parse('https://withapp.io/go-to-story?id=${widget.story.id}'),
-        androidParameters: AndroidParameters(
-          packageName: 'io.withapp.android',
-          minimumVersion: 125,
-        ),
-        iosParameters: IosParameters(
-          bundleId: 'io.withapp.ios',
-          minimumVersion: '1.0.1',
-          appStoreId: '123456789',
-        ),
-        // googleAnalyticsParameters: GoogleAnalyticsParameters(
-        //   campaign: 'example-promo',
-        //   medium: 'social',
-        //   source: 'orkut',
-        // ),
-        // itunesConnectAnalyticsParameters:
-        //     ItunesConnectAnalyticsParameters(
-        //   providerToken: '123456',
-        //   campaignToken: 'example-promo',
-        // ),
-        socialMetaTagParameters: SocialMetaTagParameters(
-          title: widget.story.title,
-          description: 'This story was created on with-app',
-        ),
-      );
-      final ShortDynamicLink shortDynamicLink =
-          await parameters.buildShortLink();
-      final Uri shortUrl = shortDynamicLink.shortUrl;
-      print(shortUrl);
-      // final Uri dynamicUrl = await parameters.buildUrl();
-      if (sharing == false) {
-        Share.share('Check out my story\n\n$shortUrl',
-            subject: widget.story.title);
-      }
-      setState(() {
-        sharing = true;
-      });
-      Timer(Duration(milliseconds: 1000), () {
-        setState(() {
-          sharing = false;
-        });
-      });
-    };
-
     return SliverAppBar(
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
@@ -460,11 +489,12 @@ class _TimelineHeroState extends State<TimelineHero> {
         },
       ),
       title: title,
-      // shape: RoundedRectangleBorder(
-      //   borderRadius: BorderRadius.vertical(bottom: Radius.circular(30.0)),
-      // ),
-      backgroundColor: Theme.of(context).primaryColor.darken(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.0)),
+      ),
+      backgroundColor: Theme.of(context).primaryColor,
       expandedHeight: expandedHeight,
+      collapsedHeight: _paddingTop + _appBarHeight - 19.0,
       actions: [
         InkWell(
           child: Padding(
@@ -514,7 +544,7 @@ class _TimelineHeroState extends State<TimelineHero> {
         builder: (context, constraints) {
           final _height =
               max(constraints.biggest.height - _paddingTop - _appBarHeight, 0);
-          if (_height == 0) {
+          if (_height < 10.0) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (!_isCollapsed) {
                 setState(() {
