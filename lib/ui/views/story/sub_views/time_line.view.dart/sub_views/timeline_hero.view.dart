@@ -12,16 +12,19 @@ import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
+import 'package:with_app/with_icons.dart';
 
 class TimelineHero extends StatefulWidget {
   final UserModel author;
   final Story story;
   final UserModel currentUser;
+  final ScrollController scrollController;
 
   TimelineHero({
     this.author,
     this.story,
     this.currentUser,
+    this.scrollController,
   });
 
   @override
@@ -34,6 +37,7 @@ class _TimelineHeroState extends State<TimelineHero> {
   GlobalKey _descriptionKey = GlobalKey();
   double expandedHeight = 0.0;
   double descriptionHeight = 0.0;
+  bool showDiscussion = false;
 
   @override
   void initState() {
@@ -52,10 +56,8 @@ class _TimelineHeroState extends State<TimelineHero> {
     final storyProvider = Provider.of<StoryVM>(context);
     final userProvider = Provider.of<UserVM>(context);
     bool isAuthor = widget.author?.id == widget.currentUser?.id;
-    String isFollower = widget.currentUser.stories.following.firstWhere(
-      (element) => element == widget.story.id,
-      orElse: () => null,
-    );
+    bool isFollower =
+        widget.currentUser.stories.following.contains(widget.story.id);
     final Function followStory = () {
       storyProvider.addFollower(widget.story);
       userProvider.followStory(widget.story.id, widget.currentUser);
@@ -72,7 +74,7 @@ class _TimelineHeroState extends State<TimelineHero> {
         final _descriptionBox = keyContext.findRenderObject() as RenderBox;
         final double newHeight = _descriptionBox.size.height;
         if (newHeight != descriptionHeight) {
-          final staticHeight = isAuthor ? 228.0 : 268.0;
+          final staticHeight = isAuthor ? 228.0 : 258.0;
           setState(() {
             expandedHeight = staticHeight + _descriptionBox.size.height;
             descriptionHeight = _descriptionBox.size.height;
@@ -139,7 +141,7 @@ class _TimelineHeroState extends State<TimelineHero> {
         height: 34.0,
         width: follow ? 110.0 : 130.0,
         child: RaisedButton(
-          textColor: Theme.of(context).primaryColorLight,
+          textColor: Theme.of(context).primaryColor,
           padding: EdgeInsets.fromLTRB(5.0, 0.0, 10.0, 0.0),
           onPressed: follow ? followStory : unFollowStory,
           color: Colors.white,
@@ -167,43 +169,78 @@ class _TimelineHeroState extends State<TimelineHero> {
     }
 
     @swidget
-    Widget followBtn(bool condensed) {
-      String exsistingId = widget.currentUser.stories.following.firstWhere(
-        (element) => element == widget.story.id,
-        orElse: () => null,
-      );
-      return condensed
-          ? InkWell(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Transform.translate(
-                  offset: Offset(0.0, -3.0),
-                  child: Icon(
-                    exsistingId == null
-                        ? Icons.bookmark_border
-                        : Icons.bookmark,
-                    size: 24.0,
-                    color: Colors.white,
-                  ),
+    actionBtn(Function onPressed, IconData iconData, String label,
+        {Color iconColor = Colors.white}) {
+      return Container(
+        margin: EdgeInsets.only(right: 13.0),
+        child: OutlineButton(
+          onPressed: onPressed,
+          highlightedBorderColor: Colors.white,
+          borderSide: BorderSide(
+            color: Colors.white, //Color of the border
+            style: BorderStyle.solid, //Style of the border
+            width: 1, //width of the border
+          ),
+          child: Row(
+            children: [
+              Icon(iconData, size: 20.0, color: iconColor),
+              SizedBox(
+                width: 6.0,
+              ),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11.0,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              onTap: exsistingId == null ? followStory : unFollowStory,
-            )
-          : AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              transitionBuilder: (Widget child, Animation<double> animation) =>
-                  ScaleTransition(
-                scale: animation,
-                child: child,
-              ),
-              layoutBuilder:
-                  (Widget currentChild, List<Widget> previousChildren) {
-                return currentChild;
-              },
-              child: exsistingId == null
-                  ? followBtnState(true, 1)
-                  : followBtnState(false, 2),
-            );
+            ],
+          ),
+        ),
+      );
+    }
+
+    @swidget
+    Widget followBtn() {
+      return actionBtn(
+        isFollower ? unFollowStory : followStory,
+        isFollower ? Icons.bookmark : Icons.bookmark_border,
+        isFollower ? 'UNFOLLOW' : 'FOLLOW',
+        iconColor: isFollower ? Theme.of(context).accentColor : Colors.white,
+      );
+    }
+
+    @swidget
+    Widget settingsBtn() {
+      return actionBtn(() {}, With.settings, 'SETTINGS');
+    }
+
+    @swidget
+    Widget shareBtn() {
+      return actionBtn(() {}, Icons.share, 'SHARE');
+    }
+
+    @swidget
+    Widget discussionBtn() {
+      return Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.all(Radius.circular(25.0)),
+        clipBehavior: Clip.hardEdge,
+        child: IconButton(
+          splashColor: Colors.white.withAlpha(50),
+          // highlightColor: Colors.white,
+          icon: Icon(Icons.mode_comment),
+          onPressed: () {
+            setState(() {
+              // expandedHeight = staticHeight + _descriptionBox.size.height;
+              // expandedHeight = expandedHeight + 200;
+              showDiscussion = true;
+            });
+          },
+          color: Theme.of(context).accentColor,
+          iconSize: 30.0,
+        ),
+      );
     }
 
     List<Widget> flexibleContent = [
@@ -223,37 +260,13 @@ class _TimelineHeroState extends State<TimelineHero> {
       Text(widget.story.description, key: _descriptionKey),
       stats,
       Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          isAuthor
-              ? SizedBox()
-              : OutlineButton(
-                  onPressed: () {},
-                  borderSide: BorderSide(
-                    color: Colors.white, //Color of the border
-                    style: BorderStyle.solid, //Style of the border
-                    width: 1, //width of the border
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        isFollower == null
-                            ? Icons.bookmark_border
-                            : Icons.bookmark,
-                        size: 20.0,
-                      ),
-                      SizedBox(
-                        width: 6.0,
-                      ),
-                      Text(
-                        isFollower == null ? 'FOLLOW' : 'UNFOLLOW',
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+          isAuthor ? SizedBox() : followBtn(),
+          settingsBtn(),
+          Spacer(),
+          discussionBtn(),
+          // shareBtn(),
         ],
       ),
       SizedBox(
@@ -265,7 +278,8 @@ class _TimelineHeroState extends State<TimelineHero> {
     Widget flexibleContainer(double squeeze) {
       return Opacity(
         opacity: 1 * squeeze,
-        child: ClipRect(
+        child: ClipRRect(
+          // borderRadius: BorderRadius.vertical(bottom: Radius.circular(30.0)),
           child: OverflowBox(
             alignment: Alignment.topLeft,
             minHeight: 0.0,
@@ -274,7 +288,7 @@ class _TimelineHeroState extends State<TimelineHero> {
               margin: EdgeInsets.only(top: _paddingTop + _appBarHeight),
               // height: expandedHeight,
               padding: const EdgeInsets.fromLTRB(22.0, 16.0, 22.0, 26.0),
-              color: Theme.of(context).primaryColorLight,
+              color: Theme.of(context).primaryColor,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,12 +317,11 @@ class _TimelineHeroState extends State<TimelineHero> {
                           ),
                           items: 1,
                           period: Duration(seconds: 2),
-                          baseColor:
-                              TinyColor(Theme.of(context).primaryColorLight)
-                                  .lighten(4)
-                                  .color,
+                          baseColor: TinyColor(Theme.of(context).primaryColor)
+                              .lighten(4)
+                              .color,
                           hightlightColor:
-                              TinyColor(Theme.of(context).primaryColorLight)
+                              TinyColor(Theme.of(context).primaryColor)
                                   .lighten(10)
                                   .color,
                         ),
@@ -373,10 +386,9 @@ class _TimelineHeroState extends State<TimelineHero> {
             items: 1,
             period: Duration(seconds: 2),
             baseColor:
-                TinyColor(Theme.of(context).primaryColorLight).lighten(4).color,
-            hightlightColor: TinyColor(Theme.of(context).primaryColorLight)
-                .lighten(10)
-                .color,
+                TinyColor(Theme.of(context).primaryColor).lighten(4).color,
+            hightlightColor:
+                TinyColor(Theme.of(context).primaryColor).lighten(10).color,
           );
 
     @swidget
@@ -448,10 +460,12 @@ class _TimelineHeroState extends State<TimelineHero> {
         },
       ),
       title: title,
-      backgroundColor: Theme.of(context).primaryColorLight.darken(),
+      // shape: RoundedRectangleBorder(
+      //   borderRadius: BorderRadius.vertical(bottom: Radius.circular(30.0)),
+      // ),
+      backgroundColor: Theme.of(context).primaryColor.darken(),
       expandedHeight: expandedHeight,
       actions: [
-        isAuthor ? SizedBox() : followBtn(true),
         InkWell(
           child: Padding(
             padding: const EdgeInsets.all(12.0),
@@ -465,31 +479,37 @@ class _TimelineHeroState extends State<TimelineHero> {
             ),
           ),
           onTap: () {
-            showModalBottomSheet(
-                context: context,
-                builder: (context) {
-                  return FractionallySizedBox(
-                    heightFactor: 0.4,
-                    child: Container(
-                      color: Theme.of(context).primaryColorLight,
-                      padding: EdgeInsets.all(22.0),
-                      child: Column(
-                        children: [
-                          listItem('SETTINGS', Icons.settings, () {}),
-                          SizedBox(
-                            height: 15.0,
-                          ),
-                          listItem('SHARE', Icons.share,
-                              sharing == false ? shareStoryLink : null),
-                        ],
-                      ),
-                    ),
-                  );
-                });
+            // showModalBottomSheet(
+            //     context: context,
+            //     builder: (context) {
+            //       return FractionallySizedBox(
+            //         heightFactor: 0.4,
+            //         child: Container(
+            //           color: Theme.of(context).primaryColor,
+            //           padding: EdgeInsets.all(22.0),
+            //           child: Column(
+            //             children: [
+            //               listItem('SETTINGS', Icons.settings, () {}),
+            //               SizedBox(
+            //                 height: 15.0,
+            //               ),
+            //               listItem('SHARE', Icons.share,
+            //                   sharing == false ? shareStoryLink : null),
+            //             ],
+            //           ),
+            //         ),
+            //       );
+            //     });
+            widget.scrollController.animateTo(
+              0.0,
+              curve: Curves.easeOut,
+              duration: const Duration(milliseconds: 300),
+            );
           },
         ),
       ],
       pinned: true,
+      forceElevated: true,
       flexibleSpace: LayoutBuilder(
         builder: (context, constraints) {
           final _height =

@@ -3,11 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 class WithTheme {
   static data(BuildContext context) {
-    final Color accentColor = Colors.tealAccent[200];
+    final Color accentColor = Color.fromRGBO(232, 163, 1, 1); // orange
     return ThemeData(
       brightness: Brightness.dark,
-      primaryColor: Color.fromRGBO(31, 107, 137, 1), // deep blue
-      primaryColorLight: Color.fromRGBO(105, 81, 174, 1), // bright purple
+      primaryColor: Color.fromRGBO(105, 81, 174, 1), // purple
+      // primaryColorLight: Color.fromRGBO(105, 81, 174, 1), // bright purple
       backgroundColor: Color.fromRGBO(245, 245, 245, 1),
       accentColor: accentColor,
       fontFamily: 'Hind',
@@ -65,11 +65,6 @@ class WithTheme {
       ),
       // iconTheme: IconThemeData(
       //   color: Theme.of(context).accentColor,
-      // ),
-      // outlinedButtonTheme: OutlinedButtonThemeData(
-      //   style: ButtonStyle(
-      //     border
-      //   ),
       // ),
     );
   }

@@ -27,12 +27,10 @@ class StoryAppBar extends StatelessWidget {
               ),
               items: 1,
               period: Duration(seconds: 2),
-              baseColor: TinyColor(Theme.of(context).primaryColorLight)
-                  .lighten(4)
-                  .color,
-              hightlightColor: TinyColor(Theme.of(context).primaryColorLight)
-                  .lighten(10)
-                  .color,
+              baseColor:
+                  TinyColor(Theme.of(context).primaryColor).lighten(4).color,
+              hightlightColor:
+                  TinyColor(Theme.of(context).primaryColor).lighten(10).color,
             ),
     );
   }

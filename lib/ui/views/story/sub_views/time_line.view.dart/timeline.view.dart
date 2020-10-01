@@ -1,9 +1,9 @@
 import 'package:floating_pullup_card/floating_layout.dart';
+import 'package:floating_pullup_card/floating_pullup_card.dart';
 import 'package:flutter/material.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/models/user.model.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
-import 'package:with_app/ui/shared/all.dart';
 import 'sub_views/post.view.dart';
 import 'sub_views/timeline_hero.view.dart';
 // import 'package:with_app/ui/views/home/home.view.dart';
@@ -25,12 +25,16 @@ class Timeline extends StatefulWidget {
 }
 
 class _TimelineState extends State<Timeline> {
-  ScrollControl scrollController = ScrollControl();
+  // ScrollControl scrollController = ScrollControl();
+  ScrollController scrollController = ScrollController();
+  bool hideDiscussionTab = true;
+
+  var maxHeight;
 
   @override
   void initState() {
     super.initState();
-    scrollController.init();
+    // scrollController.init();
   }
 
   @override
@@ -44,48 +48,106 @@ class _TimelineState extends State<Timeline> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: FloatingPullUpCardLayout(
-        cardElevation: 24,
-        borderRadius: BorderRadius.zero,
+        cardElevation: 25,
+        autoPadding: false,
+        // height: 560.0,
+        // uncollpsedStateOffset: () {
+        //   double maxHeight = 250.0;
+        //   return maxHeight;
+        // },
+        state: hideDiscussionTab
+            ? FloatingPullUpState.hidden
+            : FloatingPullUpState.collapsed,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30.0)),
         dragHandleBuilder: (context, constraints, beingDragged) {
           return Container(
-            height: 68.0,
+            height: 60.0,
             width: double.infinity,
-            color: Theme.of(context).primaryColorLight,
-            child: Text('Discussion... TBD'),
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+            ),
+            child: Center(
+              child: Text('Discussion... TBD'),
+            ),
           );
         },
-        body: Text('Helo', style: Theme.of(context).textTheme.bodyText1),
+        body: Text('Hello', style: Theme.of(context).textTheme.bodyText1),
+        cardBuilder: (
+          context,
+          constraints,
+          dragHandler,
+          body,
+          beingDragged,
+        ) {
+          return Transform.translate(
+            offset: Offset(0.0, 8.0),
+            child: Container(
+              child: Column(
+                children: [
+                  dragHandler,
+                  Expanded(
+                    child: Container(
+                      // height: 500.0,
+                      width: double.infinity,
+                      color: Colors.white,
+                      child: body,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
         child: Container(
           child: GestureDetector(
             onTap: () {
               FocusScope.of(this.context).unfocus();
             },
-            child: CustomScrollView(
-              slivers: <Widget>[
-                TimelineHero(
-                  author: widget.author,
-                  story: widget.story,
-                  currentUser: widget.currentUser,
-                ),
-                // Skeleton(),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      return Container(
-                        // color: Colors.green,
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 22.0,
-                            ),
-                            PostCard(),
-                          ],
-                        ),
-                      );
-                    },
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (ScrollNotification scrollInfo) {
+                if (scrollInfo.metrics.pixels == 0.0) {
+                  if (!hideDiscussionTab) {
+                    setState(() {
+                      hideDiscussionTab = true;
+                    });
+                  }
+                } else if (hideDiscussionTab) {
+                  print(scrollInfo.metrics.pixels);
+                  setState(() {
+                    hideDiscussionTab = false;
+                  });
+                }
+                return false;
+              },
+              child: CustomScrollView(
+                controller: scrollController,
+                slivers: <Widget>[
+                  TimelineHero(
+                      author: widget.author,
+                      story: widget.story,
+                      currentUser: widget.currentUser,
+                      scrollController: scrollController),
+                  // Skeleton(),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return Container(
+                          // color: Colors.green,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 22.0,
+                              ),
+                              PostCard(),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
