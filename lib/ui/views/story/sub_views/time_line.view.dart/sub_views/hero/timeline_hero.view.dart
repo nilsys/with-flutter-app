@@ -78,20 +78,20 @@ class _TimelineHeroState extends State<TimelineHero> {
       userProvider.unFollowStory(widget.story.id, widget.currentUser);
     };
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final keyContext = _descriptionKey.currentContext;
-      if (keyContext != null) {
-        final _descriptionBox = keyContext.findRenderObject() as RenderBox;
-        final double newHeight = _descriptionBox.size.height;
-        if (newHeight != descriptionHeight) {
-          setState(() {
-            expandedHeight = staticHeight + _descriptionBox.size.height;
-            descriptionHeight = _descriptionBox.size.height;
-            // collapsedHeight = 0.0;
-          });
-        }
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   final keyContext = _descriptionKey.currentContext;
+    //   if (keyContext != null) {
+    //     final _descriptionBox = keyContext.findRenderObject() as RenderBox;
+    //     final double newHeight = _descriptionBox.size.height;
+    //     if (newHeight != descriptionHeight) {
+    //       setState(() {
+    //         expandedHeight = staticHeight + _descriptionBox.size.height;
+    //         descriptionHeight = _descriptionBox.size.height;
+    //         // collapsedHeight = 0.0;
+    //       });
+    //     }
+    //   }
+    // });
 
     final Function shareStoryLink = () async {
       final DynamicLinkParameters parameters = DynamicLinkParameters(
@@ -361,6 +361,12 @@ class _TimelineHeroState extends State<TimelineHero> {
       ),
     ];
 
+    getExpandedHeight(height) {
+      setState(() {
+        expandedHeight = height;
+      });
+    }
+
     @swidget
     Widget flexibleContainer(double squeeze) {
       return Opacity(
@@ -382,6 +388,13 @@ class _TimelineHeroState extends State<TimelineHero> {
                     ? [
                         HeroFlexibleContent(
                           height: expandedHeight - _appBarHeight - _paddingTop,
+                          lock: !showDiscussion,
+                          story: widget.story,
+                          isAuthor: isAuthor,
+                          goToSettings: widget.goToSettings,
+                          onDiscussionToggle: widget.onDiscussionToggle,
+                          isFollower: isFollower,
+                          getExpandedHeight: getExpandedHeight,
                         )
                       ]
                     : [
