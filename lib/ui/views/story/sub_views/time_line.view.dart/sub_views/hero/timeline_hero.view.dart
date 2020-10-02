@@ -15,6 +15,8 @@ import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
 import 'package:with_app/with_icons.dart';
 
+import 'sub_views/hero_flexible_content.view.dart';
+
 class TimelineHero extends StatefulWidget {
   final UserModel author;
   final Story story;
@@ -376,7 +378,12 @@ class _TimelineHeroState extends State<TimelineHero> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: widget.story != null
-                    ? flexibleContent
+                    // ? flexibleContent
+                    ? [
+                        HeroFlexibleContent(
+                          height: expandedHeight - _appBarHeight - _paddingTop,
+                        )
+                      ]
                     : [
                         SkeletonLoader(
                           builder: Column(
