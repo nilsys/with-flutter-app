@@ -11,8 +11,7 @@ import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/with_icons.dart';
 
 class HeroFlexibleContent extends StatefulWidget {
-  final double height;
-  final bool lock;
+  // final double height;
   final Story story;
   final bool isAuthor;
   final UserModel currentUser;
@@ -22,10 +21,9 @@ class HeroFlexibleContent extends StatefulWidget {
   final bool isFollower;
 
   HeroFlexibleContent({
-    @required this.height,
+    // @required this.height,
     @required this.isAuthor,
     @required this.goToSettings,
-    this.lock = true,
     this.story,
     this.currentUser,
     @required this.onDiscussionToggle,
@@ -247,7 +245,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
             onPressed: () {
               setState(() {
                 showDiscussion = !showDiscussion;
-                expandedHeight += showDiscussion ? 300 : -300;
+                // expandedHeight += showDiscussion ? 300 : -300;
               });
               widget.onDiscussionToggle(showDiscussion);
             },
@@ -262,10 +260,9 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
       children: [
         Container(
           padding: EdgeInsets.only(bottom: 40.0),
-          height: widget.height + 54,
-          color: Colors.red,
+          height: expandedHeight + 210,
           child: CustomScrollView(
-            physics: widget.lock ? NeverScrollableScrollPhysics() : null,
+            physics: showDiscussion ? null : NeverScrollableScrollPhysics(),
             slivers: [
               SliverAppBar(
                 // title: Transform.translate(
@@ -278,8 +275,8 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
                 expandedHeight: expandedHeight - 10.0,
                 toolbarHeight: 0.0,
                 elevation: 0.0,
-                // pinned: true,
-                floating: true,
+                pinned: true,
+                // floating: true,
                 leading: null,
                 forceElevated: false,
                 automaticallyImplyLeading: false,
@@ -321,6 +318,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     return Container(
+                      color: Colors.green,
                       child: Column(
                         children: [
                           SizedBox(
@@ -341,7 +339,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
           left: 0,
           right: 0,
           child: Container(
-            color: Colors.yellow,
+            color: Colors.red,
             height: 40.0,
             child: Center(
               child: Text('Input box'),

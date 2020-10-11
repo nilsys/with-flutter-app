@@ -380,55 +380,19 @@ class _TimelineHeroState extends State<TimelineHero> {
             child: Container(
               margin: EdgeInsets.only(top: _paddingTop + _appBarHeight),
               padding: const EdgeInsets.fromLTRB(22.0, 10.0, 22.0, 26.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: widget.story != null
-                    // ? flexibleContent
-                    ? [
-                        HeroFlexibleContent(
-                          height: expandedHeight - _appBarHeight - _paddingTop,
-                          lock: !showDiscussion,
-                          story: widget.story,
-                          isAuthor: isAuthor,
-                          goToSettings: widget.goToSettings,
-                          onDiscussionToggle: widget.onDiscussionToggle,
-                          isFollower: isFollower,
-                          getExpandedHeight: getExpandedHeight,
-                        )
-                      ]
-                    : [
-                        SkeletonLoader(
-                          builder: Column(
-                            children: [
-                              Container(
-                                width: 50.0,
-                                height: 50.0,
-                                margin: EdgeInsets.only(bottom: 5.0),
-                                decoration: new BoxDecoration(
-                                  color: Colors.black,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              Container(
-                                color: Colors.black,
-                                width: 160.0,
-                                height: 18.0,
-                                margin: EdgeInsets.only(bottom: 15.0),
-                              ),
-                            ],
-                          ),
-                          items: 1,
-                          period: Duration(seconds: 2),
-                          baseColor: TinyColor(Theme.of(context).primaryColor)
-                              .lighten(4)
-                              .color,
-                          hightlightColor:
-                              TinyColor(Theme.of(context).primaryColor)
-                                  .lighten(10)
-                                  .color,
-                        ),
-                      ],
+              child: HeroFlexibleContent(
+                // height: expandedHeight - _appBarHeight - _paddingTop,
+                story: widget.story,
+                isAuthor: isAuthor,
+                goToSettings: widget.goToSettings,
+                onDiscussionToggle: ((showDiscussion) {
+                  widget.onDiscussionToggle(showDiscussion);
+                  setState(() {
+                    expandedHeight += (showDiscussion ? 300 : -300);
+                  });
+                }),
+                isFollower: isFollower,
+                getExpandedHeight: getExpandedHeight,
               ),
             ),
           ),
