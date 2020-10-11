@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,12 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
   Widget build(BuildContext context) {
     final storyProvider = Provider.of<StoryVM>(context);
     final userProvider = Provider.of<UserVM>(context);
-    final double staticHeight = widget.isAuthor ? 224.0 : 254.0;
+    final double staticHeight = widget.isAuthor ? 224.0 : 170.0;
+    final double _paddingTop = MediaQuery.of(context).padding.top;
+    final double _appBarHeight = AppBar().preferredSize.height;
+    final double _deviceHeight = MediaQuery.of(context).size.height;
+    final double _expandedDiscussionHeight =
+        _deviceHeight - _paddingTop - _appBarHeight - 50.0;
 
     final Function shareStoryLink = () async {
       final DynamicLinkParameters parameters = DynamicLinkParameters(
@@ -237,7 +243,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
     @swidget
     Widget discussionBtn() {
       return Transform.translate(
-        offset: Offset(10.0, 0.0),
+        offset: Offset(0.0, 0.0),
         child: Container(
           width: 40.0,
           child: FlatButton(
@@ -248,6 +254,9 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
                 // expandedHeight += showDiscussion ? 300 : -300;
               });
               widget.onDiscussionToggle(showDiscussion);
+              widget.getExpandedHeight(
+                showDiscussion ? _expandedDiscussionHeight : expandedHeight,
+              );
             },
             child: Icon(Icons.mode_comment),
             textColor: Theme.of(context).accentColor,
@@ -256,44 +265,71 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
       );
     }
 
-    return Stack(
-      children: [
-        Container(
-          padding: EdgeInsets.only(bottom: 40.0),
-          height: expandedHeight + 210,
-          child: CustomScrollView(
-            physics: showDiscussion ? null : NeverScrollableScrollPhysics(),
-            slivers: [
-              SliverAppBar(
-                // title: Transform.translate(
-                //   offset: Offset(0.0, -30.0),
-                //   child: Text('title'),
-                // ),
-                backgroundColor: Colors.blue,
-                titleSpacing: 0.0,
-                // collapsedHeight: 1.0,
-                expandedHeight: expandedHeight - 10.0,
-                toolbarHeight: 0.0,
-                elevation: 0.0,
-                pinned: true,
-                // floating: true,
-                leading: null,
-                forceElevated: false,
-                automaticallyImplyLeading: false,
-                flexibleSpace: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return ClipRRect(
+    return Container(
+      padding: EdgeInsets.only(bottom: 15.0),
+      height: _expandedDiscussionHeight,
+      child: CustomScrollView(
+        physics: showDiscussion ? null : NeverScrollableScrollPhysics(),
+        slivers: [
+          SliverAppBar(
+            // title: Transform.translate(
+            //   offset: Offset(0.0, -30.0),
+            //   child: Text('title'),
+            // ),
+            // backgroundColor: Colors.blue,
+            titleSpacing: 0.0,
+            // collapsedHeight: 1.0,
+            expandedHeight: expandedHeight - 10.0,
+            toolbarHeight: 0.0,
+            elevation: 0.0,
+            // pinned: true,
+            floating: true,
+            leading: null,
+            forceElevated: false,
+            automaticallyImplyLeading: false,
+            flexibleSpace: LayoutBuilder(
+              builder: (context, constraints) {
+                final _height = max(constraints.biggest.height, 0);
+                final opacity =
+                    min(max((_height - 25.0) / expandedHeight, 0.0), 1.0);
+                return Opacity(
+                  opacity: 1 * opacity,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          width: 1.0,
+                          color: showDiscussion
+                              ? Colors.white
+                              : Colors.transparent,
+                        ),
+                      ),
+                    ),
+                    child: ClipRRect(
                       child: OverflowBox(
                         alignment: Alignment.topLeft,
                         minHeight: 0.0,
                         maxHeight: double.infinity,
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
-                              height: 17.0,
+                              width: MediaQuery.of(context).size.width,
+                              child: Text(
+                                widget.story.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: false,
+                                style: Theme.of(context).textTheme.headline1,
+                              ),
                             ),
-                            Text(widget.story.description,
-                                key: _descriptionKey),
+                            SizedBox(
+                              height: 6.0,
+                            ),
+                            Text(
+                              widget.story.description,
+                              key: _descriptionKey,
+                            ),
                             stats,
                             Row(
                               children: [
@@ -310,43 +346,55 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
                           ],
                         ),
                       ),
-                    );
-                  },
-                ),
-              ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return Container(
-                      color: Colors.green,
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 22.0,
-                          ),
-                          Text('Comment $index'),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            color: Colors.red,
-            height: 40.0,
-            child: Center(
-              child: Text('Input box'),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
-        ),
-      ],
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return index < 14
+                    ? Container(
+                        // color: Colors.black,
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 22.0,
+                            ),
+                            Text('Comment ${index + 1}'),
+                          ],
+                        ),
+                      )
+                    : Column(
+                        children: [
+                          Container(
+                            // color: Colors.black,
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 22.0,
+                                ),
+                                Text('Comment ${index + 1}'),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            color: Colors.red,
+                            height: 40.0,
+                            child: Center(
+                              child: Text('Input box'),
+                            ),
+                          ),
+                        ],
+                      );
+              },
+              childCount: 15,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
