@@ -17,9 +17,8 @@ class HeroFlexibleContent extends StatefulWidget {
   final bool isAuthor;
   final UserModel currentUser;
   final Function goToSettings;
-  final Function onDiscussionToggle;
-  final Function getExpandedHeight;
   final bool isFollower;
+  final AnimationController animationController;
 
   HeroFlexibleContent({
     // @required this.height,
@@ -27,9 +26,8 @@ class HeroFlexibleContent extends StatefulWidget {
     @required this.goToSettings,
     this.story,
     this.currentUser,
-    @required this.onDiscussionToggle,
     @required this.isFollower,
-    @required this.getExpandedHeight,
+    @required this.animationController,
   });
 
   @override
@@ -38,10 +36,14 @@ class HeroFlexibleContent extends StatefulWidget {
 
 class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
   GlobalKey _descriptionKey = GlobalKey();
-  double descriptionHeight = 0.0;
-  double expandedHeight = 100.0;
-  bool showDiscussion = false;
   bool sharing = false;
+  ScrollController scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +53,6 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
     final double _paddingTop = MediaQuery.of(context).padding.top;
     final double _appBarHeight = AppBar().preferredSize.height;
     final double _deviceHeight = MediaQuery.of(context).size.height;
-    final double _expandedDiscussionHeight =
-        _deviceHeight - _paddingTop - _appBarHeight - 50.0;
 
     final Function shareStoryLink = () async {
       final DynamicLinkParameters parameters = DynamicLinkParameters(
@@ -112,16 +112,20 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
     };
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (storyProvider.expandedDiscussionHeight == 0) {
+        storyProvider.expandedDiscussionHeight =
+            _deviceHeight - _paddingTop - _appBarHeight - 50.0;
+      }
       final keyContext = _descriptionKey.currentContext;
       if (keyContext != null) {
         final _descriptionBox = keyContext.findRenderObject() as RenderBox;
         final double newHeight = _descriptionBox.size.height;
-        if (newHeight != descriptionHeight) {
-          setState(() {
-            expandedHeight = staticHeight + _descriptionBox.size.height;
-            descriptionHeight = _descriptionBox.size.height;
-          });
-          widget.getExpandedHeight(expandedHeight);
+        if (newHeight != storyProvider.descriptionHeight) {
+          storyProvider.expandedHeight =
+              staticHeight + _descriptionBox.size.height;
+          storyProvider.descriptionHeight = _descriptionBox.size.height;
+          widget.animationController.reset();
+          widget.animationController.forward();
         }
       }
     });
@@ -248,13 +252,9 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
           child: FlatButton(
             padding: EdgeInsets.all(0.0),
             onPressed: () {
-              setState(() {
-                showDiscussion = !showDiscussion;
-              });
-              widget.onDiscussionToggle(showDiscussion);
-              widget.getExpandedHeight(
-                showDiscussion ? _expandedDiscussionHeight : expandedHeight,
-              );
+              storyProvider.showDiscussion = !storyProvider.showDiscussion;
+              widget.animationController.reset();
+              widget.animationController.forward();
             },
             child: Icon(Icons.mode_comment),
             textColor: Theme.of(context).accentColor,
@@ -263,27 +263,65 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
       );
     }
 
+    scrollToTop() {
+      scrollController.animateTo(
+        0.0,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 300),
+      );
+    }
+
+    if (scrollController.hasClients) {
+      if (scrollController.offset != 0.0 && !storyProvider.showDiscussion) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          scrollToTop();
+        });
+      } else if (storyProvider.discussionFullView &&
+          scrollController.offset == 0.0) {
+        scrollController.jumpTo(
+          storyProvider.expandedHeight,
+        );
+      }
+    }
+
     return Container(
       padding: EdgeInsets.only(bottom: 15.0),
-      height: _expandedDiscussionHeight,
+      height: storyProvider.expandedDiscussionHeight,
       child: CustomScrollView(
-        physics: showDiscussion ? null : NeverScrollableScrollPhysics(),
+        controller: scrollController,
+        physics: storyProvider.showDiscussion
+            ? null
+            : NeverScrollableScrollPhysics(),
         slivers: [
           SliverAppBar(
             titleSpacing: 0.0,
-            expandedHeight: expandedHeight - 10.0,
+            expandedHeight: storyProvider.expandedHeight - 10.0,
             toolbarHeight: 0.0,
             elevation: 0.0,
-            // pinned: true,
-            floating: true,
+            pinned: true,
+            // floating: true,
             leading: null,
             forceElevated: false,
             automaticallyImplyLeading: false,
             flexibleSpace: LayoutBuilder(
               builder: (context, constraints) {
                 final _height = max(constraints.biggest.height, 0);
-                final opacity =
-                    min(max((_height - 25.0) / expandedHeight, 0.0), 1.0);
+                final opacity = min(
+                    max((_height - 25.0) / storyProvider.expandedHeight, 0.0),
+                    1.0);
+                if (_height < 35.0) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (!storyProvider.discussionFullView) {
+                      storyProvider.discussionFullView = true;
+                    }
+                  });
+                } else if (storyProvider.discussionFullView == true) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (storyProvider.discussionFullView) {
+                      storyProvider.discussionFullView = false;
+                    }
+                  });
+                }
                 return Opacity(
                   opacity: 1 * opacity,
                   child: AnimatedContainer(
@@ -293,8 +331,8 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
                       border: Border(
                         bottom: BorderSide(
                           width: 1.0,
-                          color:
-                              Colors.white.withAlpha(showDiscussion ? 255 : 0),
+                          color: Colors.white.withAlpha(
+                              storyProvider.showDiscussion ? 255 : 0),
                         ),
                       ),
                     ),

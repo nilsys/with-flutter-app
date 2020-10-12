@@ -9,6 +9,54 @@ export 'package:provider/provider.dart';
 class StoryVM extends ChangeNotifier {
   Api _api = Api('stories');
   final _auth = FirebaseAuth.instance;
+  bool _showDiscussion = false;
+  bool _discussionFullView = false;
+  double _expandedDiscussionHeight = 0.0;
+  double _expandedHeight = 100.0;
+  double _prevExpandedHeight = 0.0;
+  double _descriptionHeight = 0.0;
+
+  bool get showDiscussion => _showDiscussion;
+  bool get discussionFullView => _discussionFullView;
+  double get expandedDiscussionHeight => _expandedDiscussionHeight;
+  double get expandedHeight => _expandedHeight;
+  double get prevExpandedHeight => _prevExpandedHeight;
+  double get descriptionHeight => _descriptionHeight;
+
+  set showDiscussion(bool val) {
+    _showDiscussion = val;
+    notifyListeners();
+  }
+
+  set discussionFullView(bool val) {
+    _discussionFullView = val;
+    notifyListeners();
+  }
+
+  set expandedDiscussionHeight(double val) {
+    _expandedDiscussionHeight = val;
+    notifyListeners();
+  }
+
+  set expandedHeight(double val) {
+    _prevExpandedHeight = _expandedHeight;
+    _expandedHeight = val;
+    notifyListeners();
+  }
+
+  set descriptionHeight(double val) {
+    _descriptionHeight = val;
+    notifyListeners();
+  }
+
+  Function resetState() {
+    _showDiscussion = false;
+    _discussionFullView = false;
+    _expandedDiscussionHeight = 0.0;
+    _expandedHeight = 100.0;
+    _prevExpandedHeight = 0.0;
+    _descriptionHeight = 0.0;
+  }
 
   List<Story> stories;
 

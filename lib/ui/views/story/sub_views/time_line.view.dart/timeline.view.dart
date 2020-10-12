@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/models/user.model.dart';
+import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'sub_views/post.view.dart';
 import 'sub_views/hero/timeline_hero.view.dart';
@@ -26,12 +27,6 @@ class Timeline extends StatefulWidget {
 class _TimelineState extends State<Timeline> {
   ScrollController scrollController = ScrollController();
   bool hideDiscussionTab = true;
-  bool disableScroll = false;
-  void onDiscussionToggle(bool disable) {
-    setState(() {
-      disableScroll = disable;
-    });
-  }
 
   var maxHeight;
 
@@ -48,6 +43,8 @@ class _TimelineState extends State<Timeline> {
 
   @override
   Widget build(BuildContext context) {
+    final storyProvider = Provider.of<StoryVM>(context);
+
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
@@ -73,7 +70,9 @@ class _TimelineState extends State<Timeline> {
             },
             child: CustomScrollView(
               controller: scrollController,
-              physics: disableScroll ? NeverScrollableScrollPhysics() : null,
+              physics: storyProvider.showDiscussion
+                  ? NeverScrollableScrollPhysics()
+                  : null,
               slivers: <Widget>[
                 TimelineHero(
                   author: widget.author,
@@ -81,7 +80,6 @@ class _TimelineState extends State<Timeline> {
                   currentUser: widget.currentUser,
                   scrollController: scrollController,
                   goToSettings: widget.goToSettings,
-                  onDiscussionToggle: onDiscussionToggle,
                 ),
                 // Skeleton(),
                 SliverList(

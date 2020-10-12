@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:with_app/ui/shared/all.dart';
-import 'package:with_app/ui/views/home/home.view.dart';
 
 class StorySettings extends StatefulWidget {
-  Function goToTimeline;
+  final Function goToTimeline;
 
   StorySettings({
     @required this.goToTimeline,

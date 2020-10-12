@@ -1,19 +1,12 @@
-import 'dart:async';
 import 'dart:math';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:flutter/material.dart';
-import 'package:share/share.dart';
 import 'package:tinycolor/tinycolor.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/models/user.model.dart';
 import 'package:skeleton_loader/skeleton_loader.dart';
-import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
-import 'package:with_app/with_icons.dart';
 
 import 'sub_views/hero_flexible_content.view.dart';
 
@@ -23,7 +16,6 @@ class TimelineHero extends StatefulWidget {
   final UserModel currentUser;
   final ScrollController scrollController;
   final Function goToSettings;
-  final Function onDiscussionToggle;
 
   TimelineHero({
     this.author,
@@ -31,7 +23,6 @@ class TimelineHero extends StatefulWidget {
     this.currentUser,
     @required this.scrollController,
     @required this.goToSettings,
-    @required this.onDiscussionToggle,
   });
 
   @override
@@ -42,10 +33,6 @@ class _TimelineHeroState extends State<TimelineHero>
     with SingleTickerProviderStateMixin {
   bool _isCollapsed = false;
   bool sharing = false;
-  double expandedHeight = 100.0;
-  double prevExpandedHeight = 0.0;
-  double descriptionHeight = 0.0;
-  bool _showDiscussion = false;
   AnimationController animationController;
   Tween<double> tween;
   Animation animation;
@@ -53,18 +40,23 @@ class _TimelineHeroState extends State<TimelineHero>
   @override
   void initState() {
     super.initState();
+    final storyProvider = Provider.of<StoryVM>(context, listen: false);
     animationController = AnimationController(
       duration: Duration(milliseconds: 500),
       vsync: this,
     );
 
-    tween = Tween<double>(begin: prevExpandedHeight, end: expandedHeight);
+    tween = Tween<double>(
+        begin: storyProvider.prevExpandedHeight,
+        end: storyProvider.expandedHeight);
 
     animation = tween.animate(new CurvedAnimation(
         parent: animationController, curve: Curves.easeInOutCubic))
       ..addListener(() {
         setState(() {});
       });
+
+    animationController.forward();
     // SystemChrome.setEnabledSystemUIOverlays([]);
   }
 
@@ -77,21 +69,30 @@ class _TimelineHeroState extends State<TimelineHero>
 
   @override
   Widget build(context) {
+    final storyProvider = Provider.of<StoryVM>(context);
     final double _paddingTop = MediaQuery.of(context).padding.top;
     final double _appBarHeight = AppBar().preferredSize.height;
     bool isAuthor = widget.author?.id == widget.currentUser?.id;
     bool isFollower =
         widget.currentUser.stories.following.contains(widget.story.id);
 
-    getExpandedHeight(height) {
-      setState(() {
-        prevExpandedHeight = expandedHeight;
-        expandedHeight = height + _appBarHeight + _paddingTop - 10.0;
-      });
-      tween.begin = prevExpandedHeight;
-      animationController.reset();
-      tween.end = expandedHeight;
-      animationController.forward();
+    scrollToTop() {
+      widget.scrollController.animateTo(
+        0.0,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 300),
+      );
+    }
+
+    if (storyProvider.showDiscussion) {
+      if (_isCollapsed) {
+        scrollToTop();
+      }
+      tween.begin = storyProvider.expandedHeight;
+      tween.end = storyProvider.expandedDiscussionHeight;
+    } else {
+      tween.begin = storyProvider.expandedDiscussionHeight;
+      tween.end = storyProvider.expandedHeight;
     }
 
     Widget title = widget.author != null
@@ -151,6 +152,7 @@ class _TimelineHeroState extends State<TimelineHero>
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
         onPressed: () {
+          storyProvider.resetState();
           Navigator.pop(context);
         },
       ),
@@ -159,16 +161,38 @@ class _TimelineHeroState extends State<TimelineHero>
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.0)),
       ),
       backgroundColor: Theme.of(context).primaryColor,
-      // expandedHeight: expandedHeight,
-      expandedHeight: animation.value,
-      // expandedHeight: animationController.value,
+      expandedHeight: animation.value + _appBarHeight + _paddingTop - 10.0,
       collapsedHeight: _paddingTop + _appBarHeight - 19.0,
       actions: [
+        AnimatedOpacity(
+          opacity: _isCollapsed || storyProvider.discussionFullView ? 1.0 : 0.0,
+          duration: Duration(milliseconds: 500),
+          child: InkWell(
+            child: Container(
+              width: 40.0,
+              height: double.infinity,
+              child: Center(
+                child: Icon(
+                  Icons.mode_comment,
+                  size: 22.0,
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+            ),
+            onTap: () {
+              storyProvider.showDiscussion = !storyProvider.showDiscussion;
+              storyProvider.discussionFullView =
+                  !storyProvider.discussionFullView;
+              animationController.reset();
+              animationController.forward();
+            },
+          ),
+        ),
         InkWell(
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Transform.translate(
-              offset: Offset(0.0, 1.0),
+          child: Container(
+            width: 40.0,
+            height: double.infinity,
+            child: Center(
               child: Icon(
                 Icons.more_vert,
                 size: 24.0,
@@ -198,11 +222,7 @@ class _TimelineHeroState extends State<TimelineHero>
             //         ),
             //       );
             //     });
-            widget.scrollController.animateTo(
-              0.0,
-              curve: Curves.easeOut,
-              duration: const Duration(milliseconds: 300),
-            );
+            scrollToTop();
           },
         ),
       ],
@@ -229,12 +249,13 @@ class _TimelineHeroState extends State<TimelineHero>
               }
             });
           }
-          final squeeze =
-              min(1.0, max(_height / (expandedHeight - _appBarHeight), 0.0));
+          final squeeze = min(
+              1.0,
+              max(_height / (storyProvider.expandedHeight + _paddingTop - 10.0),
+                  0.0));
           return Opacity(
-            opacity: _showDiscussion ? 1 : 1 * squeeze,
+            opacity: storyProvider.showDiscussion ? 1 : 1 * squeeze,
             child: ClipRRect(
-              // borderRadius: BorderRadius.vertical(bottom: Radius.circular(30.0)),
               child: OverflowBox(
                 alignment: Alignment.topLeft,
                 minHeight: 0.0,
@@ -243,19 +264,12 @@ class _TimelineHeroState extends State<TimelineHero>
                   margin: EdgeInsets.only(top: _paddingTop + _appBarHeight),
                   padding: const EdgeInsets.fromLTRB(22.0, 0.0, 22.0, 26.0),
                   child: HeroFlexibleContent(
-                    // height: expandedHeight - _appBarHeight - _paddingTop,
                     story: widget.story,
                     isAuthor: isAuthor,
                     goToSettings: widget.goToSettings,
                     currentUser: widget.currentUser,
-                    onDiscussionToggle: ((showDiscussion) {
-                      widget.onDiscussionToggle(showDiscussion);
-                      setState(() {
-                        _showDiscussion = showDiscussion;
-                      });
-                    }),
                     isFollower: isFollower,
-                    getExpandedHeight: getExpandedHeight,
+                    animationController: animationController,
                   ),
                 ),
               ),
