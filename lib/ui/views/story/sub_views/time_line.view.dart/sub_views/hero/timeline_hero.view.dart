@@ -38,27 +38,45 @@ class TimelineHero extends StatefulWidget {
   _TimelineHeroState createState() => _TimelineHeroState();
 }
 
-class _TimelineHeroState extends State<TimelineHero> {
+class _TimelineHeroState extends State<TimelineHero>
+    with SingleTickerProviderStateMixin {
   bool _isCollapsed = false;
   bool sharing = false;
   double expandedHeight = 100.0;
+  double prevExpandedHeight = 0.0;
   double descriptionHeight = 0.0;
-  bool showDiscussion = false;
+  bool _showDiscussion = false;
+  AnimationController animationController;
+  Tween<double> tween;
+  Animation animation;
 
   @override
   void initState() {
     super.initState();
+    animationController = AnimationController(
+      duration: Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    tween = Tween<double>(begin: prevExpandedHeight, end: expandedHeight);
+
+    animation = tween.animate(new CurvedAnimation(
+        parent: animationController, curve: Curves.easeInOutCubic))
+      ..addListener(() {
+        setState(() {});
+      });
     // SystemChrome.setEnabledSystemUIOverlays([]);
   }
 
   @override
   void dispose() {
     super.dispose();
+    animationController.dispose();
     // SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   }
 
   @override
-  SliverAppBar build(context) {
+  Widget build(context) {
     final double _paddingTop = MediaQuery.of(context).padding.top;
     final double _appBarHeight = AppBar().preferredSize.height;
     bool isAuthor = widget.author?.id == widget.currentUser?.id;
@@ -67,8 +85,13 @@ class _TimelineHeroState extends State<TimelineHero> {
 
     getExpandedHeight(height) {
       setState(() {
+        prevExpandedHeight = expandedHeight;
         expandedHeight = height + _appBarHeight + _paddingTop - 10.0;
       });
+      tween.begin = prevExpandedHeight;
+      animationController.reset();
+      tween.end = expandedHeight;
+      animationController.forward();
     }
 
     Widget title = widget.author != null
@@ -136,7 +159,9 @@ class _TimelineHeroState extends State<TimelineHero> {
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.0)),
       ),
       backgroundColor: Theme.of(context).primaryColor,
-      expandedHeight: expandedHeight,
+      // expandedHeight: expandedHeight,
+      expandedHeight: animation.value,
+      // expandedHeight: animationController.value,
       collapsedHeight: _paddingTop + _appBarHeight - 19.0,
       actions: [
         InkWell(
@@ -204,9 +229,10 @@ class _TimelineHeroState extends State<TimelineHero> {
               }
             });
           }
-          final squeeze = max(_height / (expandedHeight - _appBarHeight), 0.0);
+          final squeeze =
+              min(1.0, max(_height / (expandedHeight - _appBarHeight), 0.0));
           return Opacity(
-            opacity: 1 * squeeze,
+            opacity: _showDiscussion ? 1 : 1 * squeeze,
             child: ClipRRect(
               // borderRadius: BorderRadius.vertical(bottom: Radius.circular(30.0)),
               child: OverflowBox(
@@ -224,9 +250,9 @@ class _TimelineHeroState extends State<TimelineHero> {
                     currentUser: widget.currentUser,
                     onDiscussionToggle: ((showDiscussion) {
                       widget.onDiscussionToggle(showDiscussion);
-                      // setState(() {
-                      //   expandedHeight += (showDiscussion ? 300 : -300);
-                      // });
+                      setState(() {
+                        _showDiscussion = showDiscussion;
+                      });
                     }),
                     isFollower: isFollower,
                     getExpandedHeight: getExpandedHeight,

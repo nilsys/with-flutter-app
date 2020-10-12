@@ -120,7 +120,6 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
           setState(() {
             expandedHeight = staticHeight + _descriptionBox.size.height;
             descriptionHeight = _descriptionBox.size.height;
-            // collapsedHeight = 0.0;
           });
           widget.getExpandedHeight(expandedHeight);
         }
@@ -173,9 +172,9 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
             onPressed: unFollowStory,
             highlightedBorderColor: Colors.white,
             borderSide: BorderSide(
-              color: Colors.white, //Color of the border
-              style: BorderStyle.solid, //Style of the border
-              width: 1, //width of the border
+              color: Colors.white,
+              style: BorderStyle.solid,
+              width: 1,
             ),
             child: Row(
               children: [
@@ -251,7 +250,6 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
             onPressed: () {
               setState(() {
                 showDiscussion = !showDiscussion;
-                // expandedHeight += showDiscussion ? 300 : -300;
               });
               widget.onDiscussionToggle(showDiscussion);
               widget.getExpandedHeight(
@@ -272,13 +270,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
         physics: showDiscussion ? null : NeverScrollableScrollPhysics(),
         slivers: [
           SliverAppBar(
-            // title: Transform.translate(
-            //   offset: Offset(0.0, -30.0),
-            //   child: Text('title'),
-            // ),
-            // backgroundColor: Colors.blue,
             titleSpacing: 0.0,
-            // collapsedHeight: 1.0,
             expandedHeight: expandedHeight - 10.0,
             toolbarHeight: 0.0,
             elevation: 0.0,
@@ -294,14 +286,15 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
                     min(max((_height - 25.0) / expandedHeight, 0.0), 1.0);
                 return Opacity(
                   opacity: 1 * opacity,
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 750),
+                    curve: Curves.easeInOutCubic,
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
                           width: 1.0,
-                          color: showDiscussion
-                              ? Colors.white
-                              : Colors.transparent,
+                          color:
+                              Colors.white.withAlpha(showDiscussion ? 255 : 0),
                         ),
                       ),
                     ),
@@ -357,7 +350,6 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
               (context, index) {
                 return index < 14
                     ? Container(
-                        // color: Colors.black,
                         child: Column(
                           children: [
                             SizedBox(
@@ -370,7 +362,6 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
                     : Column(
                         children: [
                           Container(
-                            // color: Colors.black,
                             child: Column(
                               children: [
                                 SizedBox(
