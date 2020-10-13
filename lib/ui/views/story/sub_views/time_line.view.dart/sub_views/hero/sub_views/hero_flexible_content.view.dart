@@ -42,6 +42,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
   @override
   void dispose() {
     scrollController.dispose();
+    widget.animationController.dispose();
     super.dispose();
   }
 
@@ -53,6 +54,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
     final double _paddingTop = MediaQuery.of(context).padding.top;
     final double _appBarHeight = AppBar().preferredSize.height;
     final double _deviceHeight = MediaQuery.of(context).size.height;
+    bool preventStateChange = false;
 
     final Function shareStoryLink = () async {
       final DynamicLinkParameters parameters = DynamicLinkParameters(
@@ -267,22 +269,26 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
       scrollController.animateTo(
         0.0,
         curve: Curves.easeOut,
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 150),
       );
     }
 
-    if (scrollController.hasClients) {
-      if (scrollController.offset != 0.0 && !storyProvider.showDiscussion) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          scrollToTop();
-        });
-      } else if (storyProvider.discussionFullView &&
-          scrollController.offset == 0.0) {
-        scrollController.jumpTo(
-          storyProvider.expandedHeight,
-        );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scrollController.hasClients) {
+        if (scrollController.offset != 0.0 && !storyProvider.showDiscussion) {
+          scrollController.jumpTo(
+            0.0,
+          );
+          // scrollToTop();
+        }
+        // else if (storyProvider.discussionFullView &&
+        //     scrollController.offset == 0.0) {
+        //   scrollController.jumpTo(
+        //     storyProvider.expandedHeight,
+        //   );
+        // }
       }
-    }
+    });
 
     return Container(
       padding: EdgeInsets.only(bottom: 15.0),
@@ -296,11 +302,12 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
           SliverAppBar(
             titleSpacing: 0.0,
             expandedHeight: storyProvider.expandedHeight - 10.0,
+            collapsedHeight: 1.0,
             toolbarHeight: 0.0,
             elevation: 0.0,
-            pinned: true,
-            // floating: true,
-            leading: null,
+            // pinned: true,
+            floating: true,
+            // leading: null,
             forceElevated: false,
             automaticallyImplyLeading: false,
             flexibleSpace: LayoutBuilder(

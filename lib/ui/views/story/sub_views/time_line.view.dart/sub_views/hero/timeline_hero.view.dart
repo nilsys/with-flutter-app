@@ -30,12 +30,16 @@ class TimelineHero extends StatefulWidget {
 }
 
 class _TimelineHeroState extends State<TimelineHero>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   bool _isCollapsed = false;
   bool sharing = false;
   AnimationController animationController;
   Tween<double> tween;
-  Animation animation;
+  Animation<double> animation;
+  // AnimationController animationController2;
+  // Tween<double> tweenDropArrow;
+  // Animation<double> animateDropArrow;
+  // double scaleDropMenuArrow = 0.0;
 
   @override
   void initState() {
@@ -51,10 +55,24 @@ class _TimelineHeroState extends State<TimelineHero>
         end: storyProvider.expandedHeight);
 
     animation = tween.animate(new CurvedAnimation(
-        parent: animationController, curve: Curves.easeInOutCubic))
+      parent: animationController,
+      curve: Curves.easeInOutCubic,
+    ))
       ..addListener(() {
         setState(() {});
       });
+
+    // animationController2 = AnimationController(
+    //   duration: Duration(milliseconds: 2500),
+    //   vsync: this,
+    // );
+
+    // tweenDropArrow = Tween<double>(begin: 0, end: 180 / 360);
+
+    // animateDropArrow = tweenDropArrow.animate(CurvedAnimation(
+    //   parent: animationController2,
+    //   curve: Curves.easeInOutCubic,
+    // ));
 
     animationController.forward();
     // SystemChrome.setEnabledSystemUIOverlays([]);
@@ -64,6 +82,7 @@ class _TimelineHeroState extends State<TimelineHero>
   void dispose() {
     super.dispose();
     animationController.dispose();
+    // animationControllerForDropMenuArrow.dispose();
     // SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   }
 
@@ -75,6 +94,11 @@ class _TimelineHeroState extends State<TimelineHero>
     bool isAuthor = widget.author?.id == widget.currentUser?.id;
     bool isFollower =
         widget.currentUser.stories.following.contains(widget.story.id);
+    bool showDiscussionToggleBtn =
+        _isCollapsed || storyProvider.discussionFullView;
+
+    // tweenDropArrow.begin = _isCollapsed ? 180.0 / 360 : 0.0;
+    // tweenDropArrow.end = _isCollapsed ? 0.0 : 180 / 360;
 
     scrollToTop() {
       widget.scrollController.animateTo(
@@ -82,6 +106,15 @@ class _TimelineHeroState extends State<TimelineHero>
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 300),
       );
+    }
+
+    collapseHero() {
+      widget.scrollController.animateTo(
+        storyProvider.expandedHeight + _paddingTop - 10.0,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 300),
+      );
+      storyProvider.showDiscussion = false;
     }
 
     if (storyProvider.showDiscussion) {
@@ -99,12 +132,12 @@ class _TimelineHeroState extends State<TimelineHero>
         ? Transform.translate(
             offset: Offset(-15.0, 0.0),
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 0),
               layoutBuilder:
                   (Widget currentChild, List<Widget> previousChildren) {
                 return currentChild;
               },
-              child: _isCollapsed
+              child: showDiscussionToggleBtn
                   ? Transform.translate(
                       offset: Offset(0.0, -2.0),
                       child: Text(
@@ -162,68 +195,74 @@ class _TimelineHeroState extends State<TimelineHero>
       ),
       backgroundColor: Theme.of(context).primaryColor,
       expandedHeight: animation.value + _appBarHeight + _paddingTop - 10.0,
-      collapsedHeight: _paddingTop + _appBarHeight - 19.0,
+      collapsedHeight: _paddingTop + _appBarHeight - 22.0,
       actions: [
-        AnimatedOpacity(
-          opacity: _isCollapsed || storyProvider.discussionFullView ? 1.0 : 0.0,
-          duration: Duration(milliseconds: 500),
-          child: InkWell(
-            child: Container(
-              width: 40.0,
-              height: double.infinity,
-              child: Center(
-                child: Icon(
-                  Icons.mode_comment,
-                  size: 22.0,
-                  color: Theme.of(context).accentColor,
-                ),
-              ),
-            ),
-            onTap: () {
-              storyProvider.showDiscussion = !storyProvider.showDiscussion;
-              storyProvider.discussionFullView =
-                  !storyProvider.discussionFullView;
-              animationController.reset();
-              animationController.forward();
-            },
-          ),
-        ),
+        // AnimatedOpacity(
+        //   opacity: showDiscussionToggleBtn ? 1.0 : 0.0,
+        //   duration: Duration(milliseconds: 0),
+        //   child: InkWell(
+        //     child: Container(
+        //       width: 40.0,
+        //       height: double.infinity,
+        //       child: Center(
+        //         child: Icon(
+        //           Icons.mode_comment,
+        //           size: 22.0,
+        //           color: Theme.of(context).accentColor,
+        //         ),
+        //       ),
+        //     ),
+        //     onTap: showDiscussionToggleBtn
+        //         ? () {
+        //             storyProvider.showDiscussion =
+        //                 !storyProvider.showDiscussion;
+        //             // storyProvider.discussionFullView =
+        //             //     !storyProvider.discussionFullView;
+        //             animationController.reset();
+        //             animationController.forward();
+        //           }
+        //         : null,
+        //   ),
+        // ),
         InkWell(
           child: Container(
             width: 40.0,
             height: double.infinity,
+            margin: EdgeInsets.only(right: 10.0),
             child: Center(
               child: Icon(
-                Icons.more_vert,
+                _isCollapsed
+                    ? Icons.keyboard_arrow_down
+                    : Icons.keyboard_arrow_up,
                 size: 24.0,
                 color: Colors.white,
               ),
             ),
           ),
-          onTap: () {
-            // showModalBottomSheet(
-            //     context: context,
-            //     builder: (context) {
-            //       return FractionallySizedBox(
-            //         heightFactor: 0.4,
-            //         child: Container(
-            //           color: Theme.of(context).primaryColor,
-            //           padding: EdgeInsets.all(22.0),
-            //           child: Column(
-            //             children: [
-            //               listItem('SETTINGS', Icons.settings, () {}),
-            //               SizedBox(
-            //                 height: 15.0,
-            //               ),
-            //               listItem('SHARE', Icons.share,
-            //                   sharing == false ? shareStoryLink : null),
-            //             ],
-            //           ),
-            //         ),
-            //       );
-            //     });
-            scrollToTop();
-          },
+          // onTap: () {
+          //   // showModalBottomSheet(
+          //   //     context: context,
+          //   //     builder: (context) {
+          //   //       return FractionallySizedBox(
+          //   //         heightFactor: 0.4,
+          //   //         child: Container(
+          //   //           color: Theme.of(context).primaryColor,
+          //   //           padding: EdgeInsets.all(22.0),
+          //   //           child: Column(
+          //   //             children: [
+          //   //               listItem('SETTINGS', Icons.settings, () {}),
+          //   //               SizedBox(
+          //   //                 height: 15.0,
+          //   //               ),
+          //   //               listItem('SHARE', Icons.share,
+          //   //                   sharing == false ? shareStoryLink : null),
+          //   //             ],
+          //   //           ),
+          //   //         ),
+          //   //       );
+          //   //     });
+          // },
+          onTap: _isCollapsed ? scrollToTop : collapseHero,
         ),
       ],
       pinned: true,
