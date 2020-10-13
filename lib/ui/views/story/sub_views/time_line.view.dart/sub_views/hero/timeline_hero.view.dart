@@ -197,73 +197,66 @@ class _TimelineHeroState extends State<TimelineHero>
       expandedHeight: animation.value + _appBarHeight + _paddingTop - 10.0,
       collapsedHeight: _paddingTop + _appBarHeight - 22.0,
       actions: [
-        // AnimatedOpacity(
-        //   opacity: showDiscussionToggleBtn ? 1.0 : 0.0,
-        //   duration: Duration(milliseconds: 0),
-        //   child: InkWell(
-        //     child: Container(
-        //       width: 40.0,
-        //       height: double.infinity,
-        //       child: Center(
-        //         child: Icon(
-        //           Icons.mode_comment,
-        //           size: 22.0,
-        //           color: Theme.of(context).accentColor,
-        //         ),
+        IconButton(
+          icon: Icon(
+            Icons.mode_comment,
+            size: 22.0,
+            color: Theme.of(context).accentColor,
+          ),
+          onPressed: () {
+            storyProvider.showDiscussion = !storyProvider.showDiscussion;
+            // storyProvider.discussionFullView =
+            //     !storyProvider.discussionFullView;
+            animationController.reset();
+            animationController.forward();
+          },
+        ),
+        IconButton(
+          icon: Icon(
+            _isCollapsed ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
+          ),
+          onPressed: _isCollapsed ? scrollToTop : collapseHero,
+        ),
+        // InkWell(
+        //   child: Container(
+        //     width: 40.0,
+        //     height: double.infinity,
+        //     margin: EdgeInsets.only(right: 10.0),
+        //     child: Center(
+        //       child: Icon(
+        //         _isCollapsed
+        //             ? Icons.keyboard_arrow_down
+        //             : Icons.keyboard_arrow_up,
+        //         size: 24.0,
+        //         color: Colors.white,
         //       ),
         //     ),
-        //     onTap: showDiscussionToggleBtn
-        //         ? () {
-        //             storyProvider.showDiscussion =
-        //                 !storyProvider.showDiscussion;
-        //             // storyProvider.discussionFullView =
-        //             //     !storyProvider.discussionFullView;
-        //             animationController.reset();
-        //             animationController.forward();
-        //           }
-        //         : null,
         //   ),
+        //   // onTap: () {
+        //   //   // showModalBottomSheet(
+        //   //   //     context: context,
+        //   //   //     builder: (context) {
+        //   //   //       return FractionallySizedBox(
+        //   //   //         heightFactor: 0.4,
+        //   //   //         child: Container(
+        //   //   //           color: Theme.of(context).primaryColor,
+        //   //   //           padding: EdgeInsets.all(22.0),
+        //   //   //           child: Column(
+        //   //   //             children: [
+        //   //   //               listItem('SETTINGS', Icons.settings, () {}),
+        //   //   //               SizedBox(
+        //   //   //                 height: 15.0,
+        //   //   //               ),
+        //   //   //               listItem('SHARE', Icons.share,
+        //   //   //                   sharing == false ? shareStoryLink : null),
+        //   //   //             ],
+        //   //   //           ),
+        //   //   //         ),
+        //   //   //       );
+        //   //   //     });
+        //   // },
+        //   onTap: _isCollapsed ? scrollToTop : collapseHero,
         // ),
-        InkWell(
-          child: Container(
-            width: 40.0,
-            height: double.infinity,
-            margin: EdgeInsets.only(right: 10.0),
-            child: Center(
-              child: Icon(
-                _isCollapsed
-                    ? Icons.keyboard_arrow_down
-                    : Icons.keyboard_arrow_up,
-                size: 24.0,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          // onTap: () {
-          //   // showModalBottomSheet(
-          //   //     context: context,
-          //   //     builder: (context) {
-          //   //       return FractionallySizedBox(
-          //   //         heightFactor: 0.4,
-          //   //         child: Container(
-          //   //           color: Theme.of(context).primaryColor,
-          //   //           padding: EdgeInsets.all(22.0),
-          //   //           child: Column(
-          //   //             children: [
-          //   //               listItem('SETTINGS', Icons.settings, () {}),
-          //   //               SizedBox(
-          //   //                 height: 15.0,
-          //   //               ),
-          //   //               listItem('SHARE', Icons.share,
-          //   //                   sharing == false ? shareStoryLink : null),
-          //   //             ],
-          //   //           ),
-          //   //         ),
-          //   //       );
-          //   //     });
-          // },
-          onTap: _isCollapsed ? scrollToTop : collapseHero,
-        ),
       ],
       pinned: true,
       forceElevated: true,

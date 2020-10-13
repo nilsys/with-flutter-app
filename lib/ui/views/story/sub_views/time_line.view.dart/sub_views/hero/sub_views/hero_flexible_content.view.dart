@@ -276,10 +276,10 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (scrollController.hasClients) {
         if (scrollController.offset != 0.0 && !storyProvider.showDiscussion) {
-          scrollController.jumpTo(
-            0.0,
-          );
-          // scrollToTop();
+          // scrollController.jumpTo(
+          //   0.0,
+          // );
+          scrollToTop();
         }
         // else if (storyProvider.discussionFullView &&
         //     scrollController.offset == 0.0) {
@@ -378,7 +378,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
                                 settingsBtn(),
                                 shareBtn(),
                                 Spacer(),
-                                discussionBtn(),
+                                // discussionBtn(),
                               ],
                             ),
                           ],
@@ -394,36 +394,44 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 return index < 14
-                    ? Container(
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 22.0,
-                            ),
-                            Text('Comment ${index + 1}'),
-                          ],
+                    ? AnimatedOpacity(
+                        opacity: storyProvider.showDiscussion ? 1.0 : 0.0,
+                        duration: Duration(milliseconds: 500),
+                        child: Container(
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 22.0,
+                              ),
+                              Text('Comment ${index + 1}'),
+                            ],
+                          ),
                         ),
                       )
-                    : Column(
-                        children: [
-                          Container(
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: 22.0,
-                                ),
-                                Text('Comment ${index + 1}'),
-                              ],
+                    : AnimatedOpacity(
+                        opacity: storyProvider.showDiscussion ? 1.0 : 0.0,
+                        duration: Duration(milliseconds: 500),
+                        child: Column(
+                          children: [
+                            Container(
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 22.0,
+                                  ),
+                                  Text('Comment ${index + 1}'),
+                                ],
+                              ),
                             ),
-                          ),
-                          Container(
-                            color: Colors.red,
-                            height: 40.0,
-                            child: Center(
-                              child: Text('Input box'),
+                            Container(
+                              color: Colors.red,
+                              height: 40.0,
+                              child: Center(
+                                child: Text('Input box'),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       );
               },
               childCount: 15,
