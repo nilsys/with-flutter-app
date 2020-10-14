@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:with_app/core/models/user_stories.model.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/core/models/user.model.dart';
 import 'package:with_app/ui/shared/all.dart';
-import 'package:with_app/ui/views/home.view.dart';
+import 'package:with_app/ui/views/home/home.view.dart';
 import '../auth_hero.view.dart';
 import 'sub_views/credentials.view.dart';
 import 'sub_views/name_and_photo.view.dart';
@@ -89,6 +90,7 @@ class _SignupState extends State<Signup> {
                   displayName: controllers['display_name'].text.trim(),
                   dayOfBirth: _dayOfBirth,
                   profileImage: _url,
+                  stories: UserStories(),
                 ),
                 userCredentials.user.uid);
           }

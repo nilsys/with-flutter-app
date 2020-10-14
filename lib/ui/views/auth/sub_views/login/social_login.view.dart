@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:with_app/core/models/user.model.dart';
+import 'package:with_app/core/models/user_stories.model.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
 import 'package:with_app/with_icons.dart';
@@ -47,6 +48,7 @@ class SocialLogin extends StatelessWidget {
                   displayName: credentials.additionalUserInfo.username,
                   email: credentials.user.email,
                   profileImage: credentials.user.photoURL,
+                  stories: UserStories(),
                 ),
                 credentials.user.uid);
             break;
@@ -102,6 +104,7 @@ class SocialLogin extends StatelessWidget {
               displayName: credentials.additionalUserInfo.profile['name'],
               email: credentials.user.email,
               profileImage: credentials.user.photoURL,
+              stories: UserStories(),
             ),
             credentials.user.uid);
       } on PlatformException catch (err) {

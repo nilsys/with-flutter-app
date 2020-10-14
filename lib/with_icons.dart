@@ -50,10 +50,12 @@ class With {
   static const IconData user = IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData gavel = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData block = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData equalizer = IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData face = IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData fairy_wand = IconData(0xe9b6, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData question = IconData(0xf128, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData google = IconData(0xf1a0, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData stop = IconData(0xf359, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData settings = IconData(0xf36c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData facebook = IconData(0xf39e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

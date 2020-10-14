@@ -4,10 +4,10 @@ import 'package:with_app/core/view_models/story.vm.dart';
 // import 'package:with_app/ui/views/ModifyStory.dart';
 import 'package:provider/provider.dart';
 
-class StoryView extends StatelessWidget {
+class StoryCard extends StatelessWidget {
   final Story story;
 
-  StoryView({@required this.story});
+  StoryCard({@required this.story});
 
   @override
   Widget build(BuildContext context) {
