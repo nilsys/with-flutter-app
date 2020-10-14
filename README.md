@@ -18,6 +18,14 @@
 
 ## Coding Guildlines
 
+### Workflow
+
+1. Update your develop branch to the latest commit
+1. Branch out from develop branch. branch name should be as provided in the assignment ticket.
+1. Complete the assignment
+1. Create a pull request to the develop branch
+1. Get paid!
+
 ### State Managemnt
 
 1. State should be handled inside a `StatefulWidget` widget <br>
