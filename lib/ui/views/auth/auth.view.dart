@@ -5,7 +5,7 @@ import 'sub_views/login/login.view.dart';
 import 'package:flutter/services.dart';
 
 class AuthView extends StatefulWidget {
-  static const String route = '/auth';
+  static const String route = 'auth';
 
   @override
   _AuthViewState createState() => _AuthViewState();

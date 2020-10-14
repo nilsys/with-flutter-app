@@ -25,7 +25,11 @@ class StoryStatus {
 
   toJson() {
     return {
-      "last_viewed_at": lastViewedAt,
+      "id": id,
+      "last_viewed_at": Timestamp.fromDate(lastViewedAt),
+      "new_posts": newPosts,
+      "new_comments": newComments,
+      "new_reactions": newReactions,
     };
   }
 }

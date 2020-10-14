@@ -10,11 +10,15 @@ class Story {
   final List<String> followers;
   final List<String> viewers;
   final int views;
+  final int posts;
   final String heroImage;
+  final String description;
+  final bool private;
 
   Story({
     this.id,
     this.heroImage,
+    this.description,
     @required this.createdAt,
     @required this.closedAt,
     @required this.owner,
@@ -22,6 +26,8 @@ class Story {
     @required this.followers,
     @required this.viewers,
     @required this.views,
+    @required this.private,
+    @required this.posts,
   });
 
   Story.fromMap(Map snapshot, String id)
@@ -33,9 +39,12 @@ class Story {
             : null,
         owner = snapshot['owner'],
         title = snapshot['title'],
-        followers = snapshot['followers'].cast<String>(),
-        viewers = snapshot['viewers'].cast<String>(),
-        views = snapshot['views'];
+        followers = snapshot['followers'].cast<String>().toList(),
+        viewers = snapshot['viewers'].cast<String>().toList(),
+        views = snapshot['views'],
+        private = snapshot['private'],
+        posts = snapshot['posts'],
+        description = snapshot['description'];
 
   toJson() {
     return {
@@ -47,6 +56,9 @@ class Story {
       "viewers": viewers,
       "views": views,
       "hero_image": heroImage,
+      "description": description,
+      "private": private,
+      "posts": posts,
     };
   }
 }

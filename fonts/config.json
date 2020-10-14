@@ -71,6 +71,18 @@
       "css": "question",
       "code": 61736,
       "src": "fontawesome5"
+    },
+    {
+      "uid": "e3699d145bd628d2a35d4a508b616f0c",
+      "css": "equalizer",
+      "code": 59397,
+      "src": "iconic"
+    },
+    {
+      "uid": "e9f1a4b0968111eab72aacfdce5a3d9f",
+      "css": "settings",
+      "code": 62316,
+      "src": "octicons"
     }
   ]
 }
