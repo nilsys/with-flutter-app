@@ -15,21 +15,7 @@
 
 <br>
 
-## Specs
-
-> [Zeplin](https://app.zeplin.io/project/5f1ef2336d077042adcdbdd5)  
-> [Invision](https://projects.invisionapp.com/share/84XUFY6SRXW#/screens)
-
-<br>
-
-## Publish to github pages
-
-```
-$ git add build/web && git commit -m "Initial dist subtree commit"
-```
-
-<br>
-
-## QA
-
-...
+## Coding Guildlines
+> State should be handled inside a stafull widget <br>
+> If the state should be acceced in more than one widget use a change change-notifier provider <br>
+> Please use widgets from the sahred widgets folder if possible
