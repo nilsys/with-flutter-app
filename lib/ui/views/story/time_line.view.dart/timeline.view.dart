@@ -3,8 +3,8 @@ import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/models/user.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
-import 'sub_views/post.view.dart';
-import 'sub_views/hero/timeline_hero.view.dart';
+import 'post.view.dart';
+import 'hero/hero.view.dart';
 
 class Timeline extends StatefulWidget {
   final Story story;

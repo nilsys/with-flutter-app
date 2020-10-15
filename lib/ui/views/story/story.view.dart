@@ -5,8 +5,8 @@ import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
-import 'sub_views/story_settings.view.dart/story_settings.view.dart';
-import 'sub_views/time_line.view.dart/timeline.view.dart';
+import 'story_settings.view.dart/story_settings.view.dart';
+import 'time_line.view.dart/timeline.view.dart';
 
 class StoryView extends StatefulWidget {
   static const String route = 'story';

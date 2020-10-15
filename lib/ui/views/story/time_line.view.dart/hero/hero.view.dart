@@ -7,8 +7,7 @@ import 'package:skeleton_loader/skeleton_loader.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
-
-import 'sub_views/hero_flexible_content.view.dart';
+import 'hero_flexible_content.view.dart';
 
 class TimelineHero extends StatefulWidget {
   final UserModel author;
