@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:with_app/ui/shared/all.dart';
 
 class StorySettings extends StatefulWidget {
@@ -36,24 +35,24 @@ class _StorySettingsState extends State<StorySettings> {
 
   @override
   Widget build(BuildContext context) {
-    @swidget
-    Widget title() => CustomTextInput(
-          controller: controllers['email'],
-          key: Key('email'),
-          deny: RegExp(r"\s+"),
-          onChange: (value) {
-            // bool isValid = EmailValidator.validate(value.trim());
-            // setState(() {
-            //   _emailIsValid = isValid;
-            // });
-          },
-          validator: (value) {
-            // return EmailValidator.validate(value.trim());
-            return true;
-          },
-          placeHolder: 'Email',
-          onTap: scrollController.scrollToBottom,
-        );
+    // @swidget
+    // Widget title() => CustomTextInput(
+    //       controller: controllers['email'],
+    //       key: Key('email'),
+    //       deny: RegExp(r"\s+"),
+    //       onChange: (value) {
+    //         // bool isValid = EmailValidator.validate(value.trim());
+    //         // setState(() {
+    //         //   _emailIsValid = isValid;
+    //         // });
+    //       },
+    //       validator: (value) {
+    //         // return EmailValidator.validate(value.trim());
+    //         return true;
+    //       },
+    //       placeHolder: 'Email',
+    //       onTap: scrollController.scrollToBottom,
+    //     );
 
     return GestureDetector(
       onTap: () {

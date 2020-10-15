@@ -6,11 +6,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../services/api.dart';
 import '../models/user.model.dart';
+
 export '../models/user.model.dart';
+export 'package:with_app/locator.dart';
 
 class UserVM extends ChangeNotifier {
   Api _api = Api('users');
   final _auth = FirebaseAuth.instance;
+  bool _emailLinkExpired = false;
+
+  bool get emailLinkExpired => _emailLinkExpired;
+
+  set emailLinkExpired(bool val) {
+    _emailLinkExpired = val;
+    notifyListeners();
+  }
 
   List<UserModel> users;
 
@@ -58,10 +68,20 @@ class UserVM extends ChangeNotifier {
     return url;
   }
 
+  // TODO: remove this method - depricated (use setUser instead)
   Future addUser(UserModel data, String uid) async {
     Map<String, dynamic> _data = data.toJson();
     _data['stories'] = _data['stories'].toJson();
     await _api.addDocument(_data, id: uid);
+    return;
+  }
+
+  Future setUser(UserModel data, String uid) async {
+    Map<String, dynamic> _data = data.toJson();
+    if (_data['stories'] != null) {
+      _data['stories'] = _data['stories'].toJson();
+    }
+    await _api.updateDocument(_data, uid);
     return;
   }
 

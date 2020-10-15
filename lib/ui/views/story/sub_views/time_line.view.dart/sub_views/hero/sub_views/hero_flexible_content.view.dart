@@ -54,7 +54,6 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
     final double _paddingTop = MediaQuery.of(context).padding.top;
     final double _appBarHeight = AppBar().preferredSize.height;
     final double _deviceHeight = MediaQuery.of(context).size.height;
-    bool preventStateChange = false;
 
     final Function shareStoryLink = () async {
       final DynamicLinkParameters parameters = DynamicLinkParameters(
@@ -245,25 +244,25 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
           ),
         );
 
-    @swidget
-    Widget discussionBtn() {
-      return Transform.translate(
-        offset: Offset(0.0, 0.0),
-        child: Container(
-          width: 40.0,
-          child: FlatButton(
-            padding: EdgeInsets.all(0.0),
-            onPressed: () {
-              storyProvider.showDiscussion = !storyProvider.showDiscussion;
-              widget.animationController.reset();
-              widget.animationController.forward();
-            },
-            child: Icon(Icons.mode_comment),
-            textColor: Theme.of(context).accentColor,
-          ),
-        ),
-      );
-    }
+    // @swidget
+    // Widget discussionBtn() {
+    //   return Transform.translate(
+    //     offset: Offset(0.0, 0.0),
+    //     child: Container(
+    //       width: 40.0,
+    //       child: FlatButton(
+    //         padding: EdgeInsets.all(0.0),
+    //         onPressed: () {
+    //           storyProvider.showDiscussion = !storyProvider.showDiscussion;
+    //           widget.animationController.reset();
+    //           widget.animationController.forward();
+    //         },
+    //         child: Icon(Icons.mode_comment),
+    //         textColor: Theme.of(context).accentColor,
+    //       ),
+    //     ),
+    //   );
+    // }
 
     scrollToTop() {
       scrollController.animateTo(

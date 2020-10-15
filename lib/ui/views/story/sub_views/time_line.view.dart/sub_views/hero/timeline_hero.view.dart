@@ -81,7 +81,7 @@ class _TimelineHeroState extends State<TimelineHero>
   @override
   void dispose() {
     super.dispose();
-    animationController.dispose();
+    // animationController.dispose();
     // animationControllerForDropMenuArrow.dispose();
     // SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   }

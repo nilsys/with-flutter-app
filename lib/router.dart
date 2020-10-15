@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'ui/views/home/home.view.dart';
 // import './views/auth.view.dart';
+// import 'ui/views/auth/auth.view.dart';
 import 'ui/views/auth/auth.view.dart';
 import 'ui/views/story/story.view.dart';
 
