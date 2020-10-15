@@ -32,7 +32,7 @@ class UserModel {
         profileImage = data['profile_image'];
 
   toJson() {
-    var obj = {};
+    Map<String, dynamic> obj = {};
     if (displayName != null) {
       obj["display_name"] = displayName;
     }
