@@ -18,14 +18,22 @@
 
 ## Coding Guildlines
 
+### Workflow
+
+1. Update your develop branch to the latest commit
+1. Branch out from develop branch. branch name should be as provided in the assignment ticket.
+1. Complete the assignment
+1. Create a pull request to the develop branch
+1. Get paid!
+
 ### State Managemnt
 
-1. State should be handled inside a stafull widget <br>
-1. If the state should be acceced in more than one widget use a change-notifier provider `(lib/core/view_models)`
+1. State should be handled inside a `StatefulWidget` widget <br>
+1. If the state should be acceced in more than one widget use a `ChangeNotifier` provider. (see: `lib/core/view_models`)
 
 ### Code Reuse
 
-1. Use widgets from the sahred widgets folder if possible `(lib/ui/shared)`
+1. Use widgets from the sahred widgets folder if possible (see: `lib/ui/shared`)
 
 ### Code Style
 
