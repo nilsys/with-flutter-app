@@ -13,14 +13,14 @@ class TimelineHero extends StatefulWidget {
   final UserModel author;
   final Story story;
   final UserModel currentUser;
-  final ScrollController scrollController;
+  final ScrollController scrollController1;
   final Function goToSettings;
 
   TimelineHero({
     this.author,
     this.story,
     this.currentUser,
-    @required this.scrollController,
+    @required this.scrollController1,
     @required this.goToSettings,
   });
 
@@ -100,7 +100,7 @@ class _TimelineHeroState extends State<TimelineHero>
     // tweenDropArrow.end = _isCollapsed ? 0.0 : 180 / 360;
 
     scrollToTop() {
-      widget.scrollController.animateTo(
+      widget.scrollController1.animateTo(
         0.0,
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 300),
@@ -108,7 +108,7 @@ class _TimelineHeroState extends State<TimelineHero>
     }
 
     collapseHero() {
-      widget.scrollController.animateTo(
+      widget.scrollController1.animateTo(
         storyProvider.expandedHeight + _paddingTop - 10.0,
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 300),
@@ -292,6 +292,7 @@ class _TimelineHeroState extends State<TimelineHero>
                 minHeight: 0.0,
                 maxHeight: double.infinity,
                 child: Container(
+                  // color: Colors.red,
                   margin: EdgeInsets.only(top: _paddingTop + _appBarHeight),
                   padding: const EdgeInsets.fromLTRB(22.0, 0.0, 22.0, 26.0),
                   child: HeroFlexibleContent(

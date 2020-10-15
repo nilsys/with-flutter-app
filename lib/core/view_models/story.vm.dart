@@ -5,48 +5,87 @@ import '../services/api.dart';
 import '../models/story.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 export 'package:provider/provider.dart';
+export 'package:with_app/locator.dart';
 
 class StoryVM extends ChangeNotifier {
   Api _api = Api('stories');
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
   bool _showDiscussion = false;
   bool _discussionFullView = false;
+  bool _keyboardIsOpen = false;
   double _expandedDiscussionHeight = 0.0;
   double _expandedHeight = 100.0;
   double _prevExpandedHeight = 0.0;
   double _descriptionHeight = 0.0;
+  double _discussionHeight = 0.0;
+  String _storyId;
 
   bool get showDiscussion => _showDiscussion;
   bool get discussionFullView => _discussionFullView;
+  bool get keyboardIsOpen => _keyboardIsOpen;
   double get expandedDiscussionHeight => _expandedDiscussionHeight;
   double get expandedHeight => _expandedHeight;
   double get prevExpandedHeight => _prevExpandedHeight;
   double get descriptionHeight => _descriptionHeight;
+  double get discussionHeight => _discussionHeight;
+  String get storyId => _storyId;
 
   set showDiscussion(bool val) {
-    _showDiscussion = val;
-    notifyListeners();
+    if (_showDiscussion != val) {
+      _showDiscussion = val;
+      notifyListeners();
+    }
   }
 
   set discussionFullView(bool val) {
-    _discussionFullView = val;
-    notifyListeners();
+    if (_discussionFullView != val) {
+      _discussionFullView = val;
+      notifyListeners();
+    }
   }
 
   set expandedDiscussionHeight(double val) {
-    _expandedDiscussionHeight = val;
-    notifyListeners();
+    if (_expandedDiscussionHeight != val) {
+      _expandedDiscussionHeight = val;
+      notifyListeners();
+    }
+  }
+
+  set discussionHeight(double val) {
+    if (_discussionHeight != val) {
+      _discussionHeight = val;
+      notifyListeners();
+    }
+  }
+
+  set keyboardIsOpen(bool val) {
+    if (_keyboardIsOpen != val) {
+      _keyboardIsOpen = val;
+      notifyListeners();
+    }
   }
 
   set expandedHeight(double val) {
-    _prevExpandedHeight = _expandedHeight;
-    _expandedHeight = val;
-    notifyListeners();
+    if (_expandedHeight != val) {
+      _prevExpandedHeight = _expandedHeight;
+      _expandedHeight = val;
+      notifyListeners();
+    }
   }
 
   set descriptionHeight(double val) {
-    _descriptionHeight = val;
-    notifyListeners();
+    if (_descriptionHeight != val) {
+      _descriptionHeight = val;
+      notifyListeners();
+    }
+  }
+
+  set storyId(String val) {
+    if (_storyId != val) {
+      _storyId = val;
+      notifyListeners();
+    }
   }
 
   void resetState() {
@@ -73,6 +112,11 @@ class StoryVM extends ChangeNotifier {
 
   Stream<DocumentSnapshot> fetchStoryAsStream(String storyId) {
     return _api.streamDoc(storyId);
+  }
+
+  Stream<QuerySnapshot> streamDiscussion() {
+    CollectionReference ref = _db.collection('stories/$_storyId/discussion');
+    return ref.snapshots();
   }
 
   Future<Story> getStoryById(String id) async {

@@ -25,7 +25,7 @@ class Timeline extends StatefulWidget {
 }
 
 class _TimelineState extends State<Timeline> {
-  ScrollController scrollController = ScrollController();
+  ScrollController scrollController1 = new ScrollController();
   bool hideDiscussionTab = true;
 
   var maxHeight;
@@ -37,7 +37,7 @@ class _TimelineState extends State<Timeline> {
 
   @override
   void dispose() {
-    scrollController.dispose();
+    scrollController1.dispose();
     super.dispose();
   }
 
@@ -69,7 +69,7 @@ class _TimelineState extends State<Timeline> {
               return false;
             },
             child: CustomScrollView(
-              controller: scrollController,
+              controller: scrollController1,
               physics: storyProvider.showDiscussion
                   ? NeverScrollableScrollPhysics()
                   : null,
@@ -78,7 +78,7 @@ class _TimelineState extends State<Timeline> {
                   author: widget.author,
                   story: widget.story,
                   currentUser: widget.currentUser,
-                  scrollController: scrollController,
+                  scrollController1: scrollController1,
                   goToSettings: widget.goToSettings,
                 ),
                 // Skeleton(),

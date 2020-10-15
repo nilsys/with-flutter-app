@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:with_app/ui/shared/all.dart';
 
 class StorySettings extends StatefulWidget {
   final Function goToTimeline;
@@ -13,7 +12,7 @@ class StorySettings extends StatefulWidget {
 }
 
 class _StorySettingsState extends State<StorySettings> {
-  ScrollControl scrollController = ScrollControl();
+  // ScrollController scrollController = ScrollController();
   final Map<String, TextEditingController> controllers = {
     'title': TextEditingController(),
     'description': TextEditingController(),
@@ -22,12 +21,11 @@ class _StorySettingsState extends State<StorySettings> {
   @override
   void initState() {
     super.initState();
-    scrollController.init();
   }
 
   @override
   void dispose() {
-    scrollController.dispose();
+    // scrollController.dispose();
     controllers['title'].dispose();
     controllers['description'].dispose();
     super.dispose();

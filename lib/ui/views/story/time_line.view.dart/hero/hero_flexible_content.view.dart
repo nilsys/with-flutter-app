@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
@@ -10,6 +9,8 @@ import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/with_icons.dart';
+
+import 'discussion.dart';
 
 class HeroFlexibleContent extends StatefulWidget {
   // final double height;
@@ -37,11 +38,11 @@ class HeroFlexibleContent extends StatefulWidget {
 class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
   GlobalKey _descriptionKey = GlobalKey();
   bool sharing = false;
-  ScrollController scrollController = ScrollController();
+  ScrollController scrollController2 = new ScrollController();
 
   @override
   void dispose() {
-    scrollController.dispose();
+    scrollController2.dispose();
     widget.animationController.dispose();
     super.dispose();
   }
@@ -265,27 +266,32 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
     // }
 
     scrollToTop() {
-      scrollController.animateTo(
+      scrollController2.animateTo(
         0.0,
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 150),
       );
     }
 
+    scrollToBottom() {
+      scrollController2.animateTo(
+        scrollController2.position.maxScrollExtent,
+        curve: Curves.decelerate,
+        duration: const Duration(milliseconds: 400),
+      );
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (scrollController.hasClients) {
-        if (scrollController.offset != 0.0 && !storyProvider.showDiscussion) {
-          // scrollController.jumpTo(
+      if (scrollController2.hasClients) {
+        if (scrollController2.offset != 0.0 && !storyProvider.showDiscussion) {
+          // scrollController2.jumpTo(
           //   0.0,
           // );
           scrollToTop();
         }
-        // else if (storyProvider.discussionFullView &&
-        //     scrollController.offset == 0.0) {
-        //   scrollController.jumpTo(
-        //     storyProvider.expandedHeight,
-        //   );
-        // }
+      }
+      if (storyProvider.keyboardIsOpen) {
+        scrollToBottom();
       }
     });
 
@@ -293,7 +299,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
       padding: EdgeInsets.only(bottom: 15.0),
       height: storyProvider.expandedDiscussionHeight,
       child: CustomScrollView(
-        controller: scrollController,
+        controller: scrollController2,
         physics: storyProvider.showDiscussion
             ? null
             : NeverScrollableScrollPhysics(),
@@ -389,52 +395,8 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
               },
             ),
           ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return index < 14
-                    ? AnimatedOpacity(
-                        opacity: storyProvider.showDiscussion ? 1.0 : 0.0,
-                        duration: Duration(milliseconds: 500),
-                        child: Container(
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 22.0,
-                              ),
-                              Text('Comment ${index + 1}'),
-                            ],
-                          ),
-                        ),
-                      )
-                    : AnimatedOpacity(
-                        opacity: storyProvider.showDiscussion ? 1.0 : 0.0,
-                        duration: Duration(milliseconds: 500),
-                        child: Column(
-                          children: [
-                            Container(
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 22.0,
-                                  ),
-                                  Text('Comment ${index + 1}'),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              color: Colors.red,
-                              height: 40.0,
-                              child: Center(
-                                child: Text('Input box'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-              },
-              childCount: 15,
-            ),
+          StoryDiscussion(
+            scrollToBottom: scrollToBottom,
           ),
         ],
       ),

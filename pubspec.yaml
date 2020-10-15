@@ -54,6 +54,7 @@ dependencies:
   share: ^0.6.5+1 #https://pub.dev/packages/share
   floating_pullup_card: ^0.2.2 #https://pub.dev/packages/floating_pullup_card
   easy_debounce: ^1.0.2 #https://pub.dev/packages/easy_debounce
+  keyboard_utils: ^1.2.4 #https://pub.dev/packages/keyboard_utils
 
 dev_dependencies:
   flutter_test:

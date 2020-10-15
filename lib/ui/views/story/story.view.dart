@@ -55,8 +55,11 @@ class _StoryViewState extends State<StoryView> {
 
   @override
   Widget build(BuildContext context) {
-    final storyProvider = Provider.of<StoryVM>(context);
-    final userProvider = Provider.of<UserVM>(context);
+    final StoryVM storyProvider = locator<StoryVM>();
+    final UserVM userProvider = locator<UserVM>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      storyProvider.storyId = widget.id;
+    });
     Story story;
     UserModel currentUser;
     UserModel author;

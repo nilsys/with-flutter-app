@@ -22,12 +22,11 @@ class _LoginState extends State<Login> {
   bool _emailIsValid = false;
   bool _passwordIsValid = false;
   bool _working = false;
-  ScrollControl scrollController = ScrollControl();
+  // ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    scrollController.init();
     _auth.authStateChanges().listen((user) {
       if (user != null) {
         Navigator.pushNamed(this.context, HomeView.route);
@@ -39,7 +38,7 @@ class _LoginState extends State<Login> {
   void dispose() {
     controllers['email'].dispose();
     controllers['password'].dispose();
-    scrollController.dispose();
+    // scrollController.dispose();
     super.dispose();
   }
 
@@ -82,7 +81,7 @@ class _LoginState extends State<Login> {
         return EmailValidator.validate(value.trim());
       },
       placeHolder: 'Email',
-      onTap: scrollController.scrollToBottom,
+      // onTap: scrollController.scrollToBottom,
     );
 
     final Widget password = CustomTextInput(
@@ -118,7 +117,7 @@ class _LoginState extends State<Login> {
       onPressed: _emailIsValid
           ? () async {
               FocusScope.of(this.context).unfocus();
-              scrollController.scrollToBottom();
+              // scrollController.scrollToBottom();
               setState(() {
                 _working = true;
               });
@@ -175,7 +174,7 @@ class _LoginState extends State<Login> {
         setState(() {
           _working = isWorking;
         });
-        scrollController.scrollToBottom();
+        // scrollController.scrollToBottom();
       },
     );
 
@@ -185,7 +184,7 @@ class _LoginState extends State<Login> {
         setState(() {
           _working = isWorking;
         });
-        scrollController.scrollToBottom();
+        // scrollController.scrollToBottom();
       },
     );
 
@@ -194,7 +193,7 @@ class _LoginState extends State<Login> {
         FocusScope.of(this.context).unfocus();
       },
       child: SingleChildScrollView(
-        controller: scrollController.controller,
+        // controller: scrollController,
         padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
         child: Column(
           children: [

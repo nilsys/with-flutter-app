@@ -27,7 +27,7 @@ class _SignupState extends State<Signup> {
     'password': TextEditingController(),
     'display_name': TextEditingController(),
   };
-  ScrollControl scrollController = ScrollControl();
+  // ScrollController scrollController = ScrollController();
   bool _emailIsValid = false;
   bool _passwordIsValid = false;
   bool _displayNameIsValid = false;
@@ -39,7 +39,6 @@ class _SignupState extends State<Signup> {
   @override
   void initState() {
     super.initState();
-    scrollController.init();
     DateTime now = DateTime.now();
     _dayOfBirth = DateTime(now.year - 20);
     _userVM = UserVM();
@@ -63,7 +62,7 @@ class _SignupState extends State<Signup> {
     controllers['email'].dispose();
     controllers['password'].dispose();
     controllers['display_name'].dispose();
-    scrollController.dispose();
+    // scrollController.dispose();
     super.dispose();
   }
 
@@ -124,7 +123,7 @@ class _SignupState extends State<Signup> {
             setState(() {
               _currentStep++;
             });
-            scrollController.scrollToBottom();
+            // scrollController.scrollToBottom();
           };
         case 2:
           if (_displayNameIsValid && _selfie != null) {
@@ -210,7 +209,7 @@ class _SignupState extends State<Signup> {
         FocusScope.of(this.context).unfocus();
       },
       child: SingleChildScrollView(
-        controller: scrollController.controller,
+        // controller: scrollController,
         child: Column(
           children: [
             AuthHero(
@@ -228,7 +227,7 @@ class _SignupState extends State<Signup> {
                   Timer(Duration(milliseconds: 200), () {
                     FocusScope.of(this.context).unfocus();
                   });
-                  scrollController.scrollToBottom();
+                  // scrollController.scrollToBottom();
                 },
                 onStepContinue: getContinueFunction(),
                 controlsBuilder: (BuildContext context,
