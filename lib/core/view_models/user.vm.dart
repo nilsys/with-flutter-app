@@ -13,6 +13,7 @@ export 'package:with_app/locator.dart';
 class UserVM extends ChangeNotifier {
   Api _api = Api('users');
   final _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
   bool _emailLinkExpired = false;
 
   bool get emailLinkExpired => _emailLinkExpired;
@@ -24,10 +25,10 @@ class UserVM extends ChangeNotifier {
 
   List<UserModel> users;
 
-  // Future<List<UserModel>> fetchUser() async {
+  // Future<List<User>> fetchUser() async {
   //   var result = await _api.getDataCollection();
   //   users = result.docs
-  //       .map((doc) => UserModel.fromMap(doc.data(), doc.id))
+  //       .map((doc) => User.fromMap(doc.data(), doc.id))
   //       .toList();
   //   return users;
   // }
@@ -40,9 +41,9 @@ class UserVM extends ChangeNotifier {
     return _api.streamDoc(_auth.currentUser.uid);
   }
 
-  Future<UserModel> getUserById(String id) async {
-    var doc = await _api.getDocumentById(id);
-    return UserModel.fromMap(doc.data(), doc.id);
+  Future<DocumentSnapshot> getUserById(String uid) async {
+    CollectionReference ref = _db.collection('users');
+    return ref.doc(uid).get();
   }
 
   Future removeUser(String id) async {

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';

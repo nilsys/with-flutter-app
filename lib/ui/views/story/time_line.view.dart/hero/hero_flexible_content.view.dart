@@ -10,7 +10,7 @@ import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/with_icons.dart';
 
-import 'discussion.dart';
+import 'discussion.view.dart';
 
 class HeroFlexibleContent extends StatefulWidget {
   // final double height;

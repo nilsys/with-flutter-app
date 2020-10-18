@@ -5,7 +5,7 @@ import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/views/home/home.view.dart';
 import 'package:with_app/ui/shared/all.dart';
 
-import 'sub_views/social_login.view.dart';
+import 'social_login.view.dart';
 
 class AuthView extends StatefulWidget {
   static const String route = 'auth';
