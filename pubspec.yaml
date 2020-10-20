@@ -38,7 +38,6 @@ dependencies:
   google_fonts: ^1.1.0
   flutter_holo_date_picker: ^0.2.0 #https://pub.dev/packages/flutter_holo_date_picker
   url_launcher: ^5.5.1
-  image_picker: ^0.6.7+7
   firebase_storage: ^4.0.0 #https://pub.dev/packages/firebase_storage
   flushbar: ^1.10.4 #https://pub.dev/packages/flushbar
   sleek_circular_slider: ^1.1.0 #https://pub.dev/packages/sleek_circular_slider
@@ -55,6 +54,10 @@ dependencies:
   floating_pullup_card: ^0.2.2 #https://pub.dev/packages/floating_pullup_card
   easy_debounce: ^1.0.2 #https://pub.dev/packages/easy_debounce
   keyboard_utils: ^1.2.4 #https://pub.dev/packages/keyboard_utils
+  after_layout: ^1.0.7+2 #https://pub.dev/packages/after_layout
+  image_picker: ^0.6.7+12 #https://pub.dev/packages/image_picker
+  camera: ^0.5.8+9 #https://pub.dev/packages/camera
+  native_device_orientation: ^0.4.3 #https://pub.dev/packages/native_device_orientation
 
 dev_dependencies:
   flutter_test:

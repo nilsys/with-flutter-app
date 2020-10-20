@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../services/api.dart';
 import '../models/story.model.dart';
@@ -14,22 +17,31 @@ class StoryVM extends ChangeNotifier {
   bool _showDiscussion = false;
   bool _discussionFullView = false;
   bool _keyboardIsOpen = false;
+  bool _showCameraPreview = false;
   double _expandedDiscussionHeight = 0.0;
   double _expandedHeight = 100.0;
   double _prevExpandedHeight = 0.0;
   double _descriptionHeight = 0.0;
   double _discussionHeight = 0.0;
   String _storyId;
+  List<CameraDescription> _camaras;
 
   bool get showDiscussion => _showDiscussion;
   bool get discussionFullView => _discussionFullView;
   bool get keyboardIsOpen => _keyboardIsOpen;
+  bool get showCameraPreview => _showCameraPreview;
+  List<CameraDescription> get cameras => _camaras;
   double get expandedDiscussionHeight => _expandedDiscussionHeight;
   double get expandedHeight => _expandedHeight;
   double get prevExpandedHeight => _prevExpandedHeight;
   double get descriptionHeight => _descriptionHeight;
   double get discussionHeight => _discussionHeight;
   String get storyId => _storyId;
+
+  set cameras(List<CameraDescription> val) {
+    _camaras = val;
+    notifyListeners();
+  }
 
   set showDiscussion(bool val) {
     if (_showDiscussion != val) {
@@ -41,6 +53,13 @@ class StoryVM extends ChangeNotifier {
   set discussionFullView(bool val) {
     if (_discussionFullView != val) {
       _discussionFullView = val;
+      notifyListeners();
+    }
+  }
+
+  set showCameraPreview(bool val) {
+    if (_showCameraPreview != val) {
+      _showCameraPreview = val;
       notifyListeners();
     }
   }
@@ -91,6 +110,8 @@ class StoryVM extends ChangeNotifier {
   void resetState() {
     _showDiscussion = false;
     _discussionFullView = false;
+    _keyboardIsOpen = false;
+    _showCameraPreview = false;
     _expandedDiscussionHeight = 0.0;
     _expandedHeight = 100.0;
     _prevExpandedHeight = 0.0;
@@ -116,7 +137,7 @@ class StoryVM extends ChangeNotifier {
 
   Stream<QuerySnapshot> streamDiscussion() {
     CollectionReference ref = _db.collection('stories/$_storyId/discussion');
-    return ref.snapshots();
+    return ref.orderBy('created_at').snapshots();
   }
 
   Future<Story> getStoryById(String id) async {
@@ -171,6 +192,30 @@ class StoryVM extends ChangeNotifier {
       });
       await _api.updateDocument(_update, story.id);
     }
+  }
+
+  Future addCommentToStoryDiscussion(String text) async {
+    CollectionReference ref = _db.collection('stories/$_storyId/discussion');
+    await ref.add({
+      'text': text,
+      'created_at': new DateTime.now(),
+      'author': _auth.currentUser.uid,
+    });
+  }
+
+  Future<String> uploadMediaForPost(File mediaFile, String postId) async {
+    const String fileName = 'media.jpg';
+    final StorageReference storageReference =
+        FirebaseStorage().ref().child('posts/$postId/$fileName');
+    final StorageUploadTask uploadTask = storageReference.putFile(mediaFile);
+    final StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    final String url = await taskSnapshot.ref.getDownloadURL();
+    return url;
+  }
+
+  Future<List<CameraDescription>> getAvailableCameras() async {
+    final List<CameraDescription> cameras = await availableCameras();
+    return cameras;
   }
 
   // Future addStory(Story data) async {

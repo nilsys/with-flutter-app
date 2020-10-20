@@ -1,3 +1,4 @@
+import 'package:after_layout/after_layout.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:with_app/core/models/post.model.dart';
@@ -16,14 +17,32 @@ class DiscussionPost extends StatefulWidget {
   _DiscussionPostState createState() => _DiscussionPostState();
 }
 
-class _DiscussionPostState extends State<DiscussionPost> {
+class _DiscussionPostState extends State<DiscussionPost>
+    with TickerProviderStateMixin {
   final UserVM userProvider = locator<UserVM>();
   final StoryVM storyProvider = locator<StoryVM>();
+  AnimationController animationController;
+  bool _show = false;
+
+  @override
+  void initState() {
+    animationController = AnimationController(
+      duration: Duration(milliseconds: 500),
+      vsync: this,
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // executes after build
+      setState(() {
+        _show = true;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedOpacity(
-      opacity: storyProvider.showDiscussion ? 1.0 : 0.0,
+      opacity: storyProvider.showDiscussion && _show ? 1.0 : 0.0,
       duration: Duration(milliseconds: 500),
       child: Container(
         margin: EdgeInsets.only(top: 32.0),

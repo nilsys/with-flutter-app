@@ -1,6 +1,9 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:native_device_orientation/native_device_orientation.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:with_app/core/view_models/main.vm.dart';
 import 'package:with_app/theme_data.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,6 +18,8 @@ void main() async {
   await Firebase.initializeApp();
   final _auth = FirebaseAuth.instance;
   setupLocator();
+  final StoryVM storyProvider = locator<StoryVM>();
+  storyProvider.cameras = await storyProvider.getAvailableCameras();
   runApp(
     MyApp(
       initialRoute: _auth.currentUser != null ? 'home' : 'auth',
@@ -31,18 +36,26 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _dynamicLinkService.handleDynamicLinks(context);
+    final MainVM mainProvider = locator<MainVM>();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => locator<StoryVM>()),
         ChangeNotifierProvider(create: (_) => locator<UserVM>()),
+        ChangeNotifierProvider(create: (_) => locator<MainVM>()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        initialRoute: initialRoute,
-        title: 'With',
-        theme: WithTheme.data(context),
-        navigatorKey: NavigationService.navigationKey,
-        onGenerateRoute: AppRouter.generateRoute,
+      child: NativeDeviceOrientationReader(
+        builder: (context) {
+          mainProvider.oreintation =
+              NativeDeviceOrientationReader.orientation(context);
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            initialRoute: initialRoute,
+            title: 'With',
+            theme: WithTheme.data(context),
+            navigatorKey: NavigationService.navigationKey,
+            onGenerateRoute: AppRouter.generateRoute,
+          );
+        },
       ),
     );
   }

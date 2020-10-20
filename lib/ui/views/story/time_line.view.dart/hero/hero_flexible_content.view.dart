@@ -114,10 +114,8 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
     };
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (storyProvider.expandedDiscussionHeight == 0) {
-        storyProvider.expandedDiscussionHeight =
-            _deviceHeight - _paddingTop - _appBarHeight - 50.0;
-      }
+      storyProvider.expandedDiscussionHeight =
+          _deviceHeight - _paddingTop - _appBarHeight - 50.0;
       final keyContext = _descriptionKey.currentContext;
       if (keyContext != null) {
         final _descriptionBox = keyContext.findRenderObject() as RenderBox;
@@ -290,10 +288,16 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
           scrollToTop();
         }
       }
-      if (storyProvider.keyboardIsOpen) {
-        scrollToBottom();
-      }
     });
+
+    if (storyProvider.keyboardIsOpen) {
+      // scrollToBottom();
+      scrollController2.jumpTo(
+        scrollController2.position.maxScrollExtent,
+        // curve: Curves.decelerate,
+        // duration: const Duration(milliseconds: 400),
+      );
+    }
 
     return Container(
       padding: EdgeInsets.only(bottom: 15.0),
@@ -307,7 +311,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
           SliverAppBar(
             titleSpacing: 0.0,
             expandedHeight: storyProvider.expandedHeight - 10.0,
-            collapsedHeight: 1.0,
+            // collapsedHeight: 1.0,
             toolbarHeight: 0.0,
             elevation: 0.0,
             // pinned: true,
