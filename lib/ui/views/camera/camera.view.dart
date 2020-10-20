@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:native_device_orientation/native_device_orientation.dart';
+import 'package:with_app/core/view_models/camera.vm.dart';
 import 'package:with_app/core/view_models/main.vm.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
@@ -17,7 +18,7 @@ class _CameraViewState extends State<CameraView>
   CameraController cameraController;
   AnimationController _animationController;
   Animation<double> _offsetAnimation;
-  final StoryVM storyProvider = locator<StoryVM>();
+  final CameraVM cameraProvider = locator<CameraVM>();
   final MainVM mainProvider = locator<MainVM>();
   // bool _showCameraPreviewPrev = false;
   bool disposed = false;
@@ -25,7 +26,7 @@ class _CameraViewState extends State<CameraView>
   @override
   void initState() {
     cameraController =
-        CameraController(storyProvider.cameras[0], ResolutionPreset.medium);
+        CameraController(cameraProvider.cameras[0], ResolutionPreset.medium);
     CameraLensDirection _direction = CameraLensDirection.back;
     cameraController.initialize().then((_) {
       if (!mounted) {

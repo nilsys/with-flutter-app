@@ -8,6 +8,7 @@ import 'package:with_app/theme_data.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'core/services/dynamic_link.service.dart';
+import 'core/view_models/camera.vm.dart';
 import 'router.dart';
 import './locator.dart';
 import 'core/view_models/story.vm.dart';
@@ -18,8 +19,8 @@ void main() async {
   await Firebase.initializeApp();
   final _auth = FirebaseAuth.instance;
   setupLocator();
-  final StoryVM storyProvider = locator<StoryVM>();
-  storyProvider.cameras = await storyProvider.getAvailableCameras();
+  final CameraVM cameraProvider = locator<CameraVM>();
+  cameraProvider.cameras = await cameraProvider.getAvailableCameras();
   runApp(
     MyApp(
       initialRoute: _auth.currentUser != null ? 'home' : 'auth',
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => locator<StoryVM>()),
         ChangeNotifierProvider(create: (_) => locator<UserVM>()),
         ChangeNotifierProvider(create: (_) => locator<MainVM>()),
+        ChangeNotifierProvider(create: (_) => locator<CameraVM>()),
       ],
       child: NativeDeviceOrientationReader(
         builder: (context) {

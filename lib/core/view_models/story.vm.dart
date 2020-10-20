@@ -24,24 +24,17 @@ class StoryVM extends ChangeNotifier {
   double _descriptionHeight = 0.0;
   double _discussionHeight = 0.0;
   String _storyId;
-  List<CameraDescription> _camaras;
 
   bool get showDiscussion => _showDiscussion;
   bool get discussionFullView => _discussionFullView;
   bool get keyboardIsOpen => _keyboardIsOpen;
   bool get showCameraPreview => _showCameraPreview;
-  List<CameraDescription> get cameras => _camaras;
   double get expandedDiscussionHeight => _expandedDiscussionHeight;
   double get expandedHeight => _expandedHeight;
   double get prevExpandedHeight => _prevExpandedHeight;
   double get descriptionHeight => _descriptionHeight;
   double get discussionHeight => _discussionHeight;
   String get storyId => _storyId;
-
-  set cameras(List<CameraDescription> val) {
-    _camaras = val;
-    notifyListeners();
-  }
 
   set showDiscussion(bool val) {
     if (_showDiscussion != val) {
@@ -211,11 +204,6 @@ class StoryVM extends ChangeNotifier {
     final StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
     final String url = await taskSnapshot.ref.getDownloadURL();
     return url;
-  }
-
-  Future<List<CameraDescription>> getAvailableCameras() async {
-    final List<CameraDescription> cameras = await availableCameras();
-    return cameras;
   }
 
   // Future addStory(Story data) async {

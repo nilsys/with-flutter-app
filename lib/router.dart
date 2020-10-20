@@ -5,7 +5,7 @@ import 'ui/views/home/home.view.dart';
 // import 'ui/views/auth/auth.view.dart';
 import 'ui/views/auth/auth.view.dart';
 import 'ui/views/story/story.view.dart';
-import 'ui/views/camera/camera.view.dart';
+import 'ui/views/camera/camera2.view.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
