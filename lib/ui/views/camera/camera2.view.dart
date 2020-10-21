@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:native_device_orientation/native_device_orientation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
@@ -48,22 +49,28 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this); // TODO: learn about this...
     onNewCameraSelected(
         cameraProvider.cameras[cameraProvider.selectedCameraIndex]);
-    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void didChangeDependencies() {
     Provider.of<CameraVM>(context, listen: true);
-    onNewCameraSelected(
-        cameraProvider.cameras[cameraProvider.selectedCameraIndex]);
+    if (cameraProvider.selectedCameraIndex !=
+        cameraProvider.prevValues['selectedCameraIndex']) {
+      onNewCameraSelected(
+          cameraProvider.cameras[cameraProvider.selectedCameraIndex]);
+    }
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    cameraProvider.reset();
+    controller?.dispose();
+    videoController?.dispose();
     super.dispose();
   }
 
@@ -88,9 +95,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: const Text('Take a Photo / Video'),
-      ),
+      extendBodyBehindAppBar: true,
       body: Stack(
         children: (mainProvider.oreintation.index == 0)
             ? protraitLayout()
@@ -99,10 +104,40 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
     );
   }
 
+  @swidget
+  Widget appBar() => SafeArea(
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: Container(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                Text(
+                  'Take a Photo',
+                  style: Theme.of(context).textTheme.headline2,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
   List<Widget> protraitLayout() {
     return [
       Column(
         children: _cameraPreviewWidget(),
+      ),
+      Transform.translate(
+        offset: Offset(-30.0, -130.0),
+        child: Align(
+          alignment: Alignment.bottomRight,
+          child: _thumbnailWidget(),
+        ),
       ),
       Container(
         margin: EdgeInsets.symmetric(vertical: 25.0, horizontal: 25.0),
@@ -119,6 +154,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
           ],
         ),
       ),
+      appBar(),
     ];
   }
 
@@ -126,6 +162,15 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
     return [
       Column(
         children: _cameraPreviewWidget(landscape: true),
+      ),
+      SafeArea(
+        child: Transform.translate(
+          offset: Offset(25.0, 60.0),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: _thumbnailWidget(),
+          ),
+        ),
       ),
       Container(
         margin: EdgeInsets.symmetric(vertical: 25.0, horizontal: 25.0),
@@ -135,13 +180,17 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
               alignment: Alignment.centerRight,
               child: actionBtn(),
             ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: rotateBtn(),
+            Transform.translate(
+              offset: Offset(0.0, -100.0),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: rotateBtn(),
+              ),
             )
           ],
         ),
       ),
+      appBar(),
       // Align(
       //   alignment: Alignment.bottomRight,
       //   child:
@@ -155,7 +204,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
       width: 80,
       height: 80,
       child: FlatButton(
-        onPressed: () {},
+        onPressed: onTakePictureButtonPressed,
         shape: RoundedRectangleBorder(
           side: BorderSide(
               color: Theme.of(context).accentColor,
@@ -231,7 +280,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
             quarterTurns: turnFactor,
             child: Transform.scale(
               // scale: 1 / controller.value.aspectRatio,
-              scale: turnFactor.abs() == 1 ? 2.1 : 1.1,
+              scale: turnFactor.abs() == 1 ? 2.1 : 1.3,
               // scale: 1,
               child: Center(
                 child: AspectRatio(
@@ -283,34 +332,78 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
 
   /// Display the thumbnail of the captured image or video.
   Widget _thumbnailWidget() {
-    return Expanded(
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            videoController == null && imagePath == null
-                ? Container()
-                : SizedBox(
-                    child: (videoController == null)
-                        ? Image.file(File(imagePath))
-                        : Container(
-                            child: Center(
-                              child: AspectRatio(
-                                  aspectRatio:
-                                      videoController.value.size != null
-                                          ? videoController.value.aspectRatio
-                                          : 1.0,
-                                  child: VideoPlayer(videoController)),
-                            ),
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.pink)),
-                          ),
-                    width: 64.0,
-                    height: 64.0,
+    return Container(
+      width: 70.0,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: cameraProvider.filePath
+            .map((path) => Dismissible(
+                  key: Key(path),
+                  direction: mainProvider.oreintationIsLandscape
+                      ? DismissDirection.endToStart
+                      : DismissDirection.startToEnd,
+                  onDismissed: (direction) {
+                    cameraProvider.removeFilePath(path);
+                    print('dismissed');
+                  },
+                  background: Container(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Center(
+                      child: Icon(
+                        Icons.delete_sweep,
+                        color: Colors.red,
+                        size: 34.0,
+                      ),
+                    ),
+                    // decoration: BoxDecoration(
+                    //   color: Colors.red,
+                    //   borderRadius: BorderRadius.circular(50),
+                    //   border: Border.all(color: Colors.pink, width: 2.0),
+                    // ),
                   ),
-          ],
-        ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(4.0, 8.0, 4.0, 8.0),
+                    child: SizedBox(
+                      child: (videoController == null)
+                          ? Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                    color: Theme.of(context).accentColor,
+                                    width: 2.0),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(50.0),
+                                child: FittedBox(
+                                  fit: BoxFit.cover,
+                                  child: Image.file(
+                                    File(path),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              color: Colors.green,
+                              child: Center(
+                                child: AspectRatio(
+                                    aspectRatio:
+                                        videoController.value.size != null
+                                            ? videoController.value.aspectRatio
+                                            : 1.0,
+                                    child: VideoPlayer(videoController)),
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border:
+                                    Border.all(color: Colors.pink, width: 2.0),
+                              ),
+                            ),
+                      width: 64.0,
+                      height: 64.0,
+                    ),
+                  ),
+                ))
+            .toList(),
       ),
     );
   }
@@ -401,7 +494,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   }
 
   void onNewCameraSelected(CameraDescription cameraDescription) async {
-    if (controller != null) {
+    if (controller != null && mounted) {
       await controller.dispose();
     }
     controller = CameraController(
@@ -432,8 +525,9 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   void onTakePictureButtonPressed() {
     takePicture().then((String filePath) {
       if (mounted) {
+        cameraProvider.storeFilePath(filePath);
         setState(() {
-          imagePath = filePath;
+          imagePath = filePath; // TODO:: remove this line
           videoController?.dispose();
           videoController = null;
         });

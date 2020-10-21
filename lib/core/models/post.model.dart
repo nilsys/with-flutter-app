@@ -8,7 +8,7 @@ class Post {
   final String author;
   final DateTime createdAt;
   final String text;
-  final List<MediaItem> media;
+  final List<String> media;
   final List<Reaction> reactions;
 
   Post({
@@ -25,7 +25,7 @@ class Post {
         author = snapshot['author'],
         createdAt = (snapshot['created_at'] as Timestamp).toDate(),
         text = snapshot['text'],
-        media = snapshot['media'],
+        media = snapshot['media'].cast<String>().toList(),
         reactions = snapshot['reactions'];
 
   toJson() {
