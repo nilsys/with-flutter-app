@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:with_app/core/models/media_item.model.dart';
 import 'package:with_app/core/models/reaction.model.dart';
 
 class Post {

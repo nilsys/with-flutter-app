@@ -35,16 +35,12 @@ class FirebaseHandler {
       email: email,
       actionCodeSettings: ActionCodeSettings(
         url: 'https://withapp.page.link/',
-        android: {
-          'packageName': 'io.withapp.android',
-          'installApp': true,
-          'minimumVersion': '21'
-        },
-        // dynamicLinkDomain: 'withapp.page.link',
+        androidPackageName: 'io.withapp.android',
+        androidMinimumVersion: '21',
+        androidInstallApp: true,
         handleCodeInApp: true,
-        iOS: {
-          'bundleId': 'io.withapp.ios',
-        },
+        iOSBundleId: 'io.withapp.ios',
+        // dynamicLinkDomain: 'withapp.page.link',
       ),
     );
   }

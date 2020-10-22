@@ -4,7 +4,6 @@ import 'package:native_device_orientation/native_device_orientation.dart';
 import 'package:with_app/core/view_models/camera.vm.dart';
 import 'package:with_app/core/view_models/main.vm.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
-import 'package:with_app/ui/shared/all.dart';
 
 class CameraView extends StatefulWidget {
   static const String route = 'camera';

@@ -60,17 +60,14 @@ class _AuthState extends State<AuthView> {
         await _auth.sendSignInLinkToEmail(
           email: emailController.value.text,
           actionCodeSettings: ActionCodeSettings(
-              url:
-                  'https://withapp.page.link/email-link-signin?email=${emailController.value.text}',
-              handleCodeInApp: true,
-              android: {
-                'packageName': 'io.withapp.android',
-                'installApp': true,
-                'minimumVersion': '21'
-              },
-              iOS: {
-                'bundleId': 'io.withapp.ios',
-              }),
+            url:
+                'https://withapp.page.link/email-link-signin?email=${emailController.value.text}',
+            handleCodeInApp: true,
+            androidPackageName: 'io.withapp.android',
+            androidMinimumVersion: '21',
+            androidInstallApp: true,
+            iOSBundleId: 'io.withapp.ios',
+          ),
         );
       } on FirebaseAuthException catch (err) {
         print(err);

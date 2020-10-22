@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 class CameraVM extends ChangeNotifier {
   List<CameraDescription> _camaras;
-  CameraDescription _selectedCamera;
   int _selectedCameraIndex = 0;
   List<String> _filePath = [];
   Map<String, dynamic> _prevValues = {
@@ -18,7 +17,6 @@ class CameraVM extends ChangeNotifier {
 
   set cameras(List<CameraDescription> val) {
     _camaras = val;
-    _selectedCamera = val[0];
     notifyListeners();
   }
 

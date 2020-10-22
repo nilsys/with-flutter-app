@@ -60,7 +60,6 @@ class _DiscussionIpnutState extends State<DiscussionIpnut> {
       });
     }
 
-    ;
     return AnimatedOpacity(
       opacity: storyProvider.showDiscussion ? 1.0 : 0.0,
       duration: Duration(milliseconds: 500),
