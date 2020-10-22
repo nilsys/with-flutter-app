@@ -7,6 +7,7 @@ class WithTheme {
     return ThemeData(
       brightness: Brightness.dark,
       primaryColor: Color.fromRGBO(105, 81, 174, 1), // purple
+      primaryColorDark: Color.fromRGBO(96, 67, 145, 1), // purple
       // primaryColorLight: Color.fromRGBO(105, 81, 174, 1), // bright purple
       backgroundColor: Color.fromRGBO(245, 245, 245, 1),
       accentColor: accentColor,

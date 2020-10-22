@@ -41,7 +41,6 @@ dependencies:
   firebase_storage: ^4.0.0 #https://pub.dev/packages/firebase_storage
   flushbar: ^1.10.4 #https://pub.dev/packages/flushbar
   sleek_circular_slider: ^1.1.0 #https://pub.dev/packages/sleek_circular_slider
-  timeago: ^2.0.27 #https://pub.dev/packages/timeago
   flutter_facebook_login: ^3.0.0 #https://pub.dev/packages/flutter_facebook_login
   google_sign_in: ^4.5.3 #https://pub.dev/packages/google_sign_in
   skeleton_loader: ^1.0.2+1 #https://pub.dev/packages/skeleton_loader
@@ -59,6 +58,8 @@ dependencies:
   camera: ^0.5.8+9 #https://pub.dev/packages/camera
   native_device_orientation: ^0.4.3 #https://pub.dev/packages/native_device_orientation
   video_player: ^0.11.1+2 #https://pub.dev/packages/video_player
+  cached_network_image: ^2.3.3 #https://pub.dev/packages/cached_network_image
+  timeago: ^2.0.28 #https://pub.dev/packages/timeago
 
 dev_dependencies:
   flutter_test:
