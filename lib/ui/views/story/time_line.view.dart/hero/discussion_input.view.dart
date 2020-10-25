@@ -23,6 +23,7 @@ class _DiscussionIpnutState extends State<DiscussionIpnut> {
   final CameraVM cameraProvider = locator<CameraVM>();
   TextEditingController textController = TextEditingController();
   bool _inputIsValid;
+  bool _scrolledTobottom = false;
 
   @override
   void initState() {
@@ -35,9 +36,10 @@ class _DiscussionIpnutState extends State<DiscussionIpnut> {
     Provider.of<CameraVM>(context, listen: true);
     _inputIsValid = cameraProvider.filePath.length > 0 ||
         textController.value.text.trim().length > 0;
-    if (cameraProvider.filePath.length !=
-        cameraProvider.prevValues['fileCount']) {
-      widget.scrollToBottom();
+    if (_inputIsValid) {
+      setState(() {
+        _scrolledTobottom = false;
+      });
     }
     super.didChangeDependencies();
   }
@@ -59,6 +61,15 @@ class _DiscussionIpnutState extends State<DiscussionIpnut> {
         _inputIsValid = false;
       });
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_inputIsValid && !_scrolledTobottom) {
+        widget.scrollToBottom();
+        setState(() {
+          _scrolledTobottom = true;
+        });
+      }
+    });
 
     return AnimatedOpacity(
       opacity: storyProvider.showDiscussion ? 1.0 : 0.0,
@@ -124,6 +135,9 @@ class _DiscussionIpnutState extends State<DiscussionIpnut> {
                               Navigator.pushNamed(
                                   context, '${CameraView.route}');
                               storyProvider.showCameraPreview = true;
+                              setState(() {
+                                _scrolledTobottom = false;
+                              });
                             },
                             icon: Icon(Icons.camera_alt_rounded),
                             color: Theme.of(context).primaryColor,

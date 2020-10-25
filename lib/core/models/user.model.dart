@@ -8,6 +8,7 @@ class UserModel {
   final String email;
   final String profileImage;
   final UserStories stories;
+  final Map<String, dynamic> logs;
   final List<String> leads;
   final DateTime dayOfBirth;
 
@@ -19,6 +20,7 @@ class UserModel {
     this.leads,
     this.dayOfBirth,
     this.profileImage,
+    this.logs,
   });
 
   UserModel.fromMap(Map<String, dynamic> data, String id)
@@ -26,6 +28,7 @@ class UserModel {
         displayName = data['display_name'],
         email = data['email'],
         stories = UserStories.fromMap(data['stories']),
+        logs = data['logs'],
         leads = data['leads'] ?? List(),
         dayOfBirth =
             data['day_of_birth'] != null ? data['day_of_birth'].toDate() : null,

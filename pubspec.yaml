@@ -61,6 +61,8 @@ dependencies:
   cached_network_image: ^2.3.3 #https://pub.dev/packages/cached_network_image
   timeago: ^2.0.28 #https://pub.dev/packages/timeago
   intl: ^0.16.1 #https://pub.dev/packages/intl
+  liquid_swipe: ^1.5.0 #https://pub.dev/packages/liquid_swipe
+  gallery_saver: ^2.0.1 #https://pub.dev/packages/gallery_saver
 
 dev_dependencies:
   flutter_test:

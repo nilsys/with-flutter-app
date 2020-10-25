@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:native_device_orientation/native_device_orientation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
@@ -43,6 +45,8 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   VideoPlayerController videoController;
   VoidCallback videoPlayerListener;
   bool enableAudio = true;
+  final picker = ImagePicker();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final CameraVM cameraProvider = locator<CameraVM>();
   final MainVM mainProvider = locator<MainVM>();
 
@@ -88,8 +92,6 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
       }
     }
   }
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +152,11 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
             Align(
               alignment: Alignment.bottomRight,
               child: rotateBtn(),
-            )
+            ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: galleryBtn(),
+            ),
           ],
         ),
       ),
@@ -186,7 +192,14 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
                 alignment: Alignment.centerRight,
                 child: rotateBtn(),
               ),
-            )
+            ),
+            Transform.translate(
+              offset: Offset(0.0, 100.0),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: galleryBtn(),
+              ),
+            ),
           ],
         ),
       ),
@@ -234,6 +247,33 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
         ),
         child: Icon(
           Icons.flip_camera_ios_outlined,
+          size: 42.0,
+        ),
+      ),
+    );
+  }
+
+  Future _getImageFromGallery() async {
+    var pickedFile = await picker.getImage(
+      source: ImageSource.gallery,
+      imageQuality: 50, // do 100 for max quality
+    );
+    if (pickedFile != null) {
+      cameraProvider.storeFilePath(pickedFile.path);
+    }
+  }
+
+  Widget galleryBtn() {
+    return SizedBox(
+      width: 80,
+      height: 80,
+      child: FlatButton(
+        onPressed: _getImageFromGallery,
+        shape: new RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(50.0),
+        ),
+        child: Icon(
+          Icons.collections_outlined,
           size: 42.0,
         ),
       ),
@@ -531,7 +571,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
           videoController?.dispose();
           videoController = null;
         });
-        if (filePath != null) showInSnackBar('Picture saved to $filePath');
+        // if (filePath != null) showInSnackBar('Saved!');
       }
     });
   }
@@ -654,13 +694,29 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
     await vcontroller.play();
   }
 
+  void _saveNetworkImage(String filePath) async {
+    GallerySaver.saveImage(filePath).then((bool success) {
+      setState(() {
+        print('Image is saved');
+      });
+    });
+  }
+
+  void _saveNetworkVideo(String filePath) async {
+    GallerySaver.saveVideo(filePath).then((bool success) {
+      setState(() {
+        print('Video is saved');
+      });
+    });
+  }
+
   Future<String> takePicture() async {
     if (!controller.value.isInitialized) {
       showInSnackBar('Error: select a camera first.');
       return null;
     }
     final Directory extDir = await getApplicationDocumentsDirectory();
-    final String dirPath = '${extDir.path}/Pictures/flutter_test';
+    final String dirPath = '${extDir.path}/Pictures/withapp';
     await Directory(dirPath).create(recursive: true);
     final String filePath = '$dirPath/${timestamp()}.jpg';
 
@@ -671,6 +727,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
 
     try {
       await controller.takePicture(filePath);
+      _saveNetworkImage(filePath);
     } on CameraException catch (e) {
       _showCameraException(e);
       return null;

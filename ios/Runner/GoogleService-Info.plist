@@ -32,5 +32,11 @@
 	<string>1:64061291637:ios:1b9a510eeb6df6b2168c3c</string>
 	<key>DATABASE_URL</key>
 	<string>https://with-flutter-app-ae099.firebaseio.com</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>Used to demonstrate image picker plugin</string>
+  <key>NSCameraUsageDescription</key>
+  <string>Used to demonstrate image picker plugin</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Used to capture audio for image picker plugin</string>
 </dict>
 </plist>

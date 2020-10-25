@@ -35,7 +35,9 @@ class WithTheme {
           .apply(
             displayColor: Colors.white,
           ),
-      cursorColor: Colors.white,
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: Colors.white,
+      ),
       inputDecorationTheme: InputDecorationTheme(
         contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
         floatingLabelBehavior: FloatingLabelBehavior

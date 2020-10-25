@@ -35,7 +35,7 @@ class AppRouter {
         );
       case FullScreenMedia.route:
         return MaterialPageRoute(
-          builder: (_) => FullScreenMedia(src: Uri.decodeFull(params[0])),
+          builder: (_) => FullScreenMedia(src: params),
         );
       default:
         return MaterialPageRoute(

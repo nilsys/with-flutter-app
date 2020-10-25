@@ -48,8 +48,11 @@ class _DiscussionPostState extends State<DiscussionPost>
         padding: const EdgeInsets.only(bottom: 8.0),
         child: GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context,
-                '${FullScreenMedia.route}/${Uri.encodeComponent(widget.post.media[0])}');
+            List<String> encodedURis = widget.post.media
+                .map((uri) => Uri.encodeComponent(uri))
+                .toList();
+            String images = encodedURis.join('/');
+            Navigator.pushNamed(context, '${FullScreenMedia.route}/$images');
           },
           child: CachedNetworkImage(
             imageUrl: widget.post.media[0],

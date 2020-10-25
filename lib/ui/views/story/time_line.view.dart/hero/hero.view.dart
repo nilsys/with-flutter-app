@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:tinycolor/tinycolor.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/models/user.model.dart';
@@ -84,6 +85,21 @@ class _TimelineHeroState extends State<TimelineHero>
     // animationControllerForDropMenuArrow.dispose();
     // SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   }
+
+  @swidget
+  Widget _notificationStastus() => Container(
+        height: 10.0,
+        width: 10.0,
+        decoration: BoxDecoration(
+          color: Colors.red,
+          border: Border.all(
+            color: Theme.of(context).primaryColor,
+            width: 0.75,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+      );
 
   @override
   Widget build(context) {
@@ -196,19 +212,34 @@ class _TimelineHeroState extends State<TimelineHero>
       expandedHeight: animation.value + _appBarHeight + _paddingTop - 10.0,
       collapsedHeight: _paddingTop + _appBarHeight - 22.0,
       actions: [
-        IconButton(
-          icon: Icon(
-            Icons.mode_comment,
-            size: 22.0,
-            color: Theme.of(context).accentColor,
+        Container(
+          color: Colors.green,
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: _notificationStastus(),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.mode_comment,
+                    size: 22.0,
+                    color: Theme.of(context).accentColor,
+                  ),
+                  onPressed: () {
+                    storyProvider.showDiscussion =
+                        !storyProvider.showDiscussion;
+                    // storyProvider.discussionFullView =
+                    //     !storyProvider.discussionFullView;
+                    animationController.reset();
+                    animationController.forward();
+                  },
+                ),
+              ),
+            ],
           ),
-          onPressed: () {
-            storyProvider.showDiscussion = !storyProvider.showDiscussion;
-            // storyProvider.discussionFullView =
-            //     !storyProvider.discussionFullView;
-            animationController.reset();
-            animationController.forward();
-          },
         ),
         IconButton(
           icon: Icon(
