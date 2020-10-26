@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:share/share.dart';
-import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/with_icons.dart';
@@ -14,9 +13,7 @@ import 'discussion.view.dart';
 
 class HeroFlexibleContent extends StatefulWidget {
   // final double height;
-  final Story story;
   final bool isAuthor;
-  final UserModel currentUser;
   final Function goToSettings;
   final bool isFollower;
   final AnimationController animationController;
@@ -25,8 +22,6 @@ class HeroFlexibleContent extends StatefulWidget {
     // @required this.height,
     @required this.isAuthor,
     @required this.goToSettings,
-    this.story,
-    this.currentUser,
     @required this.isFollower,
     @required this.animationController,
   });
@@ -39,6 +34,8 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
   GlobalKey _descriptionKey = GlobalKey();
   bool sharing = false;
   ScrollController scrollController2 = new ScrollController();
+  final StoryVM storyProvider = locator<StoryVM>();
+  final UserVM userProvider = locator<UserVM>();
 
   @override
   void dispose() {
@@ -49,8 +46,6 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
 
   @override
   Widget build(BuildContext context) {
-    final storyProvider = Provider.of<StoryVM>(context);
-    final userProvider = Provider.of<UserVM>(context);
     final double staticHeight = widget.isAuthor ? 224.0 : 170.0;
     final double _paddingTop = MediaQuery.of(context).padding.top;
     final double _appBarHeight = AppBar().preferredSize.height;
@@ -59,7 +54,8 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
     final Function shareStoryLink = () async {
       final DynamicLinkParameters parameters = DynamicLinkParameters(
         uriPrefix: 'https://withapp.page.link',
-        link: Uri.parse('https://withapp.io/go-to-story?id=${widget.story.id}'),
+        link: Uri.parse(
+            'https://withapp.io/go-to-story?id=${storyProvider.story.id}'),
         androidParameters: AndroidParameters(
           packageName: 'io.withapp.android',
           minimumVersion: 125,
@@ -80,7 +76,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
         //   campaignToken: 'example-promo',
         // ),
         socialMetaTagParameters: SocialMetaTagParameters(
-          title: widget.story.title,
+          title: storyProvider.story.title,
           description: 'This story was created on with-app',
         ),
       );
@@ -91,7 +87,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
       // final Uri dynamicUrl = await parameters.buildUrl();
       if (sharing == false) {
         Share.share('Check out my story\n\n$shortUrl',
-            subject: widget.story.title);
+            subject: storyProvider.story.title);
       }
       setState(() {
         sharing = true;
@@ -104,13 +100,13 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
     };
 
     final Function followStory = () {
-      storyProvider.addFollower(widget.story);
-      userProvider.followStory(widget.story.id, widget.currentUser);
+      storyProvider.addFollower(storyProvider.story);
+      userProvider.followStory(storyProvider.story.id, userProvider.user);
     };
 
     final Function unFollowStory = () {
-      storyProvider.removeFollower(widget.story);
-      userProvider.unFollowStory(widget.story.id, widget.currentUser);
+      storyProvider.removeFollower(storyProvider.story);
+      userProvider.unFollowStory(storyProvider.story.id, userProvider.user);
     };
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -163,9 +159,9 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          counter('posts', widget.story.posts),
-          counter('followers', widget.story.followers.length),
-          counter('views', widget.story.views),
+          counter('posts', storyProvider.story.posts),
+          counter('followers', storyProvider.story.followers.length),
+          counter('views', storyProvider.story.views),
         ],
       ),
     );
@@ -363,7 +359,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
                             SizedBox(
                               width: MediaQuery.of(context).size.width,
                               child: Text(
-                                widget.story.title,
+                                storyProvider.story.title,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: false,
@@ -374,7 +370,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
                               height: 6.0,
                             ),
                             Text(
-                              widget.story.description,
+                              storyProvider.story.description,
                               key: _descriptionKey,
                             ),
                             stats,

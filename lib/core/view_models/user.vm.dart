@@ -15,15 +15,20 @@ class UserVM extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   bool _emailLinkExpired = false;
+  UserModel _user;
 
   bool get emailLinkExpired => _emailLinkExpired;
+  UserModel get user => _user;
 
   set emailLinkExpired(bool val) {
     _emailLinkExpired = val;
     notifyListeners();
   }
 
-  List<UserModel> users;
+  set user(UserModel val) {
+    _user = val;
+    notifyListeners();
+  }
 
   // Future<List<User>> fetchUser() async {
   //   var result = await _api.getDataCollection();

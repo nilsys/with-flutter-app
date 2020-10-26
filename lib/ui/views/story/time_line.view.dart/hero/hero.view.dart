@@ -2,8 +2,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:tinycolor/tinycolor.dart';
-import 'package:with_app/core/models/story.model.dart';
-import 'package:with_app/core/models/user.model.dart';
 import 'package:skeleton_loader/skeleton_loader.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
@@ -11,16 +9,10 @@ import 'package:with_app/ui/shared/all.dart';
 import 'hero_flexible_content.view.dart';
 
 class TimelineHero extends StatefulWidget {
-  final UserModel author;
-  final Story story;
-  final UserModel currentUser;
   final ScrollController scrollController1;
   final Function goToSettings;
 
   TimelineHero({
-    this.author,
-    this.story,
-    this.currentUser,
     @required this.scrollController1,
     @required this.goToSettings,
   });
@@ -31,6 +23,8 @@ class TimelineHero extends StatefulWidget {
 
 class _TimelineHeroState extends State<TimelineHero>
     with TickerProviderStateMixin {
+  final StoryVM storyProvider = locator<StoryVM>();
+  final UserVM userProvider = locator<UserVM>();
   bool _isCollapsed = false;
   bool sharing = false;
   AnimationController animationController;
@@ -44,7 +38,6 @@ class _TimelineHeroState extends State<TimelineHero>
   @override
   void initState() {
     super.initState();
-    final storyProvider = Provider.of<StoryVM>(context, listen: false);
     animationController = AnimationController(
       duration: Duration(milliseconds: 500),
       vsync: this,
@@ -88,27 +81,26 @@ class _TimelineHeroState extends State<TimelineHero>
 
   @swidget
   Widget _notificationStastus() => Container(
-        height: 10.0,
-        width: 10.0,
+        height: 13.0,
+        width: 13.0,
         decoration: BoxDecoration(
           color: Colors.red,
           border: Border.all(
             color: Theme.of(context).primaryColor,
-            width: 0.75,
+            width: 3,
           ),
           borderRadius: BorderRadius.circular(10),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
       );
 
   @override
   Widget build(context) {
-    final storyProvider = Provider.of<StoryVM>(context);
+    print(userProvider.user.logs[storyProvider.story.id]);
     final double _paddingTop = MediaQuery.of(context).padding.top;
     final double _appBarHeight = AppBar().preferredSize.height;
-    bool isAuthor = widget.author?.id == widget.currentUser?.id;
+    bool isAuthor = storyProvider.author?.id == userProvider.user?.id;
     bool isFollower =
-        widget.currentUser.stories.following.contains(widget.story.id);
+        userProvider.user.stories.following.contains(storyProvider.story.id);
     bool showDiscussionToggleBtn =
         _isCollapsed || storyProvider.discussionFullView;
 
@@ -143,7 +135,7 @@ class _TimelineHeroState extends State<TimelineHero>
       tween.end = storyProvider.expandedHeight;
     }
 
-    Widget title = widget.author != null
+    Widget title = storyProvider.author != null
         ? Transform.translate(
             offset: Offset(-15.0, 0.0),
             child: AnimatedSwitcher(
@@ -156,7 +148,7 @@ class _TimelineHeroState extends State<TimelineHero>
                   ? Transform.translate(
                       offset: Offset(0.0, -2.0),
                       child: Text(
-                        widget.story.title,
+                        storyProvider.story.title,
                         style: Theme.of(context).textTheme.headline2,
                       ),
                     )
@@ -166,14 +158,14 @@ class _TimelineHeroState extends State<TimelineHero>
                           : MainAxisAlignment.start,
                       children: [
                         Avatar(
-                          src: widget.author.profileImage,
+                          src: storyProvider.author.profileImage,
                           radius: 18.0,
                         ),
                         SizedBox(
                           width: 15.0,
                         ),
                         Text(
-                          widget.author.displayName,
+                          storyProvider.author.displayName,
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                       ],
@@ -213,13 +205,10 @@ class _TimelineHeroState extends State<TimelineHero>
       collapsedHeight: _paddingTop + _appBarHeight - 22.0,
       actions: [
         Container(
-          color: Colors.green,
+          height: double.infinity,
+          width: 48.0,
           child: Stack(
             children: [
-              Align(
-                alignment: Alignment.center,
-                child: _notificationStastus(),
-              ),
               Align(
                 alignment: Alignment.center,
                 child: IconButton(
@@ -236,6 +225,13 @@ class _TimelineHeroState extends State<TimelineHero>
                     animationController.reset();
                     animationController.forward();
                   },
+                ),
+              ),
+              Transform.translate(
+                offset: Offset(-10.0, -9.0),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: _notificationStastus(),
                 ),
               ),
             ],
@@ -327,10 +323,8 @@ class _TimelineHeroState extends State<TimelineHero>
                   margin: EdgeInsets.only(top: _paddingTop + _appBarHeight),
                   padding: const EdgeInsets.fromLTRB(22.0, 0.0, 22.0, 26.0),
                   child: HeroFlexibleContent(
-                    story: widget.story,
                     isAuthor: isAuthor,
                     goToSettings: widget.goToSettings,
-                    currentUser: widget.currentUser,
                     isFollower: isFollower,
                     animationController: animationController,
                   ),

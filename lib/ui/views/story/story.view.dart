@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:with_app/core/models/story.model.dart';
@@ -20,6 +22,12 @@ class StoryView extends StatefulWidget {
 }
 
 class _StoryViewState extends State<StoryView> {
+  final StoryVM storyProvider = locator<StoryVM>();
+  final UserVM userProvider = locator<UserVM>();
+  StreamSubscription<DocumentSnapshot> currentUserStream;
+  StreamSubscription<DocumentSnapshot> storyAutorStream;
+  StreamSubscription<DocumentSnapshot> storyStream;
+
   final pageController = PageController(
     initialPage: 0,
   );
@@ -43,71 +51,50 @@ class _StoryViewState extends State<StoryView> {
 
   @override
   void initState() {
+    currentUserStream =
+        userProvider.fetchCurrentUserAsStream().listen((DocumentSnapshot doc) {
+      userProvider.user = UserModel.fromMap(doc.data(), doc.id);
+    });
+    storyStream = storyProvider
+        .fetchStoryAsStream(widget.id)
+        .listen((DocumentSnapshot doc) {
+      storyProvider.story = Story.fromMap(doc.data(), doc.id);
+      storyAutorStream = userProvider
+          .fetchUserAsStream(storyProvider.story.owner)
+          .listen((DocumentSnapshot doc) {
+        storyProvider.author = UserModel.fromMap(doc.data(), doc.id);
+      });
+    });
     super.initState();
   }
 
   @override
   void dispose() {
     pageController.dispose();
+    currentUserStream.cancel();
+    storyStream.cancel();
+    storyAutorStream.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final StoryVM storyProvider = locator<StoryVM>();
-    final UserVM userProvider = locator<UserVM>();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      storyProvider.storyId = widget.id;
-    });
-    Story story;
-    UserModel currentUser;
-    UserModel author;
-
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      body: StreamBuilder<DocumentSnapshot>(
-          stream: storyProvider.fetchStoryAsStream(widget.id),
-          builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.hasData) {
-              story = Story.fromMap(snapshot.data.data(), widget.id);
-            }
-            return StreamBuilder<DocumentSnapshot>(
-                stream: userProvider.fetchCurrentUserAsStream(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    currentUser = UserModel.fromMap(
-                        snapshot.data.data(), snapshot.data.id);
-                  }
-                  return story != null
-                      ? StreamBuilder<DocumentSnapshot>(
-                          stream: userProvider.fetchUserAsStream(story.owner),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              author = UserModel.fromMap(
-                                  snapshot.data.data(), story.owner);
-                            }
-                            return author != null
-                                ? PageView(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    controller: pageController,
-                                    children: [
-                                      Timeline(
-                                        story: story,
-                                        currentUser: currentUser,
-                                        author: author,
-                                        goToSettings: goToSettings,
-                                      ),
-                                      StorySettings(
-                                        goToTimeline: goToTimeline,
-                                      ),
-                                    ],
-                                  )
-                                : Spinner();
-                          })
-                      : Spinner();
-                });
-          }),
+      body: storyProvider.author != null
+          ? PageView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: pageController,
+              children: [
+                Timeline(
+                  goToSettings: goToSettings,
+                ),
+                StorySettings(
+                  goToTimeline: goToTimeline,
+                ),
+              ],
+            )
+          : Spinner(),
       // bottomNavigationBar: StoryFooter(
       //   onChange: (pageIndex) {
       //     pageController.animateToPage(

@@ -1,22 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:with_app/core/models/story.model.dart';
-import 'package:with_app/core/models/user.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'post.view.dart';
 import 'hero/hero.view.dart';
 
 class Timeline extends StatefulWidget {
-  final Story story;
-  final UserModel currentUser;
-  final UserModel author;
   final Function goToSettings;
 
   Timeline({
     Key key,
-    this.story,
-    this.currentUser,
-    this.author,
     @required this.goToSettings,
   }) : super(key: key);
 
@@ -25,6 +17,7 @@ class Timeline extends StatefulWidget {
 }
 
 class _TimelineState extends State<Timeline> {
+  final StoryVM storyProvider = locator<StoryVM>();
   ScrollController scrollController1 = new ScrollController();
   bool hideDiscussionTab = true;
 
@@ -43,8 +36,6 @@ class _TimelineState extends State<Timeline> {
 
   @override
   Widget build(BuildContext context) {
-    final StoryVM storyProvider = locator<StoryVM>();
-
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Stack(
@@ -76,9 +67,6 @@ class _TimelineState extends State<Timeline> {
                     : null,
                 slivers: <Widget>[
                   TimelineHero(
-                    author: widget.author,
-                    story: widget.story,
-                    currentUser: widget.currentUser,
                     scrollController1: scrollController1,
                     goToSettings: widget.goToSettings,
                   ),

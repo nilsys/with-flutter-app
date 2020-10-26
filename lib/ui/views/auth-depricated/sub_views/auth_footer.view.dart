@@ -52,14 +52,14 @@ class _AuthFooterState extends State<AuthFooter> {
                 With.fairy_wand,
                 size: 20.0,
               ),
-              title: Text('Signup'),
+              label: 'Signup',
             ),
             BottomNavigationBarItem(
               icon: Icon(
                 With.power_settings_new,
                 size: 22.0,
               ),
-              title: Text('Login'),
+              label: 'Login',
             ),
           ],
         ),

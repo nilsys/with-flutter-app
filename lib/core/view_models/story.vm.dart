@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:with_app/core/models/post.model.dart';
+import 'package:with_app/core/models/user.model.dart';
 import '../services/api.dart';
 import '../models/story.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,7 +24,9 @@ class StoryVM extends ChangeNotifier {
   double _prevExpandedHeight = 0.0;
   double _descriptionHeight = 0.0;
   double _discussionHeight = 0.0;
-  String _storyId;
+  Story _story;
+  UserModel _author;
+  List<Post> _discussion = [];
 
   bool get showDiscussion => _showDiscussion;
   bool get discussionFullView => _discussionFullView;
@@ -33,7 +37,24 @@ class StoryVM extends ChangeNotifier {
   double get prevExpandedHeight => _prevExpandedHeight;
   double get descriptionHeight => _descriptionHeight;
   double get discussionHeight => _discussionHeight;
-  String get storyId => _storyId;
+  Story get story => _story;
+  UserModel get author => _author;
+  List<Post> get discussion => _discussion;
+
+  set story(Story val) {
+    _story = val;
+    notifyListeners();
+  }
+
+  set author(UserModel val) {
+    _author = val;
+    notifyListeners();
+  }
+
+  set discussion(List<Post> val) {
+    _discussion = val;
+    notifyListeners();
+  }
 
   set showDiscussion(bool val) {
     if (_showDiscussion != val) {
@@ -92,13 +113,6 @@ class StoryVM extends ChangeNotifier {
     }
   }
 
-  set storyId(String val) {
-    if (_storyId != val) {
-      _storyId = val;
-      notifyListeners();
-    }
-  }
-
   void resetState() {
     _showDiscussion = false;
     _discussionFullView = false;
@@ -128,7 +142,7 @@ class StoryVM extends ChangeNotifier {
   }
 
   Stream<QuerySnapshot> streamDiscussion() {
-    CollectionReference ref = _db.collection('stories/$_storyId/discussion');
+    CollectionReference ref = _db.collection('stories/${story.id}/discussion');
     return ref.orderBy('created_at').snapshots();
   }
 
@@ -187,7 +201,7 @@ class StoryVM extends ChangeNotifier {
   }
 
   Future addCommentToStoryDiscussion(String text, List<String> filePath) async {
-    CollectionReference ref = _db.collection('stories/$_storyId/discussion');
+    CollectionReference ref = _db.collection('stories/${story.id}/discussion');
     DocumentReference postRef = await ref.add({
       'text': text,
       'created_at': new DateTime.now(),
