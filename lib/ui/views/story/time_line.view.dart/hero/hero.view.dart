@@ -28,8 +28,8 @@ class _TimelineHeroState extends State<TimelineHero>
   bool _isCollapsed = false;
   bool sharing = false;
   AnimationController animationController;
-  Tween<double> tween;
-  Animation<double> animation;
+  Tween<double> tweenHeight;
+  Animation<double> _heightAnimation;
   // AnimationController animationController2;
   // Tween<double> tweenDropArrow;
   // Animation<double> animateDropArrow;
@@ -43,11 +43,11 @@ class _TimelineHeroState extends State<TimelineHero>
       vsync: this,
     );
 
-    tween = Tween<double>(
+    tweenHeight = Tween<double>(
         begin: storyProvider.prevExpandedHeight,
         end: storyProvider.expandedHeight);
 
-    animation = tween.animate(new CurvedAnimation(
+    _heightAnimation = tweenHeight.animate(new CurvedAnimation(
       parent: animationController,
       curve: Curves.easeInOutCubic,
     ))
@@ -74,7 +74,7 @@ class _TimelineHeroState extends State<TimelineHero>
   @override
   void dispose() {
     super.dispose();
-    // animationController.dispose();
+    animationController.dispose();
     // animationControllerForDropMenuArrow.dispose();
     // SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   }
@@ -93,6 +93,59 @@ class _TimelineHeroState extends State<TimelineHero>
         ),
       );
 
+  @swidget
+  Widget _discussionToggleBtn() => IconButton(
+        icon: Icon(
+          Icons.mode_comment,
+          size: 22.0,
+          color: Theme.of(context).accentColor,
+        ),
+        onPressed: () {
+          storyProvider.showDiscussion = !storyProvider.showDiscussion;
+          // storyProvider.discussionFullView =
+          //     !storyProvider.discussionFullView;
+          animationController.reset();
+          animationController.forward();
+        },
+      );
+
+  @swidget
+  Widget _title() => Transform.translate(
+        offset: Offset(-15.0, 0.0),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 0),
+          layoutBuilder: (Widget currentChild, List<Widget> previousChildren) {
+            return currentChild;
+          },
+          child: _isCollapsed || storyProvider.discussionFullView
+              ? Transform.translate(
+                  offset: Offset(0.0, -2.0),
+                  child: Text(
+                    storyProvider.story.title,
+                    style: Theme.of(context).textTheme.headline2,
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: _isCollapsed
+                      ? MainAxisAlignment.center
+                      : MainAxisAlignment.start,
+                  children: [
+                    Avatar(
+                      src: storyProvider.author.profileImage,
+                      radius: 18.0,
+                    ),
+                    SizedBox(
+                      width: 15.0,
+                    ),
+                    Text(
+                      storyProvider.author.displayName,
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
+                  ],
+                ),
+        ),
+      );
+
   @override
   Widget build(context) {
     print(userProvider.user.logs[storyProvider.story.id]);
@@ -101,8 +154,6 @@ class _TimelineHeroState extends State<TimelineHero>
     bool isAuthor = storyProvider.author?.id == userProvider.user?.id;
     bool isFollower =
         userProvider.user.stories.following.contains(storyProvider.story.id);
-    bool showDiscussionToggleBtn =
-        _isCollapsed || storyProvider.discussionFullView;
 
     // tweenDropArrow.begin = _isCollapsed ? 180.0 / 360 : 0.0;
     // tweenDropArrow.end = _isCollapsed ? 0.0 : 180 / 360;
@@ -128,65 +179,12 @@ class _TimelineHeroState extends State<TimelineHero>
       if (_isCollapsed) {
         scrollToTop();
       }
-      tween.begin = storyProvider.expandedHeight;
-      tween.end = storyProvider.expandedDiscussionHeight;
+      tweenHeight.begin = storyProvider.expandedHeight;
+      tweenHeight.end = storyProvider.expandedDiscussionHeight;
     } else {
-      tween.begin = storyProvider.expandedDiscussionHeight;
-      tween.end = storyProvider.expandedHeight;
+      tweenHeight.begin = storyProvider.expandedDiscussionHeight;
+      tweenHeight.end = storyProvider.expandedHeight;
     }
-
-    Widget title = storyProvider.author != null
-        ? Transform.translate(
-            offset: Offset(-15.0, 0.0),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 0),
-              layoutBuilder:
-                  (Widget currentChild, List<Widget> previousChildren) {
-                return currentChild;
-              },
-              child: showDiscussionToggleBtn
-                  ? Transform.translate(
-                      offset: Offset(0.0, -2.0),
-                      child: Text(
-                        storyProvider.story.title,
-                        style: Theme.of(context).textTheme.headline2,
-                      ),
-                    )
-                  : Row(
-                      mainAxisAlignment: _isCollapsed
-                          ? MainAxisAlignment.center
-                          : MainAxisAlignment.start,
-                      children: [
-                        Avatar(
-                          src: storyProvider.author.profileImage,
-                          radius: 18.0,
-                        ),
-                        SizedBox(
-                          width: 15.0,
-                        ),
-                        Text(
-                          storyProvider.author.displayName,
-                          style: Theme.of(context).textTheme.bodyText2,
-                        ),
-                      ],
-                    ),
-            ),
-          )
-        : SkeletonLoader(
-            builder: Transform.translate(
-              offset: Offset(0, -12.0),
-              child: Container(
-                height: 18,
-                color: Colors.black,
-              ),
-            ),
-            items: 1,
-            period: Duration(seconds: 2),
-            baseColor:
-                TinyColor(Theme.of(context).primaryColor).lighten(4).color,
-            hightlightColor:
-                TinyColor(Theme.of(context).primaryColor).lighten(10).color,
-          );
 
     return SliverAppBar(
       leading: IconButton(
@@ -196,12 +194,13 @@ class _TimelineHeroState extends State<TimelineHero>
           Navigator.pop(context);
         },
       ),
-      title: title,
+      title: _title(),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.0)),
       ),
       backgroundColor: Theme.of(context).primaryColor,
-      expandedHeight: animation.value + _appBarHeight + _paddingTop - 10.0,
+      expandedHeight:
+          _heightAnimation.value + _appBarHeight + _paddingTop - 10.0,
       collapsedHeight: _paddingTop + _appBarHeight - 22.0,
       actions: [
         Container(
@@ -211,21 +210,7 @@ class _TimelineHeroState extends State<TimelineHero>
             children: [
               Align(
                 alignment: Alignment.center,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.mode_comment,
-                    size: 22.0,
-                    color: Theme.of(context).accentColor,
-                  ),
-                  onPressed: () {
-                    storyProvider.showDiscussion =
-                        !storyProvider.showDiscussion;
-                    // storyProvider.discussionFullView =
-                    //     !storyProvider.discussionFullView;
-                    animationController.reset();
-                    animationController.forward();
-                  },
-                ),
+                child: _discussionToggleBtn(),
               ),
               Transform.translate(
                 offset: Offset(-10.0, -9.0),
@@ -243,46 +228,6 @@ class _TimelineHeroState extends State<TimelineHero>
           ),
           onPressed: _isCollapsed ? scrollToTop : collapseHero,
         ),
-        // InkWell(
-        //   child: Container(
-        //     width: 40.0,
-        //     height: double.infinity,
-        //     margin: EdgeInsets.only(right: 10.0),
-        //     child: Center(
-        //       child: Icon(
-        //         _isCollapsed
-        //             ? Icons.keyboard_arrow_down
-        //             : Icons.keyboard_arrow_up,
-        //         size: 24.0,
-        //         color: Colors.white,
-        //       ),
-        //     ),
-        //   ),
-        //   // onTap: () {
-        //   //   // showModalBottomSheet(
-        //   //   //     context: context,
-        //   //   //     builder: (context) {
-        //   //   //       return FractionallySizedBox(
-        //   //   //         heightFactor: 0.4,
-        //   //   //         child: Container(
-        //   //   //           color: Theme.of(context).primaryColor,
-        //   //   //           padding: EdgeInsets.all(22.0),
-        //   //   //           child: Column(
-        //   //   //             children: [
-        //   //   //               listItem('SETTINGS', Icons.settings, () {}),
-        //   //   //               SizedBox(
-        //   //   //                 height: 15.0,
-        //   //   //               ),
-        //   //   //               listItem('SHARE', Icons.share,
-        //   //   //                   sharing == false ? shareStoryLink : null),
-        //   //   //             ],
-        //   //   //           ),
-        //   //   //         ),
-        //   //   //       );
-        //   //   //     });
-        //   // },
-        //   onTap: _isCollapsed ? scrollToTop : collapseHero,
-        // ),
       ],
       pinned: true,
       forceElevated: true,

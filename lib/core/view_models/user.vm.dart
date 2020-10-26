@@ -39,7 +39,8 @@ class UserVM extends ChangeNotifier {
   // }
 
   Stream<DocumentSnapshot> fetchUserAsStream(String uid) {
-    return _api.streamDoc(uid);
+    CollectionReference ref = _db.collection('users');
+    return ref.doc(uid).snapshots();
   }
 
   Stream<DocumentSnapshot> fetchCurrentUserAsStream() {

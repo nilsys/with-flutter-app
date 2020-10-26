@@ -69,6 +69,12 @@ class _StoryViewState extends State<StoryView> {
   }
 
   @override
+  void didChangeDependencies() {
+    Provider.of<StoryVM>(context, listen: true);
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     pageController.dispose();
     currentUserStream.cancel();
