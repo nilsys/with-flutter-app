@@ -9,9 +9,11 @@ import 'discussion_post.view.dart';
 
 class StoryDiscussion extends StatefulWidget {
   final Function scrollToBottom;
+  final ScrollController scrollController;
 
   StoryDiscussion({
     @required this.scrollToBottom,
+    @required this.scrollController,
   });
 
   @override
@@ -21,15 +23,18 @@ class StoryDiscussion extends StatefulWidget {
 class _StoryDiscussionState extends State<StoryDiscussion> {
   final UserVM userProvider = locator<UserVM>();
   final StoryVM storyProvider = locator<StoryVM>();
-  StreamSubscription<QuerySnapshot> discussionStream;
+  StreamSubscription<List<QuerySnapshot>> discussionStream;
   // Timer _timer;
 
   @override
   void initState() {
-    discussionStream =
-        storyProvider.streamDiscussion().listen((QuerySnapshot data) {
+    discussionStream = storyProvider
+        .streamDiscussion(userProvider.user.logs[storyProvider.story.id])
+        .listen((List<QuerySnapshot> data) {
       storyProvider.discussion =
-          data.docs.map((doc) => Post.fromMap(doc.data())).toList();
+          data[0].docs.map((doc) => Post.fromMap(doc.data())).toList();
+      // ..addAll(
+      //     data[1].docs.map((doc) => Post.fromMap(doc.data())).toList());
     });
     super.initState();
   }
@@ -48,12 +53,22 @@ class _StoryDiscussionState extends State<StoryDiscussion> {
     //     FocusScope.of(context).unfocus();
     //   });
     // }
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if (storyProvider.showDiscussion && !storyProvider.discussionFullView) {
+    //     storyProvider.discussionFullView = true;
+    //     widget.scrollToBottom();
+    //   }
+    // });
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           if (index < storyProvider.discussion.length) {
-            return DiscussionPost(post: storyProvider.discussion[index]);
+            return DiscussionPost(
+              post: storyProvider.discussion[index],
+              scrollController: widget.scrollController,
+              index: index,
+            );
           }
           return DiscussionIpnut(
             scrollToBottom: widget.scrollToBottom,

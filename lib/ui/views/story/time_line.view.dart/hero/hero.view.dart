@@ -1,8 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
-import 'package:tinycolor/tinycolor.dart';
-import 'package:skeleton_loader/skeleton_loader.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
@@ -74,15 +72,17 @@ class _TimelineHeroState extends State<TimelineHero>
   @override
   void dispose() {
     super.dispose();
-    animationController.dispose();
+    // animationController.dispose();
     // animationControllerForDropMenuArrow.dispose();
     // SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   }
 
   @swidget
-  Widget _notificationStastus() => Container(
-        height: 13.0,
-        width: 13.0,
+  Widget _notificationStastus() => AnimatedContainer(
+        curve: Curves.easeInOutQuad,
+        duration: Duration(milliseconds: 500),
+        height: storyProvider.hasNewComments ? 13.0 : 0.0,
+        width: storyProvider.hasNewComments ? 13.0 : 0.0,
         decoration: BoxDecoration(
           color: Colors.red,
           border: Border.all(
@@ -148,7 +148,6 @@ class _TimelineHeroState extends State<TimelineHero>
 
   @override
   Widget build(context) {
-    print(userProvider.user.logs[storyProvider.story.id]);
     final double _paddingTop = MediaQuery.of(context).padding.top;
     final double _appBarHeight = AppBar().preferredSize.height;
     bool isAuthor = storyProvider.author?.id == userProvider.user?.id;

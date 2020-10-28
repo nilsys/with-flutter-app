@@ -24,7 +24,6 @@ class StoryView extends StatefulWidget {
 class _StoryViewState extends State<StoryView> {
   final StoryVM storyProvider = locator<StoryVM>();
   final UserVM userProvider = locator<UserVM>();
-  StreamSubscription<DocumentSnapshot> currentUserStream;
   StreamSubscription<DocumentSnapshot> storyAutorStream;
   StreamSubscription<DocumentSnapshot> storyStream;
 
@@ -51,10 +50,10 @@ class _StoryViewState extends State<StoryView> {
 
   @override
   void initState() {
-    currentUserStream =
-        userProvider.fetchCurrentUserAsStream().listen((DocumentSnapshot doc) {
-      userProvider.user = UserModel.fromMap(doc.data(), doc.id);
-    });
+    // currentUserStream =
+    //     userProvider.fetchCurrentUserAsStream().listen((DocumentSnapshot doc) {
+    //   userProvider.user = UserModel.fromMap(doc.data(), doc.id);
+    // });
     storyStream = storyProvider
         .fetchStoryAsStream(widget.id)
         .listen((DocumentSnapshot doc) {
@@ -77,9 +76,9 @@ class _StoryViewState extends State<StoryView> {
   @override
   void dispose() {
     pageController.dispose();
-    currentUserStream.cancel();
     storyStream.cancel();
     storyAutorStream.cancel();
+    userProvider.logEntry(storyProvider.story.id);
     super.dispose();
   }
 

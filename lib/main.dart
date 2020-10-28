@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:native_device_orientation/native_device_orientation.dart';
 import 'package:provider/provider.dart';
@@ -37,11 +38,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     _dynamicLinkService.handleDynamicLinks(context);
     final MainVM mainProvider = locator<MainVM>();
+    final UserVM userProvider = locator<UserVM>();
+    userProvider.fetchCurrentUserAsStream().listen((DocumentSnapshot doc) {
+      userProvider.user = UserModel.fromMap(doc.data(), doc.id);
+    });
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => locator<StoryVM>()),
-        ChangeNotifierProvider(create: (_) => locator<UserVM>()),
-        ChangeNotifierProvider(create: (_) => locator<MainVM>()),
+        ChangeNotifierProvider(create: (_) => userProvider),
+        ChangeNotifierProvider(create: (_) => mainProvider),
         ChangeNotifierProvider(create: (_) => locator<CameraVM>()),
       ],
       child: NativeDeviceOrientationReader(

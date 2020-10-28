@@ -63,6 +63,9 @@ dependencies:
   intl: ^0.16.1 #https://pub.dev/packages/intl
   liquid_swipe: ^1.5.0 #https://pub.dev/packages/liquid_swipe
   gallery_saver: ^2.0.1 #https://pub.dev/packages/gallery_saver
+  scroll_to_index: ^1.0.6 #https://pub.dev/packages/scroll_to_index
+  visibility_detector: ^0.1.5 #https://pub.dev/packages/visibility_detector
+  async: ^2.4.2 #https://pub.dev/packages/async
 
 dev_dependencies:
   flutter_test:

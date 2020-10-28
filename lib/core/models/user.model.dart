@@ -54,6 +54,9 @@ class UserModel {
     if (dayOfBirth != null) {
       obj["day_of_birth"] = dayOfBirth;
     }
+    if (logs != null) {
+      obj["logs"] = logs;
+    }
     return obj;
   }
 }

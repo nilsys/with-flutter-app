@@ -60,7 +60,6 @@ class UserVM extends ChangeNotifier {
   Future<void> updateUser(UserModel data, String id) async {
     Map<String, dynamic> _data = data.toJson();
     _data['stories'] = _data['stories'].toJson();
-    print(_data);
     await _api.updateDocument(_data, id);
     return;
   }
@@ -118,5 +117,13 @@ class UserVM extends ChangeNotifier {
       });
       await _api.updateDocument(_update, user.id);
     }
+  }
+
+  Future logEntry(String storyId) async {
+    CollectionReference ref = _db.collection('users');
+    user.logs[storyId] = new DateTime.now();
+    await ref.doc(user.id).update({
+      'logs': user.logs,
+    });
   }
 }

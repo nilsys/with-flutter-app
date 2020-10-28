@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:async/async.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class StoryVM extends ChangeNotifier {
   bool _discussionFullView = false;
   bool _keyboardIsOpen = false;
   bool _showCameraPreview = false;
+  bool _hasNewComments = false;
   double _expandedDiscussionHeight = 0.0;
   double _expandedHeight = 100.0;
   double _prevExpandedHeight = 0.0;
@@ -27,7 +29,9 @@ class StoryVM extends ChangeNotifier {
   Story _story;
   UserModel _author;
   List<Post> _discussion = [];
+  // List<double> _scrollOffsets = [];
 
+  bool get hasNewComments => _hasNewComments;
   bool get showDiscussion => _showDiscussion;
   bool get discussionFullView => _discussionFullView;
   bool get keyboardIsOpen => _keyboardIsOpen;
@@ -37,9 +41,17 @@ class StoryVM extends ChangeNotifier {
   double get prevExpandedHeight => _prevExpandedHeight;
   double get descriptionHeight => _descriptionHeight;
   double get discussionHeight => _discussionHeight;
+  // List<double> get scrollOffsets => _scrollOffsets;
   Story get story => _story;
   UserModel get author => _author;
   List<Post> get discussion => _discussion;
+
+  set hasNewComments(bool val) {
+    if (_hasNewComments != val) {
+      _hasNewComments = val;
+      notifyListeners();
+    }
+  }
 
   set story(Story val) {
     _story = val;
@@ -118,13 +130,20 @@ class StoryVM extends ChangeNotifier {
     _discussionFullView = false;
     _keyboardIsOpen = false;
     _showCameraPreview = false;
+    _hasNewComments = false;
     _expandedDiscussionHeight = 0.0;
+    // _scrollOffsets = [];
     _expandedHeight = 100.0;
     _prevExpandedHeight = 0.0;
     _descriptionHeight = 0.0;
   }
 
   List<Story> stories;
+
+  // void setScrollOffset(int index, double offset) {
+  //   _scrollOffsets.insert(index, offset);
+  //   print('index: ${index}: ${_scrollOffsets[index]}');
+  // }
 
   Future<List<Story>> fetchStories() async {
     var result = await _api.getDataCollection();
@@ -141,9 +160,19 @@ class StoryVM extends ChangeNotifier {
     return _api.streamDoc(storyId);
   }
 
-  Stream<QuerySnapshot> streamDiscussion() {
+  Stream<List<QuerySnapshot>> streamDiscussion(Timestamp lastEntry) {
     CollectionReference ref = _db.collection('stories/${story.id}/discussion');
-    return ref.orderBy('created_at').snapshots();
+    Stream<QuerySnapshot> newPosts = ref
+        .where('created_at', isGreaterThan: lastEntry)
+        .orderBy('created_at')
+        .snapshots();
+    Stream<QuerySnapshot> oldPosts = ref
+        .where('created_at', isLessThanOrEqualTo: lastEntry)
+        .orderBy('created_at')
+        .snapshots();
+    // return newPosts;
+    // return StreamZip([oldPosts, newPosts]);
+    return StreamZip([newPosts]);
   }
 
   Future<Story> getStoryById(String id) async {

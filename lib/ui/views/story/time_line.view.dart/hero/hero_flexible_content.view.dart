@@ -33,13 +33,28 @@ class HeroFlexibleContent extends StatefulWidget {
 class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
   GlobalKey _descriptionKey = GlobalKey();
   bool sharing = false;
-  ScrollController scrollController2 = new ScrollController();
+  ScrollController discussionDcrollController = new ScrollController();
   final StoryVM storyProvider = locator<StoryVM>();
   final UserVM userProvider = locator<UserVM>();
+  // bool _prevShowDiscussion = false;
+
+  @override
+  void didChangeDependencies() {
+    // Provider.of<StoryVM>(context, listen: true);
+    // if (storyProvider.showDiscussion && !_prevShowDiscussion) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     discussionDcrollController.jumpTo(storyProvider.scrollOffsets[2]);
+    //   });
+    // }
+    // setState(() {
+    //   _prevShowDiscussion = storyProvider.showDiscussion;
+    // });
+    super.didChangeDependencies();
+  }
 
   @override
   void dispose() {
-    scrollController2.dispose();
+    discussionDcrollController.dispose();
     widget.animationController.dispose();
     super.dispose();
   }
@@ -260,7 +275,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
     // }
 
     scrollToTop() {
-      scrollController2.animateTo(
+      discussionDcrollController.animateTo(
         0.0,
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 150),
@@ -268,17 +283,21 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
     }
 
     scrollToBottom() {
-      scrollController2.animateTo(
-        scrollController2.position.maxScrollExtent,
-        curve: Curves.decelerate,
-        duration: const Duration(milliseconds: 400),
+      // discussionDcrollController.animateTo(
+      //   discussionDcrollController.position.maxScrollExtent,
+      //   curve: Curves.decelerate,
+      //   duration: const Duration(milliseconds: 1000),
+      // );
+      discussionDcrollController.jumpTo(
+        discussionDcrollController.position.maxScrollExtent,
       );
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (scrollController2.hasClients) {
-        if (scrollController2.offset != 0.0 && !storyProvider.showDiscussion) {
-          // scrollController2.jumpTo(
+      if (discussionDcrollController.hasClients) {
+        if (discussionDcrollController.offset != 0.0 &&
+            !storyProvider.showDiscussion) {
+          // discussionDcrollController.jumpTo(
           //   0.0,
           // );
           scrollToTop();
@@ -288,8 +307,8 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
 
     if (storyProvider.keyboardIsOpen) {
       // scrollToBottom();
-      scrollController2.jumpTo(
-        scrollController2.position.maxScrollExtent,
+      discussionDcrollController.jumpTo(
+        discussionDcrollController.position.maxScrollExtent,
         // curve: Curves.decelerate,
         // duration: const Duration(milliseconds: 400),
       );
@@ -299,7 +318,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
       padding: EdgeInsets.only(bottom: 15.0),
       height: storyProvider.expandedDiscussionHeight,
       child: CustomScrollView(
-        controller: scrollController2,
+        controller: discussionDcrollController,
         physics: storyProvider.showDiscussion
             ? null
             : NeverScrollableScrollPhysics(),
@@ -310,8 +329,8 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
             // collapsedHeight: 1.0,
             toolbarHeight: 0.0,
             elevation: 0.0,
-            // pinned: true,
-            floating: true,
+            pinned: true,
+            // floating: true,
             // leading: null,
             forceElevated: false,
             automaticallyImplyLeading: false,
@@ -397,6 +416,7 @@ class _HeroFlexibleContentState extends State<HeroFlexibleContent> {
           ),
           StoryDiscussion(
             scrollToBottom: scrollToBottom,
+            scrollController: discussionDcrollController,
           ),
         ],
       ),

@@ -99,7 +99,6 @@ class SocialLogin extends StatelessWidget {
         );
         final UserCredential credentials =
             await _auth.signInWithCredential(credential);
-        print(credentials);
         _userService.setUser(
             UserModel(
               displayName: credentials.additionalUserInfo.profile['name'],
