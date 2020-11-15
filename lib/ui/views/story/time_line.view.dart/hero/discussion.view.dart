@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:with_app/core/models/post.model.dart';
+import 'package:with_app/core/models/comment.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'discussion_input.view.dart';
@@ -32,7 +32,7 @@ class _StoryDiscussionState extends State<StoryDiscussion> {
         .streamDiscussion(userProvider.user.logs[storyProvider.story.id])
         .listen((List<QuerySnapshot> data) {
       storyProvider.discussion =
-          data[0].docs.map((doc) => Post.fromMap(doc.data())).toList();
+          data[0].docs.map((doc) => Comment.fromMap(doc.data())).toList();
       // ..addAll(
       //     data[1].docs.map((doc) => Post.fromMap(doc.data())).toList());
     });

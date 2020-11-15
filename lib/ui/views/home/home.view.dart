@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
+import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
 import 'package:with_app/ui/views/auth/auth.view.dart';
 import 'package:provider/provider.dart';
@@ -21,10 +22,14 @@ class _HomeViewState extends State<HomeView> {
   List<Story> stories;
   final _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final UserVM userProvider = locator<UserVM>();
+  final storyProvider = locator<StoryVM>();
 
   @override
   Widget build(BuildContext context) {
-    final storyProvider = Provider.of<StoryVM>(context);
+    userProvider.fetchCurrentUserAsStream().listen((DocumentSnapshot doc) {
+      userProvider.user = UserModel.fromMap(doc.data(), doc.id);
+    });
 
     return Scaffold(
       // floatingActionButton: FloatingActionButton(

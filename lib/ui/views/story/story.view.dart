@@ -6,6 +6,7 @@ import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
+import 'story.posts.view.dart';
 import 'story_settings.view.dart/story_settings.view.dart';
 import 'time_line.view.dart/timeline.view.dart';
 
@@ -50,19 +51,15 @@ class _StoryViewState extends State<StoryView> {
 
   @override
   void initState() {
-    // currentUserStream =
-    //     userProvider.fetchCurrentUserAsStream().listen((DocumentSnapshot doc) {
-    //   userProvider.user = UserModel.fromMap(doc.data(), doc.id);
-    // });
     storyStream = storyProvider
         .fetchStoryAsStream(widget.id)
         .listen((DocumentSnapshot doc) {
       storyProvider.story = Story.fromMap(doc.data(), doc.id);
-      storyAutorStream = userProvider
-          .fetchUserAsStream(storyProvider.story.owner)
-          .listen((DocumentSnapshot doc) {
-        storyProvider.author = UserModel.fromMap(doc.data(), doc.id);
-      });
+      //   storyAutorStream = userProvider
+      //       .fetchUserAsStream(storyProvider.story.owner)
+      //       .listen((DocumentSnapshot doc) {
+      //     storyProvider.author = UserModel.fromMap(doc.data(), doc.id);
+      //   });
     });
     super.initState();
   }
@@ -77,7 +74,7 @@ class _StoryViewState extends State<StoryView> {
   void dispose() {
     pageController.dispose();
     storyStream.cancel();
-    storyAutorStream.cancel();
+    // storyAutorStream.cancel();
     userProvider.logEntry(storyProvider.story.id);
     super.dispose();
   }
@@ -86,17 +83,15 @@ class _StoryViewState extends State<StoryView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      body: storyProvider.author != null
+      body: storyProvider.story != null
           ? PageView(
               physics: const NeverScrollableScrollPhysics(),
               controller: pageController,
               children: [
-                Timeline(
-                  goToSettings: goToSettings,
-                ),
-                StorySettings(
-                  goToTimeline: goToTimeline,
-                ),
+                StoryPosts(),
+                // StorySettings(
+                //   goToTimeline: goToTimeline,
+                // ),
               ],
             )
           : Spinner(),

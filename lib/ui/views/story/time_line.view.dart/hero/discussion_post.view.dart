@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'package:with_app/core/models/comment.model.dart';
 import 'package:with_app/core/models/post.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
@@ -12,7 +13,7 @@ import 'package:with_app/ui/views/full-screen-media/full_screen_media.view.dart'
 
 class DiscussionPost extends StatefulWidget {
   final DateFormat formatter = DateFormat('Hm');
-  final Post post;
+  final Comment post;
   final ScrollController scrollController;
   final int index;
 

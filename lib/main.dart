@@ -38,14 +38,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     _dynamicLinkService.handleDynamicLinks(context);
     final MainVM mainProvider = locator<MainVM>();
-    final UserVM userProvider = locator<UserVM>();
-    userProvider.fetchCurrentUserAsStream().listen((DocumentSnapshot doc) {
-      userProvider.user = UserModel.fromMap(doc.data(), doc.id);
-    });
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => locator<StoryVM>()),
-        ChangeNotifierProvider(create: (_) => userProvider),
+        ChangeNotifierProvider(create: (_) => locator<UserVM>()),
         ChangeNotifierProvider(create: (_) => mainProvider),
         ChangeNotifierProvider(create: (_) => locator<CameraVM>()),
       ],

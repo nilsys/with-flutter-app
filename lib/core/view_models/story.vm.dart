@@ -4,6 +4,7 @@ import 'package:async/async.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:with_app/core/models/comment.model.dart';
 import 'package:with_app/core/models/post.model.dart';
 import 'package:with_app/core/models/user.model.dart';
 import '../services/api.dart';
@@ -28,7 +29,8 @@ class StoryVM extends ChangeNotifier {
   double _discussionHeight = 0.0;
   Story _story;
   UserModel _author;
-  List<Post> _discussion = [];
+  List<Comment> _discussion = [];
+  List<Post> _posts = [];
   // List<double> _scrollOffsets = [];
 
   bool get hasNewComments => _hasNewComments;
@@ -44,7 +46,8 @@ class StoryVM extends ChangeNotifier {
   // List<double> get scrollOffsets => _scrollOffsets;
   Story get story => _story;
   UserModel get author => _author;
-  List<Post> get discussion => _discussion;
+  List<Comment> get discussion => _discussion;
+  List<Post> get posts => _posts;
 
   set hasNewComments(bool val) {
     if (_hasNewComments != val) {
@@ -63,8 +66,13 @@ class StoryVM extends ChangeNotifier {
     notifyListeners();
   }
 
-  set discussion(List<Post> val) {
+  set discussion(List<Comment> val) {
     _discussion = val;
+    notifyListeners();
+  }
+
+  set posts(List<Post> val) {
+    _posts = val;
     notifyListeners();
   }
 
@@ -157,7 +165,8 @@ class StoryVM extends ChangeNotifier {
   }
 
   Stream<DocumentSnapshot> fetchStoryAsStream(String storyId) {
-    return _api.streamDoc(storyId);
+    DocumentReference ref = _db.collection('stories').doc(storyId);
+    return ref.snapshots();
   }
 
   Stream<List<QuerySnapshot>> streamDiscussion(Timestamp lastEntry) {
@@ -173,6 +182,12 @@ class StoryVM extends ChangeNotifier {
     // return newPosts;
     // return StreamZip([oldPosts, newPosts]);
     return StreamZip([newPosts]);
+  }
+
+  Stream<QuerySnapshot> streamPosts() {
+    CollectionReference ref = _db.collection('stories/${story.id}/posts');
+    Stream<QuerySnapshot> posts = ref.orderBy('timestamp').snapshots();
+    return posts;
   }
 
   Future<Story> getStoryById(String id) async {

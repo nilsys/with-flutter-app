@@ -4,36 +4,32 @@ import 'package:with_app/core/models/reaction.model.dart';
 
 class Post {
   final String id;
-  final String author;
-  final DateTime createdAt;
+  final String title;
   final String text;
+  final DateTime timestamp;
   final List<String> media;
-  final List<Reaction> reactions;
 
   Post({
     this.id,
-    @required this.author,
-    @required this.createdAt,
-    @required this.text,
-    @required this.media,
-    @required this.reactions,
+    @required this.title,
+    @required this.timestamp,
+    this.text,
+    this.media,
   });
 
   Post.fromMap(Map snapshot)
       : id = snapshot['id'] ?? '',
-        author = snapshot['author'],
-        createdAt = (snapshot['created_at'] as Timestamp).toDate(),
+        title = snapshot['title'],
+        timestamp = (snapshot['timestamp'] as Timestamp).toDate(),
         text = snapshot['text'],
-        media = snapshot['media'].cast<String>().toList(),
-        reactions = snapshot['reactions'];
+        media = snapshot['media'];
 
   toJson() {
     return {
-      "author": author,
-      "created_at": createdAt,
+      "timestamp": timestamp,
+      "title": title,
       "text": text,
       "media": media,
-      "reactions": reactions,
     };
   }
 }

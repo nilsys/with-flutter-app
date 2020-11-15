@@ -5,36 +5,36 @@ class WithTheme {
   static data(BuildContext context) {
     final Color accentColor = Color.fromRGBO(232, 163, 1, 1); // orange
     return ThemeData(
-      brightness: Brightness.dark,
+      // brightness: Brightness.dark,
       primaryColor: Color.fromRGBO(105, 81, 174, 1), // purple
       primaryColorDark: Color.fromRGBO(96, 67, 145, 1), // purple
       primaryColorLight: Color.fromRGBO(130, 93, 240, 1), // purple
       // primaryColorLight: Color.fromRGBO(105, 81, 174, 1), // bright purple
-      backgroundColor: Color.fromRGBO(245, 245, 245, 1),
+      backgroundColor: Color.fromRGBO(255, 255, 255, 1),
       accentColor: accentColor,
       fontFamily: 'Hind',
       appBarTheme: AppBarTheme(),
       textTheme: GoogleFonts.latoTextTheme(Theme.of(context).textTheme)
           .copyWith(
-            headline1: GoogleFonts.robotoSlab(
+            headline1: GoogleFonts.dmSerifDisplay(
                 textStyle:
                     TextStyle(fontSize: 30.0, fontWeight: FontWeight.w500)),
-            headline2: GoogleFonts.robotoSlab(
+            headline2: GoogleFonts.dmSerifDisplay(
                 textStyle:
                     TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500)),
             headline3: TextStyle(fontSize: 16.0),
-            headline4:
-                GoogleFonts.robotoSlab(textStyle: TextStyle(fontSize: 20.0)),
+            headline4: GoogleFonts.dmSerifDisplay(
+                textStyle: TextStyle(fontSize: 20.0)),
             headline5: TextStyle(
               fontSize: 16.0,
             ),
             bodyText2:
-                TextStyle(fontSize: 14.0, color: Colors.white, height: 1.5),
+                TextStyle(fontSize: 14.0, color: Colors.black, height: 1.5),
             bodyText1:
                 TextStyle(fontSize: 14.0, color: Colors.black, height: 1.5),
           )
           .apply(
-            displayColor: Colors.white,
+            displayColor: Colors.black,
           ),
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: Colors.white,
