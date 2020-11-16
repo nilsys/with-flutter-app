@@ -76,6 +76,7 @@ class _StoryViewState extends State<StoryView> {
     storyStream.cancel();
     // storyAutorStream.cancel();
     userProvider.logEntry(storyProvider.story.id);
+    storyProvider.resetState();
     super.dispose();
   }
 

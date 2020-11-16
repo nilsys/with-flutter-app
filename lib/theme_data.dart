@@ -9,6 +9,7 @@ class WithTheme {
       primaryColor: Color.fromRGBO(105, 81, 174, 1), // purple
       primaryColorDark: Color.fromRGBO(96, 67, 145, 1), // purple
       primaryColorLight: Color.fromRGBO(130, 93, 240, 1), // purple
+      indicatorColor: Color.fromRGBO(255, 0, 0, 1),
       // primaryColorLight: Color.fromRGBO(105, 81, 174, 1), // bright purple
       backgroundColor: Color.fromRGBO(255, 255, 255, 1),
       accentColor: accentColor,
@@ -28,6 +29,11 @@ class WithTheme {
             headline5: TextStyle(
               fontSize: 16.0,
             ),
+            subtitle2: GoogleFonts.lato(
+                textStyle: TextStyle(
+                    fontSize: 12.0,
+                    color: Colors.black.withAlpha(100),
+                    height: 1.5)),
             bodyText2:
                 TextStyle(fontSize: 14.0, color: Colors.black, height: 1.5),
             bodyText1:

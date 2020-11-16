@@ -140,6 +140,8 @@ class StoryVM extends ChangeNotifier {
     _showCameraPreview = false;
     _hasNewComments = false;
     _expandedDiscussionHeight = 0.0;
+    _posts = [];
+    _story = null;
     // _scrollOffsets = [];
     _expandedHeight = 100.0;
     _prevExpandedHeight = 0.0;
