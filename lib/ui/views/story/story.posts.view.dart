@@ -1,7 +1,3 @@
-//Copyright (C) 2019 Potix Corporation. All Rights Reserved.
-//History: Tue Apr 24 09:29 CST 2019
-// Author: Jerry Chen
-
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
@@ -14,6 +10,8 @@ import 'package:with_app/core/models/post.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 
+import 'story.post.view.dart';
+
 class StoryPosts extends StatefulWidget {
   StoryPosts({Key key, this.title}) : super(key: key);
 
@@ -24,9 +22,8 @@ class StoryPosts extends StatefulWidget {
 }
 
 class _StoryPostsState extends State<StoryPosts> {
-  static const maxCount = 100;
   static const gutter = 16.0;
-  static const verticalSpace = 40.0;
+  static const verticalSpace = 30.0;
   final random = math.Random();
   final scrollDirection = Axis.vertical;
   int srcollToindex = 0;
@@ -58,20 +55,16 @@ class _StoryPostsState extends State<StoryPosts> {
 
   @override
   void dispose() {
-    // _timer.cancel();
     postsStream.cancel();
     super.dispose();
   }
 
   Future _scrollToIndex(i) async {
-    // setState(() {
-    //   counter++;
-
-    //   if (counter >= maxCount) counter = 0;
-    // });
-
-    await controller.scrollToIndex(i, preferPosition: AutoScrollPosition.begin);
-    controller.highlight(i);
+    await controller.scrollToIndex(i, preferPosition: AutoScrollPosition.end);
+    controller.highlight(
+      i,
+      highlightDuration: Duration(seconds: 1),
+    );
   }
 
   @swidget
@@ -119,44 +112,45 @@ class _StoryPostsState extends State<StoryPosts> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToIndex(srcollToindex);
+      if (srcollToindex > 0) {
+        _scrollToIndex(srcollToindex);
+      }
     });
     return Scaffold(
       appBar: AppBar(
         title: Text(storyProvider.story.title),
       ),
       body: ListView.builder(
+        // addAutomaticKeepAlives: false,
+        // addRepaintBoundaries: false,
+        // addSemanticIndexes: false,
+        reverse: true,
         scrollDirection: scrollDirection,
         controller: controller,
         itemCount: storyProvider.posts.length,
         itemBuilder: (_, index) {
+          final int reversedIndex = storyProvider.posts.length - index - 1;
           if (srcollToindex == 0 &&
-              storyProvider.posts[index].timestamp.isAfter(
+              storyProvider.posts[reversedIndex].timestamp.isAfter(
                   userProvider.user.logs[storyProvider.story.id].toDate())) {
-            srcollToindex = index;
+            srcollToindex = reversedIndex;
           }
           return AutoScrollTag(
-            key: ValueKey(index),
-            controller: controller,
-            index: index,
-            highlightColor: Colors.black.withOpacity(0.1),
-            child: Container(
-                padding: EdgeInsets.fromLTRB(gutter, 0, gutter, verticalSpace),
-                child: Column(
-                  children: [
-                    srcollToindex == index
-                        ? newPostsDivider(
-                            storyProvider.posts.length - srcollToindex)
-                        : SizedBox(),
-                    postTopSection(storyProvider.posts[index].timestamp),
-                    Text(
-                      capitalize(storyProvider.posts[index].title),
-                      style: Theme.of(context).textTheme.headline1,
-                    ),
-                    Text(storyProvider.posts[index].text),
-                  ],
-                )),
-          );
+              key: ValueKey(reversedIndex),
+              controller: controller,
+              index: reversedIndex,
+              highlightColor: Theme.of(context).indicatorColor.withOpacity(0.1),
+              child: Column(
+                children: [
+                  srcollToindex == reversedIndex && reversedIndex > 0
+                      ? newPostsDivider(
+                          storyProvider.posts.length - srcollToindex)
+                      : SizedBox(),
+                  StoryPost(
+                    index: reversedIndex,
+                  ),
+                ],
+              ));
         },
       ),
     );
@@ -167,6 +161,7 @@ class _StoryPostsState extends State<StoryPosts> {
         context: context,
         builder: (BuildContext context) {
           return Container(
+            padding: EdgeInsets.all(gutter),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16.0),
@@ -175,8 +170,28 @@ class _StoryPostsState extends State<StoryPosts> {
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[Text('Bottom Drawer')],
+              children: <Widget>[
+                TextButton(
+                  onPressed: () {},
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      'Share',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      'Edit',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ],
             ),
           );
         });
