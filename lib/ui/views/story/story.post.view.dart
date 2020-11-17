@@ -86,7 +86,7 @@ class _StoryPostState extends State<StoryPost> {
     return Container(
       padding: EdgeInsets.only(bottom: verticalSpace),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
             padding: EdgeInsets.symmetric(horizontal: gutter),
@@ -153,6 +153,29 @@ class _StoryPostState extends State<StoryPost> {
             ),
           ),
           renderMedia(),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _seeMore = !_seeMore;
+              });
+            },
+            child: Transform.translate(
+              offset: Offset(5, 0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Transform.translate(
+                    offset: Offset(0, -1.2),
+                    child: Text(
+                      'Comment in Chat',
+                    ),
+                  ),
+                  Icon(Icons.chevron_right),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
