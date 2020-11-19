@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:strings/strings.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
+import 'package:with_app/ui/shared/all.dart';
 
 class StoryPost extends StatefulWidget {
   final int index;
@@ -84,11 +86,16 @@ class _StoryPostState extends State<StoryPost> {
               child: CarouselSlider.builder(
                   itemCount: images.length,
                   itemBuilder: (BuildContext context, int itemIndex) =>
-                      Image.network(
-                        images[itemIndex],
-                        fit: BoxFit.cover,
-                        width: MediaQuery.of(context).size.width,
-                        // height: MediaQuery.of(context).size.width * 1.12,
+                      Container(
+                        color: Colors.black,
+                        child: CachedNetworkImage(
+                          imageUrl: images[itemIndex],
+                          fit: BoxFit.cover,
+                          width: MediaQuery.of(context).size.width,
+                          placeholder: (context, url) => Spinner(),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                        ),
                       ),
                   options: CarouselOptions(
                     height: MediaQuery.of(context).size.width * 1.12,
