@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:strings/strings.dart';
@@ -126,6 +128,44 @@ class _StoryPostState extends State<StoryPost> {
   }
 
   @swidget
+  List<Widget> mediaIndicator() {
+    List<String> images = storyProvider.posts[widget.index].media.images;
+
+    final List<Widget> list = [
+      Icon(
+        Icons.arrow_left_rounded,
+        size: 30,
+        color: carouselIndex < 3 ? Colors.transparent : Colors.black,
+      )
+    ];
+
+    for (int i = 0; i < min(3, images.length); i++) {
+      list.add(Container(
+        padding: EdgeInsets.symmetric(horizontal: 2.0),
+        child: Icon(Icons.fiber_manual_record,
+            size: 10,
+            color: i == carouselIndex % 3
+                ? Theme.of(context).accentColor
+                : (images.length > 3) &&
+                        (i >= images.length % 3) &&
+                        (images.length - carouselIndex < 3)
+                    ? Colors.transparent
+                    : Colors.black),
+      ));
+    }
+
+    list.add(Icon(
+      Icons.arrow_right_rounded,
+      size: 30,
+      color: images.length < 4 || images.length - carouselIndex < 3
+          ? Colors.transparent
+          : Colors.black,
+    ));
+
+    return list.toList();
+  }
+
+  @swidget
   Widget renderBottom() {
     List<String> images = storyProvider.posts[widget.index].media.images;
     return Row(
@@ -135,16 +175,11 @@ class _StoryPostState extends State<StoryPost> {
           width: 64.0,
         ),
         Container(
+          // Media Indicator
           child: images.length > 1
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: images.map((itm) {
-                    return Icon(Icons.fiber_manual_record,
-                        size: 8,
-                        color: images.indexOf(itm) == carouselIndex
-                            ? Theme.of(context).accentColor
-                            : Colors.black);
-                  }).toList(),
+                  children: mediaIndicator(),
                 )
               : SizedBox(),
         ),

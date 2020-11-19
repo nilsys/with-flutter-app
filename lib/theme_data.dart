@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class WithTheme {
   static data(BuildContext context) {
-    final Color accentColor = Color.fromRGBO(232, 163, 1, 1); // orange
+    final Color accentColor = Color.fromRGBO(0, 93, 255, 1); // blue
     return ThemeData(
       // brightness: Brightness.dark,
       primaryColor: Color.fromRGBO(105, 81, 174, 1), // purple
