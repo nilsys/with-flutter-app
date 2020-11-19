@@ -132,20 +132,23 @@ class _StoryPostState extends State<StoryPost> {
     List<String> images = storyProvider.posts[widget.index].media.images;
 
     final List<Widget> list = [
-      AnimatedOpacity(
-        duration: Duration(milliseconds: carouselIndex < 3 ? 0 : 250),
-        opacity: carouselIndex < 3 ? 0 : 1,
-        child: Icon(
-          Icons.arrow_left_rounded,
-          size: 30,
-          color: Colors.black,
+      Transform.translate(
+        offset: Offset(8.0, 0),
+        child: AnimatedOpacity(
+          duration: Duration(milliseconds: carouselIndex < 3 ? 0 : 250),
+          opacity: carouselIndex < 3 ? 0 : 1,
+          child: Icon(
+            Icons.arrow_left_rounded,
+            size: 30,
+            color: Colors.black,
+          ),
         ),
       )
     ];
 
     for (int i = 0; i < min(3, images.length); i++) {
       list.add(Container(
-        padding: EdgeInsets.symmetric(horizontal: 2.0),
+        padding: EdgeInsets.symmetric(horizontal: 1.0),
         child: Icon(Icons.fiber_manual_record,
             size: 10,
             color: i == carouselIndex % 3
@@ -158,15 +161,19 @@ class _StoryPostState extends State<StoryPost> {
       ));
     }
 
-    list.add(AnimatedOpacity(
-      duration: Duration(
-          milliseconds:
-              images.length < 4 || images.length - carouselIndex < 3 ? 0 : 250),
-      opacity: images.length < 4 || images.length - carouselIndex < 3 ? 0 : 1,
-      child: Icon(
-        Icons.arrow_right_rounded,
-        size: 30,
-        color: Colors.black,
+    list.add(Transform.translate(
+      offset: Offset(-8.0, 0),
+      child: AnimatedOpacity(
+        duration: Duration(
+            milliseconds: images.length < 4 || images.length - carouselIndex < 3
+                ? 0
+                : 250),
+        opacity: images.length < 4 || images.length - carouselIndex < 3 ? 0 : 1,
+        child: Icon(
+          Icons.arrow_right_rounded,
+          size: 30,
+          color: Colors.black,
+        ),
       ),
     ));
 
