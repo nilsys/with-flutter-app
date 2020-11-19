@@ -33,10 +33,22 @@ class WithTheme {
                 textStyle: TextStyle(
                     fontSize: 12.0,
                     color: Colors.black.withAlpha(100),
-                    height: 1.5)),
-            bodyText2:
-                TextStyle(fontSize: 14.0, color: Colors.black, height: 1.5),
+                    height: 1)),
+            overline: GoogleFonts.dmSerifDisplay(
+                textStyle: TextStyle(
+              fontSize: 14.0,
+              color: Colors.black,
+              height: 1.5,
+              decoration: TextDecoration.underline,
+              decorationStyle: TextDecorationStyle.solid,
+              decorationThickness: 1.0,
+              decorationColor: Colors.black,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w500,
+            )),
             bodyText1:
+                TextStyle(fontSize: 14.0, color: Colors.black, height: 1.5),
+            bodyText2:
                 TextStyle(fontSize: 14.0, color: Colors.black, height: 1.5),
           )
           .apply(

@@ -60,7 +60,10 @@ class _StoryPostsState extends State<StoryPosts> {
   }
 
   Future _scrollToIndex(i) async {
-    await controller.scrollToIndex(i, preferPosition: AutoScrollPosition.end);
+    await controller.scrollToIndex(
+      i,
+      preferPosition: AutoScrollPosition.end,
+    );
     controller.highlight(
       i,
       highlightDuration: Duration(seconds: 1),
@@ -68,30 +71,12 @@ class _StoryPostsState extends State<StoryPosts> {
   }
 
   @swidget
-  Widget newPostsDivider(i) => Row(
-        children: [
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.fromLTRB(0, 5, 0, 7),
-              margin: EdgeInsets.fromLTRB(
-                0,
-                verticalSpace / 2,
-                0,
-                verticalSpace,
-              ),
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(239, 239, 239, 1),
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: Center(
-                child: Text(
-                  '$i Unread Posts',
-                  style: TextStyle(color: Theme.of(context).indicatorColor),
-                ),
-              ),
-            ),
-          ),
-        ],
+  Widget newPostsDivider(i) => Container(
+        padding: EdgeInsets.fromLTRB(0, 22, 0, 18),
+        child: Text(
+          '$i Unread Posts',
+          style: TextStyle(color: Theme.of(context).indicatorColor),
+        ),
       );
 
   @swidget
@@ -117,6 +102,7 @@ class _StoryPostsState extends State<StoryPosts> {
       }
     });
     return Scaffold(
+      backgroundColor: Color.fromRGBO(232, 232, 232, 1),
       appBar: AppBar(
         title: Text(storyProvider.story.title),
       ),
@@ -139,7 +125,7 @@ class _StoryPostsState extends State<StoryPosts> {
               key: ValueKey(reversedIndex),
               controller: controller,
               index: reversedIndex,
-              highlightColor: Theme.of(context).indicatorColor.withOpacity(0.1),
+              highlightColor: Theme.of(context).primaryColor.withOpacity(0.1),
               child: Column(
                 children: [
                   srcollToindex == reversedIndex && reversedIndex > 0
