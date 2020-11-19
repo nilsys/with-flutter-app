@@ -132,10 +132,14 @@ class _StoryPostState extends State<StoryPost> {
     List<String> images = storyProvider.posts[widget.index].media.images;
 
     final List<Widget> list = [
-      Icon(
-        Icons.arrow_left_rounded,
-        size: 30,
-        color: carouselIndex < 3 ? Colors.transparent : Colors.black,
+      AnimatedOpacity(
+        duration: Duration(milliseconds: carouselIndex < 3 ? 0 : 250),
+        opacity: carouselIndex < 3 ? 0 : 1,
+        child: Icon(
+          Icons.arrow_left_rounded,
+          size: 30,
+          color: Colors.black,
+        ),
       )
     ];
 
@@ -154,12 +158,16 @@ class _StoryPostState extends State<StoryPost> {
       ));
     }
 
-    list.add(Icon(
-      Icons.arrow_right_rounded,
-      size: 30,
-      color: images.length < 4 || images.length - carouselIndex < 3
-          ? Colors.transparent
-          : Colors.black,
+    list.add(AnimatedOpacity(
+      duration: Duration(
+          milliseconds:
+              images.length < 4 || images.length - carouselIndex < 3 ? 0 : 250),
+      opacity: images.length < 4 || images.length - carouselIndex < 3 ? 0 : 1,
+      child: Icon(
+        Icons.arrow_right_rounded,
+        size: 30,
+        color: Colors.black,
+      ),
     ));
 
     return list.toList();
