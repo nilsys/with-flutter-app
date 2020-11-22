@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:expandable/expandable.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:strings/strings.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -223,6 +224,14 @@ class _StoryPostState extends State<StoryPost> {
     );
   }
 
+  @swidget
+  Widget postTitle() {
+    return Text(
+      capitalize(storyProvider.posts[widget.index].title),
+      style: Theme.of(context).textTheme.headline1,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -241,10 +250,6 @@ class _StoryPostState extends State<StoryPost> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 postTopSection(storyProvider.posts[widget.index].timestamp),
-                Text(
-                  capitalize(storyProvider.posts[widget.index].title),
-                  style: Theme.of(context).textTheme.headline1,
-                ),
                 storyProvider.posts[widget.index].text.length > 0
                     ? LayoutBuilder(
                         builder: (context, size) {
@@ -263,37 +268,75 @@ class _StoryPostState extends State<StoryPost> {
 
                           if (tp.didExceedMaxLines) {
                             // The text has more than three lines.
-                            // TODO: display the prompt message
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _seeMore
-                                    ? Text(
-                                        storyProvider.posts[widget.index].text,
-                                      )
-                                    : Text(
-                                        storyProvider.posts[widget.index].text,
-                                        maxLines: 4,
-                                        overflow: TextOverflow.ellipsis,
-                                        softWrap: false,
+                            return ExpandableNotifier(
+                              // <-- Provides ExpandableController to its children
+                              child: ScrollOnExpand(
+                                scrollOnExpand: true,
+                                scrollOnCollapse: false,
+                                child: Expandable(
+                                  // <-- Driven by ExpandableController from ExpandableNotifier
+                                  collapsed: Column(
+                                    children: [
+                                      postTitle(),
+                                      ExpandableButton(
+                                        // <-- Expands when tapped on the cover photo
+                                        child: Text(
+                                          storyProvider
+                                              .posts[widget.index].text,
+                                          maxLines: 4,
+                                          overflow: TextOverflow.ellipsis,
+                                          softWrap: false,
+                                        ),
                                       ),
-                                InkWell(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                  onTap: () {
-                                    setState(() {
-                                      _seeMore = !_seeMore;
-                                    });
-                                  },
-                                  child: Text('More..',
-                                      style:
-                                          Theme.of(context).textTheme.overline
-                                      // textAlign: TextAlign.center,
+                                    ],
+                                  ),
+                                  expanded: Column(children: [
+                                    postTitle(),
+                                    ExpandableButton(
+                                      // <-- Collapses when tapped on
+                                      child: Text(
+                                        storyProvider.posts[widget.index].text,
                                       ),
+                                    ),
+                                  ]),
                                 ),
+                              ),
+                            );
+                            // return Column(
+                            //   crossAxisAlignment: CrossAxisAlignment.start,
+                            //   children: [
+                            //     _seeMore
+                            //         ? Text(
+                            //             storyProvider.posts[widget.index].text,
+                            //           )
+                            //         : Text(
+                            //             storyProvider.posts[widget.index].text,
+                            //             maxLines: 4,
+                            //             overflow: TextOverflow.ellipsis,
+                            //             softWrap: false,
+                            //           ),
+                            //     InkWell(
+                            //       borderRadius: BorderRadius.circular(4.0),
+                            //       onTap: () {
+                            //         setState(() {
+                            //           _seeMore = !_seeMore;
+                            //         });
+                            //       },
+                            //       child: Text('More..',
+                            //           style:
+                            //               Theme.of(context).textTheme.overline
+                            //           // textAlign: TextAlign.center,
+                            //           ),
+                            //     ),
+                            //   ],
+                            // );
+                          } else {
+                            return Column(
+                              children: [
+                                postTitle(),
+                                Text(storyProvider.posts[widget.index].text),
                               ],
                             );
-                          } else {
-                            return Text(storyProvider.posts[widget.index].text);
                           }
                         },
                       )

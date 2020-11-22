@@ -69,6 +69,7 @@ dependencies:
   flutter_hooks: ^0.14.1 #https://pub.dev/packages/flutter_hooks
   strings: ^0.1.4 #https://pub.dev/packages/strings
   carousel_slider: ^2.3.1 #https://pub.dev/packages/carousel_slider
+  expandable: ^4.1.4 #https://pub.dev/packages/expandable
 
 dev_dependencies:
   flutter_test:

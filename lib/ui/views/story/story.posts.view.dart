@@ -59,7 +59,7 @@ class _StoryPostsState extends State<StoryPosts> {
     super.dispose();
   }
 
-  Future _scrollToIndex(i) async {
+  Future<void> scrollToIndex(i) async {
     await controller.scrollToIndex(
       i,
       preferPosition: AutoScrollPosition.end,
@@ -98,7 +98,9 @@ class _StoryPostsState extends State<StoryPosts> {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (srcollToindex > 0) {
-        _scrollToIndex(srcollToindex);
+        scrollToIndex(srcollToindex);
+      } else if (storyProvider.posts.length > 0) {
+        scrollToIndex(storyProvider.posts.length - 1);
       }
     });
     return Scaffold(
