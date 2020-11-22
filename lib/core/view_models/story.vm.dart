@@ -24,7 +24,7 @@ class StoryVM extends ChangeNotifier {
   bool _hasNewComments = false;
   double _expandedDiscussionHeight = 0.0;
   double _expandedHeight = 100.0;
-  double _collpasedHeight = 82.0;
+  double _collpasedHeight = 78.0;
   double _prevExpandedHeight = 0.0;
   double _descriptionHeight = 0.0;
   double _discussionHeight = 0.0;

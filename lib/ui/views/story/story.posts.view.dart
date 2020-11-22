@@ -102,7 +102,7 @@ class _StoryPostsState extends State<StoryPosts> {
       if (srcollToindex > 0) {
         scrollToIndex(srcollToindex);
       } else if (storyProvider.posts.length > 0) {
-        scrollToIndex(storyProvider.posts.length - 2);
+        scrollToIndex(storyProvider.posts.length - 1);
       }
     });
     return Scaffold(
