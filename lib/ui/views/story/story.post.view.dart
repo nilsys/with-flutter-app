@@ -239,7 +239,10 @@ class _StoryPostState extends State<StoryPost> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(bottom: verticalSpace),
-      margin: EdgeInsets.only(top: 6.0),
+      margin: EdgeInsets.only(
+        // top: 6.0 + (widget.index > 0 ? 0 : storyProvider.collpasedHeight),
+        top: 6.0,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20.0),

@@ -151,7 +151,9 @@ class ExpandedView extends State<StoryCover>
         elevation: 50.01,
         color: Colors.transparent,
         child: ClipRRect(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(24.0)),
+          // borderRadius: BorderRadius.vertical(bottom: Radius.circular(24.0)),
+          borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(34.0 * animation.value)),
           child: Container(
             height: storyProvider.collpasedHeight +
                 animation.value * (coverHeight + 240),

@@ -41,8 +41,11 @@ class _StoryPostsState extends State<StoryPosts> {
   void initState() {
     super.initState();
     controller = AutoScrollController(
-        viewportBoundaryGetter: () =>
-            Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
+        // viewportBoundaryG2etter: () => Rect.fromLTRB(
+        //     0,
+        //     storyProvider.collpasedHeight,
+        //     0,
+        //     MediaQuery.of(context).padding.bottom),
         axis: scrollDirection);
     postsStream = storyProvider.streamPosts().listen((QuerySnapshot data) {
       storyProvider.posts = data.docs.map((doc) {
@@ -123,7 +126,7 @@ class _StoryPostsState extends State<StoryPosts> {
           // fit: StackFit.expand,
           children: [
             Container(
-              margin: EdgeInsets.only(top: storyProvider.collpasedHeight),
+              padding: EdgeInsets.only(top: storyProvider.collpasedHeight),
               child: ListView.builder(
                 // addAutomaticKeepAlives: false,
                 // addRepaintBoundaries: false,
@@ -141,12 +144,13 @@ class _StoryPostsState extends State<StoryPosts> {
                               .toDate())) {
                     srcollToindex = reversedIndex;
                   }
+                  if (index == storyProvider.posts.length) {
+                    return SizedBox(height: 40);
+                  }
                   return AutoScrollTag(
                       key: ValueKey(reversedIndex),
                       controller: controller,
                       index: reversedIndex,
-                      highlightColor:
-                          Theme.of(context).primaryColor.withOpacity(0.1),
                       child: Column(
                         children: [
                           srcollToindex == reversedIndex && reversedIndex > 0
