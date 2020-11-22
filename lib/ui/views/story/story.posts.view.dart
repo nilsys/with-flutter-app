@@ -64,6 +64,7 @@ class _StoryPostsState extends State<StoryPosts> {
     await controller.scrollToIndex(
       i,
       preferPosition: AutoScrollPosition.end,
+      duration: Duration(milliseconds: 700),
     );
     controller.highlight(
       i,
@@ -101,7 +102,7 @@ class _StoryPostsState extends State<StoryPosts> {
       if (srcollToindex > 0) {
         scrollToIndex(srcollToindex);
       } else if (storyProvider.posts.length > 0) {
-        scrollToIndex(storyProvider.posts.length - 1);
+        scrollToIndex(storyProvider.posts.length - 2);
       }
     });
     return Scaffold(
@@ -117,46 +118,52 @@ class _StoryPostsState extends State<StoryPosts> {
       //         })
       //   ],
       // ),
-      body: Stack(
-        // fit: StackFit.expand,
-        children: [
-          ListView.builder(
-            // addAutomaticKeepAlives: false,
-            // addRepaintBoundaries: false,
-            // addSemanticIndexes: false,
-            reverse: true,
-            scrollDirection: scrollDirection,
-            controller: controller,
-            itemCount: storyProvider.posts.length,
-            itemBuilder: (_, index) {
-              final int reversedIndex = storyProvider.posts.length - index - 1;
-              if (srcollToindex == 0 &&
-                  storyProvider.posts[reversedIndex].timestamp.isAfter(
-                      userProvider.user.logs[storyProvider.story.id]
-                          .toDate())) {
-                srcollToindex = reversedIndex;
-              }
-              return AutoScrollTag(
-                  key: ValueKey(reversedIndex),
-                  controller: controller,
-                  index: reversedIndex,
-                  highlightColor:
-                      Theme.of(context).primaryColor.withOpacity(0.1),
-                  child: Column(
-                    children: [
-                      srcollToindex == reversedIndex && reversedIndex > 0
-                          ? newPostsDivider(
-                              storyProvider.posts.length - srcollToindex)
-                          : SizedBox(),
-                      StoryPost(
-                        index: reversedIndex,
-                      ),
-                    ],
-                  ));
-            },
-          ),
-          StoryCover(),
-        ],
+      body: SafeArea(
+        child: Stack(
+          // fit: StackFit.expand,
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: storyProvider.collpasedHeight),
+              child: ListView.builder(
+                // addAutomaticKeepAlives: false,
+                // addRepaintBoundaries: false,
+                // addSemanticIndexes: false,
+                reverse: true,
+                scrollDirection: scrollDirection,
+                controller: controller,
+                itemCount: storyProvider.posts.length,
+                itemBuilder: (_, index) {
+                  final int reversedIndex =
+                      storyProvider.posts.length - index - 1;
+                  if (srcollToindex == 0 &&
+                      storyProvider.posts[reversedIndex].timestamp.isAfter(
+                          userProvider.user.logs[storyProvider.story.id]
+                              .toDate())) {
+                    srcollToindex = reversedIndex;
+                  }
+                  return AutoScrollTag(
+                      key: ValueKey(reversedIndex),
+                      controller: controller,
+                      index: reversedIndex,
+                      highlightColor:
+                          Theme.of(context).primaryColor.withOpacity(0.1),
+                      child: Column(
+                        children: [
+                          srcollToindex == reversedIndex && reversedIndex > 0
+                              ? newPostsDivider(
+                                  storyProvider.posts.length - srcollToindex)
+                              : SizedBox(),
+                          StoryPost(
+                            index: reversedIndex,
+                          ),
+                        ],
+                      ));
+                },
+              ),
+            ),
+            StoryCover(),
+          ],
+        ),
       ),
     );
   }

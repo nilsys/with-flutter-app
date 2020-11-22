@@ -24,6 +24,7 @@ class StoryVM extends ChangeNotifier {
   bool _hasNewComments = false;
   double _expandedDiscussionHeight = 0.0;
   double _expandedHeight = 100.0;
+  double _collpasedHeight = 82.0;
   double _prevExpandedHeight = 0.0;
   double _descriptionHeight = 0.0;
   double _discussionHeight = 0.0;
@@ -43,6 +44,7 @@ class StoryVM extends ChangeNotifier {
   double get prevExpandedHeight => _prevExpandedHeight;
   double get descriptionHeight => _descriptionHeight;
   double get discussionHeight => _discussionHeight;
+  double get collpasedHeight => _collpasedHeight;
   // List<double> get scrollOffsets => _scrollOffsets;
   Story get story => _story;
   UserModel get author => _author;

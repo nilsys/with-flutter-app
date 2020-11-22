@@ -16,7 +16,6 @@ class ExpandedView extends State<StoryCover>
   AnimationController controller;
   final StoryVM storyProvider = locator<StoryVM>();
   bool isTaped = false;
-  static const collpasedHeight = 102.0;
   static const coverHeight = 185.0;
   static const gutter = 16.0;
 
@@ -154,7 +153,8 @@ class ExpandedView extends State<StoryCover>
         child: ClipRRect(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(24.0)),
           child: Container(
-            height: collpasedHeight + animation.value * (coverHeight + 240),
+            height: storyProvider.collpasedHeight +
+                animation.value * (coverHeight + 240),
             decoration: BoxDecoration(
               color: Color.fromRGBO(232, 232, 232, 1),
               // gradient: LinearGradient(
@@ -168,107 +168,100 @@ class ExpandedView extends State<StoryCover>
               //   bottom: new Radius.circular(animation.value / 10),
               // ),
             ),
-            child: SafeArea(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  OverflowBox(
-                    alignment: Alignment.topLeft,
-                    minHeight: 0.0,
-                    maxHeight: double.infinity,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          // color: Colors.red,
-                          height: collpasedHeight -
-                              10.0 -
-                              MediaQuery.of(context).padding.top,
-                          margin: EdgeInsets.only(bottom: 10.0),
-                          child: Row(
-                            children: [
-                              Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(30),
-                                  splashColor: Colors.black.withAlpha(70),
-                                  radius: 45,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Icon(Icons.arrow_back),
-                                  ),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                OverflowBox(
+                  alignment: Alignment.topLeft,
+                  minHeight: 0.0,
+                  maxHeight: double.infinity,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: storyProvider.collpasedHeight - 10.0,
+                        margin: EdgeInsets.only(bottom: 10.0),
+                        child: Row(
+                          children: [
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(30),
+                                splashColor: Colors.black.withAlpha(70),
+                                radius: 45,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Icon(Icons.arrow_back),
+                                ),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                            AnimatedSwitcher(
+                              child: isTaped == true
+                                  ? _expandedTopSction()
+                                  : _collpasedTopSction(),
+                              duration: const Duration(milliseconds: 600),
+                              switchInCurve: Curves.easeOutQuart,
+                              switchOutCurve: Curves.easeInQuart,
+                              transitionBuilder:
+                                  (Widget child, Animation<double> animation) =>
+                                      FadeTransition(
+                                opacity: animation,
+                                child: ScaleTransition(
+                                  child: child,
+                                  scale: animation,
                                 ),
                               ),
-                              AnimatedSwitcher(
-                                child: isTaped == true
-                                    ? _expandedTopSction()
-                                    : _collpasedTopSction(),
-                                duration: const Duration(milliseconds: 600),
-                                switchInCurve: Curves.easeOutQuart,
-                                switchOutCurve: Curves.easeInQuart,
-                                transitionBuilder: (Widget child,
-                                        Animation<double> animation) =>
-                                    FadeTransition(
-                                  opacity: animation,
-                                  child: ScaleTransition(
-                                    child: child,
-                                    scale: animation,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        storyProvider.story.cover != null
-                            ? Image.network(
-                                storyProvider.story.cover,
-                                fit: BoxFit.cover,
-                                width: MediaQuery.of(context).size.width,
-                                height: coverHeight,
-                              )
-                            : SizedBox(),
-                        Padding(
-                          padding:
-                              EdgeInsets.fromLTRB(gutter, 14.0, gutter, 0.0),
-                          child: Text(
-                            storyProvider.story.title,
-                            style: Theme.of(context).textTheme.headline1,
-                          ),
+                      ),
+                      storyProvider.story.cover != null
+                          ? Image.network(
+                              storyProvider.story.cover,
+                              fit: BoxFit.cover,
+                              width: MediaQuery.of(context).size.width,
+                              height: coverHeight,
+                            )
+                          : SizedBox(),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(gutter, 14.0, gutter, 0.0),
+                        child: Text(
+                          storyProvider.story.title,
+                          style: Theme.of(context).textTheme.headline1,
                         ),
-                        Padding(
-                          padding:
-                              EdgeInsets.fromLTRB(gutter, 6.0, gutter, 0.0),
-                          child: Text(
-                            storyProvider.story.description,
-                            // style: Theme.of(context).textTheme.headline1,
-                          ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(gutter, 6.0, gutter, 0.0),
+                        child: Text(
+                          storyProvider.story.description,
+                          // style: Theme.of(context).textTheme.headline1,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Positioned(
-                    bottom: 8.0 + (4.0 * animation.value),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Center(
-                        child: AnimatedContainer(
-                          duration: Duration(milliseconds: 750),
-                          curve: Curves.easeOutQuart,
-                          width: 26 + (50.0 * animation.value),
-                          height: 4.0,
-                          decoration: BoxDecoration(
-                              color: Colors.grey.shade500,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(2.0))),
-                        ),
+                ),
+                Positioned(
+                  bottom: 8.0 + (4.0 * animation.value),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Center(
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 750),
+                        curve: Curves.easeOutQuart,
+                        width: 26 + (50.0 * animation.value),
+                        height: 4.0,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade500,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(2.0))),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -285,33 +278,4 @@ class ExpandedView extends State<StoryCover>
       },
     );
   }
-}
-
-class ArcClipper extends CustomClipper<Path> {
-  // this class is copied from below url
-  //https://flutter.rocks/2017/09/12/from-wireframes-to-flutter-movie-details-page/
-
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    path.lineTo(0.0, size.height - 30);
-
-    var firstControlPoint = Offset(size.width / 4, size.height);
-    var firstPoint = Offset(size.width / 2, size.height);
-    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
-        firstPoint.dx, firstPoint.dy);
-
-    var secondControlPoint = Offset(size.width - (size.width / 4), size.height);
-    var secondPoint = Offset(size.width, size.height - 30);
-    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
-        secondPoint.dx, secondPoint.dy);
-
-    path.lineTo(size.width, 0.0);
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

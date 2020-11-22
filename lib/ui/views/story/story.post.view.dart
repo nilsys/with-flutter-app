@@ -226,9 +226,12 @@ class _StoryPostState extends State<StoryPost> {
 
   @swidget
   Widget postTitle() {
-    return Text(
-      capitalize(storyProvider.posts[widget.index].title),
-      style: Theme.of(context).textTheme.headline1,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        capitalize(storyProvider.posts[widget.index].title),
+        style: Theme.of(context).textTheme.headline1,
+      ),
     );
   }
 
@@ -267,9 +270,7 @@ class _StoryPostState extends State<StoryPost> {
                           tp.layout(maxWidth: size.maxWidth);
 
                           if (tp.didExceedMaxLines) {
-                            // The text has more than three lines.
                             return ExpandableNotifier(
-                              // <-- Provides ExpandableController to its children
                               child: ScrollOnExpand(
                                 scrollOnExpand: true,
                                 scrollOnCollapse: false,
@@ -319,34 +320,6 @@ class _StoryPostState extends State<StoryPost> {
                                 ),
                               ),
                             );
-                            // return Column(
-                            //   crossAxisAlignment: CrossAxisAlignment.start,
-                            //   children: [
-                            //     _seeMore
-                            //         ? Text(
-                            //             storyProvider.posts[widget.index].text,
-                            //           )
-                            //         : Text(
-                            //             storyProvider.posts[widget.index].text,
-                            //             maxLines: 4,
-                            //             overflow: TextOverflow.ellipsis,
-                            //             softWrap: false,
-                            //           ),
-                            //     InkWell(
-                            //       borderRadius: BorderRadius.circular(4.0),
-                            //       onTap: () {
-                            //         setState(() {
-                            //           _seeMore = !_seeMore;
-                            //         });
-                            //       },
-                            //       child: Text('More..',
-                            //           style:
-                            //               Theme.of(context).textTheme.overline
-                            //           // textAlign: TextAlign.center,
-                            //           ),
-                            //     ),
-                            //   ],
-                            // );
                           } else {
                             return Column(
                               children: [
@@ -357,7 +330,7 @@ class _StoryPostState extends State<StoryPost> {
                           }
                         },
                       )
-                    : SizedBox(),
+                    : postTitle(),
               ],
             ),
           ),
