@@ -276,29 +276,46 @@ class _StoryPostState extends State<StoryPost> {
                                 child: Expandable(
                                   // <-- Driven by ExpandableController from ExpandableNotifier
                                   collapsed: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       postTitle(),
+                                      Text(
+                                        storyProvider.posts[widget.index].text,
+                                        maxLines: 4,
+                                        overflow: TextOverflow.ellipsis,
+                                        softWrap: false,
+                                      ),
                                       ExpandableButton(
                                         // <-- Expands when tapped on the cover photo
-                                        child: Text(
-                                          storyProvider
-                                              .posts[widget.index].text,
-                                          maxLines: 4,
-                                          overflow: TextOverflow.ellipsis,
-                                          softWrap: false,
-                                        ),
+                                        child: Text('More..',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .overline
+                                            // textAlign: TextAlign.center,
+                                            ),
                                       ),
                                     ],
                                   ),
-                                  expanded: Column(children: [
-                                    postTitle(),
-                                    ExpandableButton(
-                                      // <-- Collapses when tapped on
-                                      child: Text(
-                                        storyProvider.posts[widget.index].text,
-                                      ),
-                                    ),
-                                  ]),
+                                  expanded: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        postTitle(),
+                                        Text(
+                                          storyProvider
+                                              .posts[widget.index].text,
+                                        ),
+                                        ExpandableButton(
+                                          // <-- Collapses when tapped on
+                                          child: Text('Less',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .overline
+                                              // textAlign: TextAlign.center,
+                                              ),
+                                        ),
+                                      ]),
                                 ),
                               ),
                             );

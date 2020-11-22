@@ -13,6 +13,8 @@ class Story {
   final int posts;
   final String heroImage;
   final String description;
+  final String cover;
+  final String privateTo;
   final bool private;
 
   Story({
@@ -28,6 +30,8 @@ class Story {
     @required this.views,
     @required this.private,
     @required this.posts,
+    this.privateTo,
+    this.cover,
   });
 
   Story.fromMap(Map snapshot, String id)
@@ -44,6 +48,8 @@ class Story {
         views = snapshot['views'],
         private = snapshot['private'],
         posts = snapshot['posts'],
+        cover = snapshot['cover'],
+        privateTo = snapshot['privateTo'],
         description = snapshot['description'];
 
   toJson() {
@@ -58,6 +64,8 @@ class Story {
       "hero_image": heroImage,
       "description": description,
       "private": private,
+      "cover": cover,
+      "privateTo": privateTo,
       "posts": posts,
     };
   }

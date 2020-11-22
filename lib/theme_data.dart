@@ -18,8 +18,11 @@ class WithTheme {
       textTheme: GoogleFonts.latoTextTheme(Theme.of(context).textTheme)
           .copyWith(
             headline1: GoogleFonts.dmSerifDisplay(
-                textStyle:
-                    TextStyle(fontSize: 30.0, fontWeight: FontWeight.w500)),
+                textStyle: TextStyle(
+              fontSize: 30.0,
+              fontWeight: FontWeight.w500,
+              height: 1.1,
+            )),
             headline2: GoogleFonts.dmSerifDisplay(
                 textStyle:
                     TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500)),
@@ -41,7 +44,7 @@ class WithTheme {
               height: 1.5,
               decoration: TextDecoration.underline,
               decorationStyle: TextDecorationStyle.solid,
-              decorationThickness: 1.0,
+              decorationThickness: 1.5,
               decorationColor: Colors.black,
               fontStyle: FontStyle.italic,
               fontWeight: FontWeight.w500,

@@ -10,6 +10,7 @@ import 'package:with_app/core/models/post.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 
+import 'story.cover.view.dart';
 import 'story.post.view.dart';
 
 class StoryPosts extends StatefulWidget {
@@ -105,41 +106,57 @@ class _StoryPostsState extends State<StoryPosts> {
     });
     return Scaffold(
       backgroundColor: Color.fromRGBO(232, 232, 232, 1),
-      appBar: AppBar(
-        title: Text(storyProvider.story.title),
-      ),
-      body: ListView.builder(
-        // addAutomaticKeepAlives: false,
-        // addRepaintBoundaries: false,
-        // addSemanticIndexes: false,
-        reverse: true,
-        scrollDirection: scrollDirection,
-        controller: controller,
-        itemCount: storyProvider.posts.length,
-        itemBuilder: (_, index) {
-          final int reversedIndex = storyProvider.posts.length - index - 1;
-          if (srcollToindex == 0 &&
-              storyProvider.posts[reversedIndex].timestamp.isAfter(
-                  userProvider.user.logs[storyProvider.story.id].toDate())) {
-            srcollToindex = reversedIndex;
-          }
-          return AutoScrollTag(
-              key: ValueKey(reversedIndex),
-              controller: controller,
-              index: reversedIndex,
-              highlightColor: Theme.of(context).primaryColor.withOpacity(0.1),
-              child: Column(
-                children: [
-                  srcollToindex == reversedIndex && reversedIndex > 0
-                      ? newPostsDivider(
-                          storyProvider.posts.length - srcollToindex)
-                      : SizedBox(),
-                  StoryPost(
-                    index: reversedIndex,
-                  ),
-                ],
-              ));
-        },
+      // appBar: AppBar(
+      //   title: Text(storyProvider.story.title),
+      //   elevation: 0.0,
+      //   actions: [
+      //     IconButton(
+      //         icon: new Icon(Icons.expand_more),
+      //         onPressed: () {
+      //           storyCover.expandedView.tappedEvent();
+      //         })
+      //   ],
+      // ),
+      body: Stack(
+        // fit: StackFit.expand,
+        children: [
+          ListView.builder(
+            // addAutomaticKeepAlives: false,
+            // addRepaintBoundaries: false,
+            // addSemanticIndexes: false,
+            reverse: true,
+            scrollDirection: scrollDirection,
+            controller: controller,
+            itemCount: storyProvider.posts.length,
+            itemBuilder: (_, index) {
+              final int reversedIndex = storyProvider.posts.length - index - 1;
+              if (srcollToindex == 0 &&
+                  storyProvider.posts[reversedIndex].timestamp.isAfter(
+                      userProvider.user.logs[storyProvider.story.id]
+                          .toDate())) {
+                srcollToindex = reversedIndex;
+              }
+              return AutoScrollTag(
+                  key: ValueKey(reversedIndex),
+                  controller: controller,
+                  index: reversedIndex,
+                  highlightColor:
+                      Theme.of(context).primaryColor.withOpacity(0.1),
+                  child: Column(
+                    children: [
+                      srcollToindex == reversedIndex && reversedIndex > 0
+                          ? newPostsDivider(
+                              storyProvider.posts.length - srcollToindex)
+                          : SizedBox(),
+                      StoryPost(
+                        index: reversedIndex,
+                      ),
+                    ],
+                  ));
+            },
+          ),
+          StoryCover(),
+        ],
       ),
     );
   }
