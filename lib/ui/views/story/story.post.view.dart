@@ -7,14 +7,15 @@ import 'package:strings/strings.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:with_app/core/models/post.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
 
 class StoryPost extends StatefulWidget {
-  final int index;
+  final Post post;
 
   StoryPost({
-    @required this.index,
+    @required this.post,
   });
 
   @override
@@ -66,14 +67,14 @@ class _StoryPostState extends State<StoryPost> {
 
   @swidget
   Widget renderMedia() {
-    List<String> images = storyProvider.posts[widget.index].media.images;
+    List<String> images = widget.post.media.images;
     if (images[0] != null) {
       // return Container(
       //   margin: EdgeInsets.only(top: gutter),
       //   child: ClipRRect(
       //     borderRadius: BorderRadius.circular(gutter / 2),
       //     child: Image.network(
-      //       storyProvider.posts[widget.index].media.images[0],
+      //       widget.post.media.images[0],
       //       fit: BoxFit.cover,
       //       width: MediaQuery.of(context).size.width,
       //       height: MediaQuery.of(context).size.width * 1.12,
@@ -130,7 +131,7 @@ class _StoryPostState extends State<StoryPost> {
 
   @swidget
   List<Widget> mediaIndicator() {
-    List<String> images = storyProvider.posts[widget.index].media.images;
+    List<String> images = widget.post.media.images;
 
     final List<Widget> list = [
       Transform.translate(
@@ -183,7 +184,7 @@ class _StoryPostState extends State<StoryPost> {
 
   @swidget
   Widget renderBottom() {
-    List<String> images = storyProvider.posts[widget.index].media.images;
+    List<String> images = widget.post.media.images;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -229,7 +230,7 @@ class _StoryPostState extends State<StoryPost> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
-        capitalize(storyProvider.posts[widget.index].title),
+        capitalize(widget.post.title),
         style: Theme.of(context).textTheme.headline1,
       ),
     );
@@ -255,12 +256,12 @@ class _StoryPostState extends State<StoryPost> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                postTopSection(storyProvider.posts[widget.index].timestamp),
-                storyProvider.posts[widget.index].text.length > 0
+                postTopSection(widget.post.timestamp),
+                widget.post.text.length > 0
                     ? LayoutBuilder(
                         builder: (context, size) {
                           final span = TextSpan(
-                            text: storyProvider.posts[widget.index].text,
+                            text: widget.post.text,
                             style: new TextStyle(color: Colors.grey[600]),
                           );
                           final tp = TextPainter(
@@ -285,7 +286,7 @@ class _StoryPostState extends State<StoryPost> {
                                     children: [
                                       postTitle(),
                                       Text(
-                                        storyProvider.posts[widget.index].text,
+                                        widget.post.text,
                                         maxLines: 4,
                                         overflow: TextOverflow.ellipsis,
                                         softWrap: false,
@@ -307,8 +308,7 @@ class _StoryPostState extends State<StoryPost> {
                                       children: [
                                         postTitle(),
                                         Text(
-                                          storyProvider
-                                              .posts[widget.index].text,
+                                          widget.post.text,
                                         ),
                                         ExpandableButton(
                                           // <-- Collapses when tapped on
@@ -327,7 +327,7 @@ class _StoryPostState extends State<StoryPost> {
                             return Column(
                               children: [
                                 postTitle(),
-                                Text(storyProvider.posts[widget.index].text),
+                                Text(widget.post.text),
                               ],
                             );
                           }

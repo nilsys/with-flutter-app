@@ -105,9 +105,34 @@ class _StoryPostsState extends State<StoryPosts> {
       if (srcollToindex > 0) {
         scrollToIndex(srcollToindex);
       } else if (storyProvider.posts.length > 0) {
-        scrollToIndex(storyProvider.posts.length - 1);
+        // scrollToIndex(storyProvider.posts.length - 1); // TODO: implement for none followers
+        scrollToIndex(0); // for followers
       }
     });
+    List<Widget> posts =
+        storyProvider.posts.reversed.toList().asMap().entries.map((entry) {
+      int index = entry.key;
+      Post post = entry.value;
+      if (srcollToindex == 0 &&
+          post.timestamp.isAfter(
+              userProvider.user.logs[storyProvider.story.id].toDate())) {
+        srcollToindex = index;
+      }
+      return AutoScrollTag(
+          key: ValueKey(index),
+          controller: controller,
+          index: index,
+          child: Column(
+            children: [
+              srcollToindex == index && index > 0
+                  ? newPostsDivider(storyProvider.posts.length - srcollToindex)
+                  : SizedBox(),
+              StoryPost(
+                post: post,
+              ),
+            ],
+          ));
+    }).toList();
     return Scaffold(
       backgroundColor: Color.fromRGBO(232, 232, 232, 1),
       // appBar: AppBar(
@@ -127,42 +152,69 @@ class _StoryPostsState extends State<StoryPosts> {
           children: [
             Container(
               padding: EdgeInsets.only(top: storyProvider.collpasedHeight),
-              child: ListView.builder(
+              child: ListView(
                 // addAutomaticKeepAlives: false,
                 // addRepaintBoundaries: false,
                 // addSemanticIndexes: false,
                 reverse: true,
                 scrollDirection: scrollDirection,
                 controller: controller,
-                itemCount: storyProvider.posts.length,
-                itemBuilder: (_, index) {
-                  final int reversedIndex =
-                      storyProvider.posts.length - index - 1;
-                  if (srcollToindex == 0 &&
-                      storyProvider.posts[reversedIndex].timestamp.isAfter(
-                          userProvider.user.logs[storyProvider.story.id]
-                              .toDate())) {
-                    srcollToindex = reversedIndex;
-                  }
-                  if (index == storyProvider.posts.length) {
-                    return SizedBox(height: 40);
-                  }
-                  return AutoScrollTag(
-                      key: ValueKey(reversedIndex),
-                      controller: controller,
-                      index: reversedIndex,
-                      child: Column(
-                        children: [
-                          srcollToindex == reversedIndex && reversedIndex > 0
-                              ? newPostsDivider(
-                                  storyProvider.posts.length - srcollToindex)
-                              : SizedBox(),
-                          StoryPost(
-                            index: reversedIndex,
+                children: [
+                      AutoScrollTag(
+                        key: ValueKey(storyProvider.posts.length),
+                        controller: controller,
+                        index: storyProvider.posts.length,
+                        child: Padding(
+                          padding: const EdgeInsets.all(gutter),
+                          child: TextButton(
+                            onPressed: () {},
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add),
+                                  Text(
+                                    'NEW POST',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ],
-                      ));
-                },
+                        ),
+                      ),
+                    ] +
+                    storyProvider.posts.reversed
+                        .toList()
+                        .asMap()
+                        .entries
+                        .map((entry) {
+                      int index = entry.key;
+                      Post post = entry.value;
+                      if (srcollToindex == 0 &&
+                          post.timestamp.isAfter(userProvider
+                              .user.logs[storyProvider.story.id]
+                              .toDate())) {
+                        srcollToindex = index;
+                      }
+                      return AutoScrollTag(
+                          key: ValueKey(index),
+                          controller: controller,
+                          index: index,
+                          child: Column(
+                            children: [
+                              srcollToindex == index && index > 0
+                                  ? newPostsDivider(storyProvider.posts.length -
+                                      srcollToindex)
+                                  : SizedBox(),
+                              StoryPost(
+                                post: post,
+                              ),
+                            ],
+                          ));
+                    }).toList(),
               ),
             ),
             StoryCover(),
