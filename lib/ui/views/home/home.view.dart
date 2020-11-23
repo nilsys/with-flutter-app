@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -24,6 +26,27 @@ class _HomeViewState extends State<HomeView> {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final UserVM userProvider = locator<UserVM>();
   final storyProvider = locator<StoryVM>();
+  StreamSubscription<QuerySnapshot> storiesStream;
+
+  @override
+  void initState() {
+    super.initState();
+    storiesStream =
+        storyProvider.fetchStoriesAsStream().listen((QuerySnapshot data) {
+      storyProvider.storyList = data.docs.map((doc) {
+        // if (doc.data()['timestamp'].toData().isAfter(userProvider.user.logs[storyProvider.story.id].toDate())) {
+
+        // }
+        return Story.fromMap(doc.data(), doc.id);
+      }).toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    storiesStream.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,28 +79,20 @@ class _HomeViewState extends State<HomeView> {
       body: Container(
         child: _auth.currentUser == null
             ? Spinner()
-            : StreamBuilder(
-                stream: storyProvider.fetchStoriesAsStream(),
-                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    stories = snapshot.data.docs
-                        .map((doc) => Story.fromMap(doc.data(), doc.id))
-                        .toList();
-                    return ListView.builder(
-                      key: Key('story_list'),
-                      itemCount: stories.length,
-                      itemBuilder: (buildContext, index) => StoryCard(
-                        storyDetails: stories[index],
+            : ListView(
+                children: List<Widget>.from([]) +
+                    storyProvider.storyList
+                        .toList()
+                        .asMap()
+                        .entries
+                        .map((entry) {
+                      int index = entry.key;
+                      return StoryCard(
+                        storyDetails: entry.value,
                         enableDelete: index > 0,
-                      ),
-                    );
-                  } else {
-                    return Text(
-                      'fetching',
-                      key: Key('fetching'),
-                    );
-                  }
-                }),
+                      );
+                    }).toList(),
+              ),
       ),
     );
   }

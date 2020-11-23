@@ -88,6 +88,14 @@ class WithTheme {
           // ),
         ),
       ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          primary: accentColor,
+          textStyle: TextStyle(
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
       // iconTheme: IconThemeData(
       //   color: Theme.of(context).accentColor,
       // ),

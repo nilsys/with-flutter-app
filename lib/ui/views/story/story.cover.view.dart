@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
+import 'package:with_app/core/view_models/layout.vm.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 
 class StoryCover extends StatefulWidget {
@@ -15,9 +16,9 @@ class ExpandedView extends State<StoryCover>
   Animation<double> animation;
   AnimationController controller;
   final StoryVM storyProvider = locator<StoryVM>();
+  final LayoutVM layoutProvider = locator<LayoutVM>();
   bool isTaped = false;
   static const coverHeight = 185.0;
-  static const gutter = 16.0;
 
   @override
   initState() {
@@ -76,9 +77,11 @@ class ExpandedView extends State<StoryCover>
                 )
               : SizedBox(),
           Container(
-            width:
-                MediaQuery.of(context).size.width - 52.0 - 64.0 - (gutter * 2),
-            margin: EdgeInsets.only(left: gutter),
+            width: MediaQuery.of(context).size.width -
+                52.0 -
+                64.0 -
+                (layoutProvider.gutter * 2),
+            margin: EdgeInsets.only(left: layoutProvider.gutter),
             child: Text(
               storyProvider.story.title,
               maxLines: 2,
@@ -120,7 +123,7 @@ class ExpandedView extends State<StoryCover>
             ),
           ),
           SizedBox(
-            width: gutter,
+            width: layoutProvider.gutter,
           ),
           Material(
             color: Colors.transparent,
@@ -229,14 +232,16 @@ class ExpandedView extends State<StoryCover>
                             )
                           : SizedBox(),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(gutter, 14.0, gutter, 0.0),
+                        padding: EdgeInsets.fromLTRB(layoutProvider.gutter,
+                            14.0, layoutProvider.gutter, 0.0),
                         child: Text(
                           storyProvider.story.title,
                           style: Theme.of(context).textTheme.headline1,
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(gutter, 6.0, gutter, 0.0),
+                        padding: EdgeInsets.fromLTRB(layoutProvider.gutter, 6.0,
+                            layoutProvider.gutter, 0.0),
                         child: Text(
                           storyProvider.story.description,
                           // style: Theme.of(context).textTheme.headline1,

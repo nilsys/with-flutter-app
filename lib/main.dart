@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:native_device_orientation/native_device_orientation.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:with_app/core/view_models/main.vm.dart';
+import 'package:with_app/core/view_models/layout.vm.dart';
 import 'package:with_app/theme_data.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,17 +37,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _dynamicLinkService.handleDynamicLinks(context);
-    final MainVM mainProvider = locator<MainVM>();
+    final LayoutVM layoutProvider = locator<LayoutVM>();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => locator<StoryVM>()),
         ChangeNotifierProvider(create: (_) => locator<UserVM>()),
-        ChangeNotifierProvider(create: (_) => mainProvider),
+        ChangeNotifierProvider(create: (_) => layoutProvider),
         ChangeNotifierProvider(create: (_) => locator<CameraVM>()),
       ],
       child: NativeDeviceOrientationReader(
         builder: (context) {
-          mainProvider.oreintation =
+          layoutProvider.oreintation =
               NativeDeviceOrientationReader.orientation(context);
           return MaterialApp(
             debugShowCheckedModeBanner: false,

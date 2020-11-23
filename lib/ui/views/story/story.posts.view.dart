@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
+import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:strings/strings.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,9 +10,12 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:with_app/core/models/post.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
+import 'package:with_app/ui/views/new-post/new-post.view.dart';
 
 import 'story.cover.view.dart';
 import 'story.post.view.dart';
+
+final NavigationService navService = NavigationService();
 
 class StoryPosts extends StatefulWidget {
   StoryPosts({Key key, this.title}) : super(key: key);
@@ -167,7 +171,10 @@ class _StoryPostsState extends State<StoryPosts> {
                         child: Padding(
                           padding: const EdgeInsets.all(gutter),
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              navService.pushNamed(
+                                  '${NewPostView.route}/${storyProvider.story.id}/1');
+                            },
                             child: SizedBox(
                               width: double.infinity,
                               child: Row(

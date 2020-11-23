@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:with_app/ui/views/new-post/new-post.view.dart';
 import 'ui/views/full-screen-media/full_screen_media.view.dart';
 import 'ui/views/home/home.view.dart';
 // import './views/auth.view.dart';
@@ -36,6 +37,11 @@ class AppRouter {
       case FullScreenMedia.route:
         return MaterialPageRoute(
           builder: (_) => FullScreenMedia(src: params),
+        );
+      case NewPostView.route:
+        return MaterialPageRoute(
+          builder: (_) =>
+              NewPostView(storyId: params[0], step: int.parse(params[1])),
         );
       default:
         return MaterialPageRoute(

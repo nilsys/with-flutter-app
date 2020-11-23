@@ -10,7 +10,7 @@ import 'package:native_device_orientation/native_device_orientation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:with_app/core/view_models/camera.vm.dart';
-import 'package:with_app/core/view_models/main.vm.dart';
+import 'package:with_app/core/view_models/layout.vm.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 
 class CameraView extends StatefulWidget {
@@ -48,7 +48,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   final picker = ImagePicker();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final CameraVM cameraProvider = locator<CameraVM>();
-  final MainVM mainProvider = locator<MainVM>();
+  final LayoutVM layoutProvider = locator<LayoutVM>();
 
   @override
   void initState() {
@@ -99,7 +99,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
       key: _scaffoldKey,
       extendBodyBehindAppBar: true,
       body: Stack(
-        children: (mainProvider.oreintation.index == 0)
+        children: (layoutProvider.oreintation.index == 0)
             ? protraitLayout()
             : landscapeLayout(),
       ),
@@ -282,7 +282,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
 
   int getTurnFactor() {
     int turns;
-    switch (mainProvider.oreintation) {
+    switch (layoutProvider.oreintation) {
       case NativeDeviceOrientation.landscapeLeft:
         turns = -1;
         break;
@@ -379,7 +379,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
         children: cameraProvider.filePath
             .map((path) => Dismissible(
                   key: Key(path),
-                  direction: mainProvider.oreintationIsLandscape
+                  direction: layoutProvider.oreintationIsLandscape
                       ? DismissDirection.endToStart
                       : DismissDirection.startToEnd,
                   onDismissed: (direction) {

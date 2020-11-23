@@ -2,7 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:native_device_orientation/native_device_orientation.dart';
 import 'package:with_app/core/view_models/camera.vm.dart';
-import 'package:with_app/core/view_models/main.vm.dart';
+import 'package:with_app/core/view_models/layout.vm.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 
 class CameraView extends StatefulWidget {
@@ -18,7 +18,7 @@ class _CameraViewState extends State<CameraView>
   AnimationController _animationController;
   Animation<double> _offsetAnimation;
   final CameraVM cameraProvider = locator<CameraVM>();
-  final MainVM mainProvider = locator<MainVM>();
+  final LayoutVM layoutProvider = locator<LayoutVM>();
   // bool _showCameraPreviewPrev = false;
   bool disposed = false;
 
@@ -81,7 +81,7 @@ class _CameraViewState extends State<CameraView>
 
     int getTurnFactor() {
       int turns;
-      switch (mainProvider.oreintation) {
+      switch (layoutProvider.oreintation) {
         case NativeDeviceOrientation.landscapeLeft:
           turns = -1;
           break;

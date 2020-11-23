@@ -12,6 +12,7 @@ import '../models/story.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 export 'package:provider/provider.dart';
 export 'package:with_app/locator.dart';
+export '../models/story.model.dart';
 
 class StoryVM extends ChangeNotifier {
   Api _api = Api('stories');
@@ -32,6 +33,7 @@ class StoryVM extends ChangeNotifier {
   UserModel _author;
   List<Comment> _discussion = [];
   List<Post> _posts = [];
+  List<Story> _storyList = [];
   // List<double> _scrollOffsets = [];
 
   bool get hasNewComments => _hasNewComments;
@@ -50,6 +52,7 @@ class StoryVM extends ChangeNotifier {
   UserModel get author => _author;
   List<Comment> get discussion => _discussion;
   List<Post> get posts => _posts;
+  List<Story> get storyList => _storyList;
 
   set hasNewComments(bool val) {
     if (_hasNewComments != val) {
@@ -75,6 +78,11 @@ class StoryVM extends ChangeNotifier {
 
   set posts(List<Post> val) {
     _posts = val;
+    notifyListeners();
+  }
+
+  set storyList(List<Story> val) {
+    _storyList = val;
     notifyListeners();
   }
 
