@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:with_app/core/models/reaction.model.dart';
 
 import 'media.dart';
 
@@ -9,29 +8,29 @@ class Post {
   final String title;
   final String text;
   final DateTime timestamp;
-  final Media media;
+  final List<String> media;
 
   Post({
     this.id,
-    @required this.title,
+    this.title,
     @required this.timestamp,
     this.text,
     this.media,
   });
 
-  Post.fromMap(Map snapshot)
-      : id = snapshot['id'] ?? '',
+  Post.fromMap(Map snapshot, String id)
+      : id = id != null ? id : null,
         title = snapshot['title'],
         timestamp = (snapshot['timestamp'] as Timestamp).toDate(),
         text = snapshot['text'],
-        media = Media.fromMap(snapshot['media']);
+        media = snapshot['media'].cast<String>().toList();
 
   toJson() {
     return {
       "timestamp": timestamp,
       "title": title,
       "text": text,
-      "media": media.toJson(),
+      "media": media,
     };
   }
 }

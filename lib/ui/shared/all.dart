@@ -5,3 +5,4 @@ export 'vertical_spacer.dart';
 export 'gradient_bg.dart';
 export 'skeleton.dart';
 export 'avatar.dart';
+export 'media-gallery.dart';

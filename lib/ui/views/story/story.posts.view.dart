@@ -28,7 +28,6 @@ class StoryPosts extends StatefulWidget {
 
 class _StoryPostsState extends State<StoryPosts> {
   static const gutter = 16.0;
-  static const verticalSpace = 30.0;
   final random = math.Random();
   final scrollDirection = Axis.vertical;
   int srcollToindex = 0;
@@ -56,7 +55,7 @@ class _StoryPostsState extends State<StoryPosts> {
         // if (doc.data()['timestamp'].toData().isAfter(userProvider.user.logs[storyProvider.story.id].toDate())) {
 
         // }
-        return Post.fromMap(doc.data());
+        return Post.fromMap(doc.data(), doc.id);
       }).toList();
     });
   }
@@ -113,46 +112,11 @@ class _StoryPostsState extends State<StoryPosts> {
         scrollToIndex(0); // for followers
       }
     });
-    List<Widget> posts =
-        storyProvider.posts.reversed.toList().asMap().entries.map((entry) {
-      int index = entry.key;
-      Post post = entry.value;
-      if (srcollToindex == 0 &&
-          post.timestamp.isAfter(
-              userProvider.user.logs[storyProvider.story.id].toDate())) {
-        srcollToindex = index;
-      }
-      return AutoScrollTag(
-          key: ValueKey(index),
-          controller: controller,
-          index: index,
-          child: Column(
-            children: [
-              srcollToindex == index && index > 0
-                  ? newPostsDivider(storyProvider.posts.length - srcollToindex)
-                  : SizedBox(),
-              StoryPost(
-                post: post,
-              ),
-            ],
-          ));
-    }).toList();
+
     return Scaffold(
       backgroundColor: Color.fromRGBO(232, 232, 232, 1),
-      // appBar: AppBar(
-      //   title: Text(storyProvider.story.title),
-      //   elevation: 0.0,
-      //   actions: [
-      //     IconButton(
-      //         icon: new Icon(Icons.expand_more),
-      //         onPressed: () {
-      //           storyCover.expandedView.tappedEvent();
-      //         })
-      //   ],
-      // ),
       body: SafeArea(
         child: Stack(
-          // fit: StackFit.expand,
           children: [
             Container(
               padding: EdgeInsets.only(top: storyProvider.collpasedHeight),
@@ -172,8 +136,7 @@ class _StoryPostsState extends State<StoryPosts> {
                           padding: const EdgeInsets.all(gutter),
                           child: TextButton(
                             onPressed: () {
-                              navService.pushNamed(
-                                  '${NewPostView.route}/${storyProvider.story.id}/1');
+                              navService.pushNamed('${NewPostView.route}/1');
                             },
                             child: SizedBox(
                               width: double.infinity,

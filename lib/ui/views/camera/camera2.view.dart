@@ -45,6 +45,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   VideoPlayerController videoController;
   VoidCallback videoPlayerListener;
   bool enableAudio = true;
+  bool disableActionBtn = false;
   final picker = ImagePicker();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final CameraVM cameraProvider = locator<CameraVM>();
@@ -217,7 +218,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
       width: 80,
       height: 80,
       child: FlatButton(
-        onPressed: onTakePictureButtonPressed,
+        onPressed: disableActionBtn ? null : onTakePictureButtonPressed,
         shape: RoundedRectangleBorder(
           side: BorderSide(
               color: Theme.of(context).accentColor,
@@ -563,6 +564,9 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   }
 
   void onTakePictureButtonPressed() {
+    setState(() {
+      disableActionBtn = true;
+    });
     takePicture().then((String filePath) {
       if (mounted) {
         cameraProvider.storeFilePath(filePath);
@@ -570,6 +574,7 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
           imagePath = filePath; // TODO:: remove this line
           videoController?.dispose();
           videoController = null;
+          disableActionBtn = false;
         });
         // if (filePath != null) showInSnackBar('Saved!');
       }

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -8,7 +7,6 @@ import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
 import 'package:with_app/ui/views/auth/auth.view.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'sub_views/story_card.view.dart';

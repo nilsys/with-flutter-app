@@ -18,9 +18,9 @@ class Media {
 
   toJson() {
     return {
-      "images": images,
-      "videos": videos,
-      "audio": audio,
+      "images": images != null ? images : [],
+      "videos": videos != null ? videos : [],
+      "audio": audio != null ? audio : [],
     };
   }
 }

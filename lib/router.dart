@@ -40,8 +40,10 @@ class AppRouter {
         );
       case NewPostView.route:
         return MaterialPageRoute(
-          builder: (_) =>
-              NewPostView(storyId: params[0], step: int.parse(params[1])),
+          builder: (_) => NewPostView(
+            step: int.parse(params[0]),
+            postId: params.length > 1 ? params[1] : null,
+          ),
         );
       default:
         return MaterialPageRoute(

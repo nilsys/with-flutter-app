@@ -53,6 +53,8 @@ class StoryVM extends ChangeNotifier {
   List<Comment> get discussion => _discussion;
   List<Post> get posts => _posts;
   List<Story> get storyList => _storyList;
+  Story get currentStory =>
+      _storyList.firstWhere((story) => story.id == story.id);
 
   set hasNewComments(bool val) {
     if (_hasNewComments != val) {
@@ -271,6 +273,29 @@ class StoryVM extends ChangeNotifier {
     });
   }
 
+  Future<void> addPost(Post post, List<String> media) async {
+    CollectionReference ref = _db.collection('stories/${story.id}/posts');
+    DocumentReference postRef = await ref.add(post.toJson());
+    List<String> uploadUrls = [];
+    uploadUrls = await uploadMediaForPost(media, postRef.id);
+    postRef.update({
+      'media': uploadUrls,
+    });
+  }
+
+  Future<void> editPost(String postId, Post post, List<String> newMedia,
+      List<String> deleteMedia) async {
+    DocumentReference ref =
+        _db.collection('stories/${story.id}/posts').doc(postId);
+    await ref.update(post.toJson());
+    List<String> uploadUrls = [];
+    uploadUrls = await uploadMediaForPost(newMedia, ref.id);
+    ref.update({
+      'media': post.media + uploadUrls,
+    });
+    deleteMediaForPost(deleteMedia, postId);
+  }
+
   Future<List<String>> uploadMediaForPost(
       List<String> filePath, String postId) async {
     List<String> uploadUrls = [];
@@ -290,6 +315,19 @@ class StoryVM extends ChangeNotifier {
       }
     }));
     return uploadUrls;
+  }
+
+  Future<void> deleteMediaForPost(List<String> filePath, String postId) async {
+    await Future.wait(filePath.map((String path) async {
+      String fileName = path.split('/').last;
+      final StorageReference storageReference =
+          FirebaseStorage().ref().child('posts/$postId/$fileName');
+      await storageReference.delete();
+    }));
+  }
+
+  Post getPostById(String postId) {
+    return _posts.firstWhere((post) => post.id == postId);
   }
 
   // Future addStory(Story data) async {

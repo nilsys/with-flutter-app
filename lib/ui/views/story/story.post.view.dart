@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable/expandable.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
+import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:strings/strings.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:carousel_slider/carousel_slider.dart';
@@ -10,6 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:with_app/core/models/post.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
+import 'package:with_app/ui/views/new-post/new-post.view.dart';
+
+final NavigationService navService = NavigationService();
 
 class StoryPost extends StatefulWidget {
   final Post post;
@@ -67,7 +71,7 @@ class _StoryPostState extends State<StoryPost> {
 
   @swidget
   Widget renderMedia() {
-    List<String> images = widget.post.media.images;
+    List<String> images = widget.post.media;
     if (images[0] != null) {
       // return Container(
       //   margin: EdgeInsets.only(top: gutter),
@@ -131,7 +135,7 @@ class _StoryPostState extends State<StoryPost> {
 
   @swidget
   List<Widget> mediaIndicator() {
-    List<String> images = widget.post.media.images;
+    List<String> images = widget.post.media;
 
     final List<Widget> list = [
       Transform.translate(
@@ -184,7 +188,7 @@ class _StoryPostState extends State<StoryPost> {
 
   @swidget
   Widget renderBottom() {
-    List<String> images = widget.post.media.images;
+    List<String> images = widget.post.media;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -325,6 +329,7 @@ class _StoryPostState extends State<StoryPost> {
                             );
                           } else {
                             return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 postTitle(),
                                 Text(widget.post.text),
@@ -370,7 +375,10 @@ class _StoryPostState extends State<StoryPost> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    navService
+                        .pushNamed('${NewPostView.route}/1/${widget.post.id}');
+                  },
                   child: SizedBox(
                     width: double.infinity,
                     child: Text(

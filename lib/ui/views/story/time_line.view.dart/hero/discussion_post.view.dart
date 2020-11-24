@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:with_app/core/models/comment.model.dart';
-import 'package:with_app/core/models/post.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/core/view_models/user.vm.dart';
 import 'package:with_app/ui/shared/all.dart';

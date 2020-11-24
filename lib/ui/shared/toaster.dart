@@ -1,19 +1,34 @@
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 
+Flushbar flushbar;
+
 class Toaster {
   final Icon icon;
   final Widget content;
   final String title;
+  final String type;
 
   Toaster({
     @required this.icon,
     @required this.content,
+    this.type = 'info',
     this.title,
   });
 
+  Color _getBackgroundColor() {
+    switch (this.type) {
+      case 'error':
+        return Colors.red.withAlpha(40);
+        break;
+      default:
+        return Colors.black.withAlpha(40);
+    }
+  }
+
   void show(context) {
-    Flushbar(
+    flushbar?.dismiss();
+    flushbar = Flushbar(
       titleText: this.title != null
           ? Text(
               this.title,
@@ -30,10 +45,11 @@ class Toaster {
       padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
       borderRadius: 10,
       isDismissible: true,
+      shouldIconPulse: false,
       forwardAnimationCurve: Curves.fastLinearToSlowEaseIn,
       reverseAnimationCurve: Curves.easeOutCubic,
       barBlur: 10,
-      backgroundColor: Colors.black.withAlpha(80),
+      backgroundColor: _getBackgroundColor(),
     )..show(context);
   }
 }

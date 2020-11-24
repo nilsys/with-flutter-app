@@ -1,26 +1,23 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
-import 'package:selection_menu/components_configurations.dart';
-import 'package:selection_menu/selection_menu.dart';
+import 'package:with_app/core/view_models/camera.vm.dart';
 import 'package:with_app/core/view_models/layout.vm.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'select-story.view.dart';
-import 'edit-post.view copy.dart';
+import 'edit-post.view.dart';
 
 final NavigationService navService = NavigationService();
 
 class NewPostView extends StatefulWidget {
   static const String route = 'new-post';
-  final String storyId;
+  final String postId;
   final int step;
 
   NewPostView({
-    this.storyId,
     this.step = 0,
+    this.postId,
   });
 
   @override
@@ -29,8 +26,13 @@ class NewPostView extends StatefulWidget {
 
 class _NewPostViewState extends State<NewPostView> {
   final LayoutVM layoutProvider = locator<LayoutVM>();
+
   final storyProvider = locator<StoryVM>();
+
+  final CameraVM cameraProvider = locator<CameraVM>();
+
   StreamSubscription<QuerySnapshot> storiesStream;
+
   PageController pageController;
 
   @override
@@ -51,6 +53,7 @@ class _NewPostViewState extends State<NewPostView> {
   void dispose() {
     pageController.dispose();
     storiesStream.cancel();
+    cameraProvider.clearFiles();
     super.dispose();
   }
 
@@ -63,7 +66,10 @@ class _NewPostViewState extends State<NewPostView> {
         controller: pageController,
         children: [
           SelectStoryView(),
-          EditPostView(story: storyProvider.storyList[0]),
+          EditPostView(
+            story: storyProvider.currentStory,
+            postId: widget.postId,
+          ),
           // StorySettings(
           //   goToTimeline: goToTimeline,
           // ),
