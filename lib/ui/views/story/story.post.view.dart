@@ -81,7 +81,7 @@ class _StoryPostState extends State<StoryPost> {
   @swidget
   Widget renderMedia() {
     List<String> images = widget.post.media;
-    if (images[0] != null) {
+    if (images.length > 0) {
       // return Container(
       //   margin: EdgeInsets.only(top: gutter),
       //   child: ClipRRect(
@@ -126,7 +126,9 @@ class _StoryPostState extends State<StoryPost> {
         ],
       );
     }
-    return SizedBox();
+    return SizedBox(
+      height: 0,
+    );
   }
 
   @swidget
@@ -318,11 +320,14 @@ class _StoryPostState extends State<StoryPost> {
               children: <Widget>[
                 TextButton(
                   onPressed: () {
-                    storyProvider.scrollToIndex = widget.postIndex;
                     navService.goBack();
                     navService.pushNamed(
-                      '${NewPostView.route}/1/${widget.post.id}',
-                      args: {'postId': widget.post.id},
+                      '${NewPostView.route}',
+                      args: {
+                        'postId': widget.post.id,
+                        'step': 1,
+                        'postIndex': widget.postIndex
+                      },
                     );
                   },
                   child: SizedBox(
@@ -330,6 +335,29 @@ class _StoryPostState extends State<StoryPost> {
                     child: Text(
                       'Edit',
                       textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    await storyProvider.deletePost(widget.post);
+                    storyProvider.scrollToIndex = max(widget.postIndex - 1, 0);
+                    navService.goBack();
+                    Toaster(
+                      type: 'success',
+                      title: 'Success!',
+                      icon: Icon(Icons.check_circle_outline),
+                      content: Text('Your post has been deleted.'),
+                    )..show(context);
+                  },
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      'Delete',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).indicatorColor,
+                      ),
                     ),
                   ),
                 ),

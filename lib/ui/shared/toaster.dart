@@ -21,6 +21,9 @@ class Toaster {
       case 'error':
         return Colors.red.withAlpha(40);
         break;
+      case 'success':
+        return Colors.green.shade100.withAlpha(140);
+        break;
       default:
         return Colors.black.withAlpha(40);
     }

@@ -16,10 +16,12 @@ final NavigationService navService = NavigationService();
 class EditPostView extends StatefulWidget {
   final Story story;
   final String postId;
+  final int postIndex;
 
   EditPostView({
     @required this.story,
     this.postId,
+    this.postIndex,
   });
 
   @override
@@ -31,9 +33,7 @@ class _EditPostViewState extends State<EditPostView> {
 
   final StoryVM storyProvider = locator<StoryVM>();
 
-  final TextEditingController postTitleController = TextEditingController(
-      // text: storyProvider.getPostById(widget.postId).title,
-      );
+  final TextEditingController postTitleController = TextEditingController();
 
   final TextEditingController postDescController = TextEditingController();
 
@@ -51,10 +51,16 @@ class _EditPostViewState extends State<EditPostView> {
   @override
   void initState() {
     super.initState();
-    Post post = storyProvider.getPostById(widget.postId);
-    postTitleController.text = post.title;
-    postDescController.text = post.text;
-    _media = post.media;
+    if (widget.postId != null) {
+      Post post = storyProvider.getPostById(widget.postId);
+      postTitleController.text = post.title;
+      postDescController.text = post.text;
+      _media = post.media;
+    }
+
+    if (widget.postIndex != null) {
+      storyProvider.scrollToIndex = widget.postIndex;
+    }
   }
 
   @override

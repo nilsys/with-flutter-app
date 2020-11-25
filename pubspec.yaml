@@ -70,6 +70,8 @@ dependencies:
   strings: ^0.1.4 #https://pub.dev/packages/strings
   carousel_slider: ^2.3.1 #https://pub.dev/packages/carousel_slider
   expandable: ^4.1.4 #https://pub.dev/packages/expandable
+  badges: ^1.1.4 #https://pub.dev/packages/badges
+  decorated_icon: ^1.0.2 #https://pub.dev/packages/decorated_icon
 
 dev_dependencies:
   flutter_test:

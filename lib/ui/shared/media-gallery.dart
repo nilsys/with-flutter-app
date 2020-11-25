@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-
+import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
+import 'package:decorated_icon/decorated_icon.dart';
 import 'package:with_app/core/view_models/camera.vm.dart';
 import 'package:with_app/core/view_models/layout.vm.dart';
 
@@ -187,8 +188,8 @@ class _MediaGalleryState extends State<MediaGallery> {
                                 ),
                           widget.onRemoveImg != null
                               ? Positioned(
-                                  right: layoutProvider.gutter / 2,
-                                  top: layoutProvider.gutter / 2,
+                                  left: 0,
+                                  top: 0,
                                   child: Material(
                                     color: Colors.transparent,
                                     child: InkWell(
@@ -197,10 +198,18 @@ class _MediaGalleryState extends State<MediaGallery> {
                                       radius: 45,
                                       child: Padding(
                                         padding: const EdgeInsets.all(12.0),
-                                        child: Icon(
+                                        child: DecoratedIcon(
                                           Icons.close,
-                                          size: 32,
                                           color: Colors.white,
+                                          size: 32,
+                                          shadows: [
+                                            BoxShadow(
+                                              blurRadius: 3.0,
+                                              offset: Offset(0, 1.5),
+                                              color:
+                                                  Colors.black.withAlpha(125),
+                                            )
+                                          ],
                                         ),
                                       ),
                                       onTap: () {
@@ -225,6 +234,40 @@ class _MediaGalleryState extends State<MediaGallery> {
                                               widget.media[itemIndex]);
                                         });
                                       },
+                                    ),
+                                  ),
+                                )
+                              : SizedBox(),
+                          widget.media.length > 1
+                              ? Positioned(
+                                  right: layoutProvider.gutter,
+                                  top: layoutProvider.gutter,
+                                  child: Badge(
+                                    toAnimate: false,
+                                    shape: BadgeShape.square,
+                                    badgeColor: Colors.white,
+                                    padding: EdgeInsets.all(0.0),
+                                    borderRadius: BorderRadius.circular(4.0),
+                                    badgeContent: Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 2.0, horizontal: 5.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        borderRadius:
+                                            BorderRadius.circular(4.0),
+                                        border: Border.all(
+                                          width: 1,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      child: Text(
+                                          '${itemIndex + 1}/${widget.media.length}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .caption
+                                              .copyWith(
+                                                height: 1,
+                                              )),
                                     ),
                                   ),
                                 )

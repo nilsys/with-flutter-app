@@ -42,8 +42,9 @@ class AppRouter {
       case NewPostView.route:
         return MaterialPageRoute(
           builder: (_) => NewPostView(
-            step: int.parse(params[0]),
+            step: args['step'],
             postId: args['postId'],
+            postIndex: args['postIndex'],
           ),
         );
       default:

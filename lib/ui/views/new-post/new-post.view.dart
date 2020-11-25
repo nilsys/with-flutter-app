@@ -14,9 +14,11 @@ class NewPostView extends StatefulWidget {
   static const String route = 'new-post';
   final String postId;
   final int step;
+  final int postIndex;
 
   NewPostView({
     this.step = 0,
+    this.postIndex,
     this.postId,
   });
 
@@ -69,6 +71,7 @@ class _NewPostViewState extends State<NewPostView> {
           EditPostView(
             story: storyProvider.currentStory,
             postId: widget.postId,
+            postIndex: widget.postIndex,
           ),
           // StorySettings(
           //   goToTimeline: goToTimeline,

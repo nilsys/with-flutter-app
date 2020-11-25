@@ -143,7 +143,11 @@ class _StoryPostsState extends State<StoryPosts> {
                           padding: const EdgeInsets.all(gutter),
                           child: TextButton(
                             onPressed: () {
-                              navService.pushNamed('${NewPostView.route}/1');
+                              storyProvider.scrollToIndex = 0;
+                              navService.pushNamed(
+                                '${NewPostView.route}',
+                                args: {'step': 1},
+                              );
                             },
                             child: SizedBox(
                               width: double.infinity,

@@ -23,7 +23,9 @@ class Post {
         title = snapshot['title'],
         timestamp = (snapshot['timestamp'] as Timestamp).toDate(),
         text = snapshot['text'],
-        media = snapshot['media'].cast<String>().toList();
+        media = snapshot['media'] == null
+            ? []
+            : snapshot['media'].cast<String>().toList();
 
   toJson({bool withoutTimeStamp = false}) {
     if (withoutTimeStamp) {

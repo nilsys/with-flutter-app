@@ -346,6 +346,13 @@ class StoryVM extends ChangeNotifier {
     }));
   }
 
+  Future<void> deletePost(Post post) async {
+    DocumentReference ref =
+        _db.collection('stories/${story.id}/posts').doc(post.id);
+    await deleteMediaForPost(post.media, post.id);
+    await ref.delete();
+  }
+
   Post getPostById(String postId) {
     return _posts.firstWhere((post) => post.id == postId);
   }
