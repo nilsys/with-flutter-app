@@ -9,6 +9,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:with_app/core/models/post.model.dart';
+import 'package:with_app/core/view_models/layout.vm.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
 import 'package:with_app/ui/views/new-post/new-post.view.dart';
@@ -30,11 +31,13 @@ class StoryPost extends StatefulWidget {
 
 class _StoryPostState extends State<StoryPost> {
   static const verticalSpace = 30.0;
-  static const gutter = 16.0;
   int carouselIndex = 0;
   bool _seeMore = false;
-  final StoryVM storyProvider = locator<StoryVM>();
   CarouselController carouselController = CarouselController();
+
+  final StoryVM storyProvider = locator<StoryVM>();
+
+  final LayoutVM layoutProvider = locator<LayoutVM>();
 
   @swidget
   Widget postTopSection() => Row(
@@ -94,43 +97,30 @@ class _StoryPostState extends State<StoryPost> {
       return Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: gutter),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(gutter / 2),
-              child: CarouselSlider.builder(
-                  itemCount: images.length,
-                  itemBuilder: (BuildContext context, int itemIndex) =>
-                      Container(
-                        color: Colors.black,
-                        child: CachedNetworkImage(
-                          imageUrl: images[itemIndex],
-                          fit: BoxFit.cover,
-                          width: MediaQuery.of(context).size.width,
-                          placeholder: (context, url) => Spinner(),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
-                        ),
+            margin: EdgeInsets.only(top: layoutProvider.gutter),
+            child: MediaGallery(
+              media: images,
+              left: SizedBox(width: 64.0),
+              right: Container(
+                margin: EdgeInsets.only(right: layoutProvider.gutter / 2),
+                child: Container(
+                  width: 64.0,
+                  child: TextButton(
+                    onPressed: () {},
+                    child: Transform.translate(
+                      offset: Offset(5, 0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(Icons.forum_outlined),
+                          Icon(Icons.chevron_right),
+                        ],
                       ),
-                  options: CarouselOptions(
-                    height: MediaQuery.of(context).size.width * 1.12,
-                    aspectRatio: 1 / 1.12,
-                    viewportFraction: 1,
-                    initialPage: 0,
-                    enableInfiniteScroll: false,
-                    reverse: false,
-                    // autoPlay: false,
-                    // autoPlayInterval: Duration(seconds: 3),
-                    // autoPlayAnimationDuration: Duration(milliseconds: 800),
-                    // autoPlayCurve: Curves.fastOutSlowIn,
-                    // enlargeCenterPage: true,
-                    onPageChanged:
-                        (int index, CarouselPageChangedReason reason) {
-                      setState(() {
-                        carouselIndex = index;
-                      });
-                    },
-                    scrollDirection: Axis.horizontal,
-                  )),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -193,49 +183,6 @@ class _StoryPostState extends State<StoryPost> {
   }
 
   @swidget
-  Widget renderBottom() {
-    List<String> images = widget.post.media;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        SizedBox(
-          width: 64.0,
-        ),
-        Container(
-          // Media Indicator
-          child: images.length > 1
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: mediaIndicator(),
-                )
-              : SizedBox(),
-        ),
-        Container(
-          width: 64,
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                _seeMore = !_seeMore;
-              });
-            },
-            child: Transform.translate(
-              offset: Offset(5, 0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(Icons.forum_outlined),
-                  Icon(Icons.chevron_right),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  @swidget
   Widget postTitle() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -262,7 +209,7 @@ class _StoryPostState extends State<StoryPost> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: gutter),
+            padding: EdgeInsets.symmetric(horizontal: layoutProvider.gutter),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -349,7 +296,6 @@ class _StoryPostState extends State<StoryPost> {
             ),
           ),
           renderMedia(),
-          renderBottom(),
         ],
       ),
     );
@@ -360,7 +306,7 @@ class _StoryPostState extends State<StoryPost> {
         context: context,
         builder: (BuildContext context) {
           return Container(
-            padding: EdgeInsets.all(gutter),
+            padding: EdgeInsets.all(layoutProvider.gutter),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16.0),
@@ -370,18 +316,6 @@ class _StoryPostState extends State<StoryPost> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    print(widget.postIndex);
-                  },
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Text(
-                      'Share',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
                 TextButton(
                   onPressed: () {
                     storyProvider.scrollToIndex = widget.postIndex;

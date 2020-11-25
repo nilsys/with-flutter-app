@@ -14,17 +14,13 @@ import 'spinner.dart';
 class MediaGallery extends StatefulWidget {
   final List<String> media;
   final Widget right;
-  final Function rightAction;
   final Widget left;
-  final Function leftAction;
   final Function onRemoveImg;
 
   MediaGallery({
     @required this.media,
     this.right,
-    this.rightAction,
     this.left,
-    this.leftAction,
     this.onRemoveImg,
   });
 
@@ -136,39 +132,27 @@ class _MediaGalleryState extends State<MediaGallery> {
 
     @swidget
     Widget renderBottom() {
+      List<Widget> children = [];
+      if (widget.left != null) {
+        children.add(widget.left);
+      } else {
+        children.add(SizedBox());
+      }
+      if (widget.media.length > 1) {
+        children.add(Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: mediaIndicator(),
+        ));
+      }
+      if (widget.right != null) {
+        children.add(widget.right);
+      } else {
+        children.add(SizedBox());
+      }
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            width: 64,
-            child: TextButton(
-              onPressed: widget.leftAction,
-              child: Transform.translate(
-                offset: Offset(5, 0),
-                child: widget.left != null ? widget.left : SizedBox(),
-              ),
-            ),
-          ),
-          Container(
-            // Media Indicator
-            child: widget.media.length > 1
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: mediaIndicator(),
-                  )
-                : SizedBox(),
-          ),
-          Container(
-            width: 64,
-            child: TextButton(
-              onPressed: widget.rightAction,
-              child: Transform.translate(
-                offset: Offset(5, 0),
-                child: widget.right != null ? widget.right : SizedBox(),
-              ),
-            ),
-          ),
-        ],
+        children: children,
       );
     }
 
@@ -190,6 +174,7 @@ class _MediaGalleryState extends State<MediaGallery> {
                                   imageUrl: widget.media[itemIndex],
                                   fit: BoxFit.cover,
                                   width: MediaQuery.of(context).size.width,
+                                  height: double.infinity,
                                   placeholder: (context, url) => Spinner(),
                                   errorWidget: (context, url, error) =>
                                       Icon(Icons.error),
@@ -198,6 +183,7 @@ class _MediaGalleryState extends State<MediaGallery> {
                                   File(widget.media[itemIndex]),
                                   fit: BoxFit.cover,
                                   width: MediaQuery.of(context).size.width,
+                                  height: double.infinity,
                                 ),
                           widget.onRemoveImg != null
                               ? Positioned(
