@@ -26,7 +26,7 @@ class Toaster {
       icon: icon,
       messageText: content,
       duration: Duration(seconds: 6),
-      margin: EdgeInsets.fromLTRB(15, 0, 15, 84),
+      margin: EdgeInsets.fromLTRB(15, 0, 15, 15),
       padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
       borderRadius: 10,
       isDismissible: true,

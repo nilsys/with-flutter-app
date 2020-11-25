@@ -18,7 +18,7 @@ class UserModel {
     this.stories,
     this.leads,
     this.dayOfBirth,
-    @required this.profileImage,
+    this.profileImage,
   });
 
   UserModel.fromMap(Map<String, dynamic> data, String id)
@@ -32,13 +32,25 @@ class UserModel {
         profileImage = data['profile_image'];
 
   toJson() {
-    return {
-      "display_name": displayName,
-      "email": email,
-      "profile_image": profileImage,
-      "stories": stories,
-      "leads": leads,
-      "day_of_birth": dayOfBirth,
-    };
+    Map<String, dynamic> obj = {};
+    if (displayName != null) {
+      obj["display_name"] = displayName;
+    }
+    if (email != null) {
+      obj["email"] = email;
+    }
+    if (profileImage != null) {
+      obj["profile_image"] = profileImage;
+    }
+    if (stories != null) {
+      obj["stories"] = stories;
+    }
+    if (leads != null) {
+      obj["leads"] = leads;
+    }
+    if (dayOfBirth != null) {
+      obj["day_of_birth"] = dayOfBirth;
+    }
+    return obj;
   }
 }

@@ -49,7 +49,7 @@ class StoryVM extends ChangeNotifier {
     notifyListeners();
   }
 
-  Function resetState() {
+  void resetState() {
     _showDiscussion = false;
     _discussionFullView = false;
     _expandedDiscussionHeight = 0.0;

@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:with_app/core/models/story.model.dart';
 import 'package:with_app/core/view_models/story.vm.dart';
 import 'package:with_app/ui/shared/all.dart';
-import 'package:with_app/ui/widgets/story_card.dart';
 import 'package:with_app/ui/views/auth/auth.view.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'sub_views/story_card.view.dart';
 
 class HomeView extends StatefulWidget {
   static const String route = 'home';
@@ -18,6 +20,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   List<Story> stories;
   final _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +41,10 @@ class _HomeViewState extends State<HomeView> {
           icon: Icon(
             Icons.power_settings_new,
           ),
-          onPressed: () {
-            _auth.signOut().then((value) => {
-                  Navigator.pushNamed(context, AuthView.route),
-                });
+          onPressed: () async {
+            await _googleSignIn.disconnect();
+            await _auth.signOut();
+            Navigator.pushNamed(context, AuthView.route);
           },
         ),
       ),
