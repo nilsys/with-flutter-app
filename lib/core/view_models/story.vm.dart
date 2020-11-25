@@ -14,6 +14,8 @@ export 'package:provider/provider.dart';
 export 'package:with_app/locator.dart';
 export '../models/story.model.dart';
 
+FirebaseStorage _storage = FirebaseStorage.instance;
+
 class StoryVM extends ChangeNotifier {
   Api _api = Api('stories');
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -34,6 +36,8 @@ class StoryVM extends ChangeNotifier {
   List<Comment> _discussion = [];
   List<Post> _posts = [];
   List<Story> _storyList = [];
+  int _scrollToIndex = 0;
+  int _firstUnread = 0;
   // List<double> _scrollOffsets = [];
 
   bool get hasNewComments => _hasNewComments;
@@ -47,6 +51,8 @@ class StoryVM extends ChangeNotifier {
   double get descriptionHeight => _descriptionHeight;
   double get discussionHeight => _discussionHeight;
   double get collpasedHeight => _collpasedHeight;
+  int get scrollToIndex => _scrollToIndex;
+  int get firstUnread => _firstUnread;
   // List<double> get scrollOffsets => _scrollOffsets;
   Story get story => _story;
   UserModel get author => _author;
@@ -55,6 +61,20 @@ class StoryVM extends ChangeNotifier {
   List<Story> get storyList => _storyList;
   Story get currentStory =>
       _storyList.firstWhere((story) => story.id == story.id);
+
+  set scrollToIndex(int val) {
+    if (_scrollToIndex != val) {
+      _scrollToIndex = val;
+      notifyListeners();
+    }
+  }
+
+  set firstUnread(int val) {
+    if (_firstUnread != val) {
+      _firstUnread = val;
+      notifyListeners();
+    }
+  }
 
   set hasNewComments(bool val) {
     if (_hasNewComments != val) {
@@ -158,6 +178,8 @@ class StoryVM extends ChangeNotifier {
     _expandedHeight = 100.0;
     _prevExpandedHeight = 0.0;
     _descriptionHeight = 0.0;
+    _scrollToIndex = 0;
+    _firstUnread = 0;
   }
 
   List<Story> stories;
@@ -287,7 +309,7 @@ class StoryVM extends ChangeNotifier {
       List<String> deleteMedia) async {
     DocumentReference ref =
         _db.collection('stories/${story.id}/posts').doc(postId);
-    await ref.update(post.toJson());
+    await ref.update(post.toJson(withoutTimeStamp: true));
     List<String> uploadUrls = [];
     uploadUrls = await uploadMediaForPost(newMedia, ref.id);
     ref.update({
@@ -302,7 +324,7 @@ class StoryVM extends ChangeNotifier {
     await Future.wait(filePath.map((String path) async {
       String fileName = path.split('/').last;
       final StorageReference storageReference =
-          FirebaseStorage().ref().child('posts/$postId/$fileName');
+          _storage.ref().child('posts/$postId/$fileName');
       final StorageUploadTask uploadTask = storageReference.putFile(File(path));
       final StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
       if (taskSnapshot.error == null) {
@@ -319,10 +341,8 @@ class StoryVM extends ChangeNotifier {
 
   Future<void> deleteMediaForPost(List<String> filePath, String postId) async {
     await Future.wait(filePath.map((String path) async {
-      String fileName = path.split('/').last;
-      final StorageReference storageReference =
-          FirebaseStorage().ref().child('posts/$postId/$fileName');
-      await storageReference.delete();
+      StorageReference _mediaRef = await _storage.getReferenceFromUrl(path);
+      await _mediaRef.delete();
     }));
   }
 

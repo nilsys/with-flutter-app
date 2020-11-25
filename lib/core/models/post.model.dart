@@ -25,7 +25,15 @@ class Post {
         text = snapshot['text'],
         media = snapshot['media'].cast<String>().toList();
 
-  toJson() {
+  toJson({bool withoutTimeStamp = false}) {
+    if (withoutTimeStamp) {
+      return {
+        "title": title,
+        "text": text,
+        "media": media,
+      };
+    }
+
     return {
       "timestamp": timestamp,
       "title": title,

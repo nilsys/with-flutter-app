@@ -330,7 +330,10 @@ class _EditPostViewState extends State<EditPostView> {
                 if (path.startsWith('http')) {
                   setState(() {
                     _deleteMedia = _deleteMedia + [path];
-                    _media = _media.where((src) => src != path);
+                    _media = _media.where((src) {
+                      return Uri.encodeComponent(src) !=
+                          Uri.encodeComponent(path);
+                    }).toList();
                   });
                 } else {
                   cameraProvider.removeFilePath(path);

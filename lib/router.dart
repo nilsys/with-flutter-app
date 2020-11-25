@@ -13,6 +13,7 @@ class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     List splitRoute = settings.name.split('/');
     List<String> params = List();
+    Map args = settings.arguments;
     final String name = splitRoute[0];
     for (int i = 1; i < splitRoute.length; i++) {
       params.add(splitRoute[i]);
@@ -42,7 +43,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => NewPostView(
             step: int.parse(params[0]),
-            postId: params.length > 1 ? params[1] : null,
+            postId: args['postId'],
           ),
         );
       default:

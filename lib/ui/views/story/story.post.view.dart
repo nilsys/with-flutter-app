@@ -17,9 +17,11 @@ final NavigationService navService = NavigationService();
 
 class StoryPost extends StatefulWidget {
   final Post post;
+  final int postIndex;
 
   StoryPost({
     @required this.post,
+    @required this.postIndex,
   });
 
   @override
@@ -35,11 +37,15 @@ class _StoryPostState extends State<StoryPost> {
   CarouselController carouselController = CarouselController();
 
   @swidget
-  Widget postTopSection(timestamp) => Row(
+  Widget postTopSection() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(camelize(timeago.format(timestamp)),
-              style: Theme.of(context).textTheme.subtitle2),
+          Text(camelize(timeago.format(widget.post.timestamp)),
+              style: Theme.of(context).textTheme.subtitle2.copyWith(
+                    color: storyProvider.firstUnread >= widget.postIndex
+                        ? Theme.of(context).indicatorColor
+                        : Theme.of(context).textTheme.subtitle2.color,
+                  )),
           IconButton(
             icon: Icon(Icons.more_horiz),
             color: Colors.black.withAlpha(100),
@@ -260,7 +266,7 @@ class _StoryPostState extends State<StoryPost> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                postTopSection(widget.post.timestamp),
+                postTopSection(),
                 widget.post.text.length > 0
                     ? LayoutBuilder(
                         builder: (context, size) {
@@ -365,7 +371,9 @@ class _StoryPostState extends State<StoryPost> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    print(widget.postIndex);
+                  },
                   child: SizedBox(
                     width: double.infinity,
                     child: Text(
@@ -376,8 +384,12 @@ class _StoryPostState extends State<StoryPost> {
                 ),
                 TextButton(
                   onPressed: () {
-                    navService
-                        .pushNamed('${NewPostView.route}/1/${widget.post.id}');
+                    storyProvider.scrollToIndex = widget.postIndex;
+                    navService.goBack();
+                    navService.pushNamed(
+                      '${NewPostView.route}/1/${widget.post.id}',
+                      args: {'postId': widget.post.id},
+                    );
                   },
                   child: SizedBox(
                     width: double.infinity,

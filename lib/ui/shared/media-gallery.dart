@@ -47,15 +47,17 @@ class _MediaGalleryState extends State<MediaGallery> {
   void didChangeDependencies() {
     if (widget.onRemoveImg != null) {
       Provider.of<CameraVM>(context, listen: true);
-      setState(() {
-        carouselIndex = max(cameraProvider.filePath.length - 1, 0);
+      _timer =
+          Timer(Duration(milliseconds: widget.media.length > 1 ? 1000 : 0), () {
+        setState(() {
+          carouselIndex = max(widget.media.length - 1, 0);
+        });
+        _animateToPage();
       });
       if (cameraProvider.filePath.length == 0) {
         _timer?.cancel();
       } else {
-        _controller.animateToPage(carouselIndex,
-            duration: Duration(milliseconds: 1000),
-            curve: Curves.fastLinearToSlowEaseIn);
+        _animateToPage();
       }
     }
     super.didChangeDependencies();
@@ -65,6 +67,14 @@ class _MediaGalleryState extends State<MediaGallery> {
   void dispose() {
     _timer?.cancel();
     super.dispose();
+  }
+
+  void _animateToPage() {
+    _controller.animateToPage(
+      carouselIndex,
+      duration: Duration(milliseconds: 1000),
+      curve: Curves.fastLinearToSlowEaseIn,
+    );
   }
 
   @override
@@ -218,12 +228,7 @@ class _MediaGalleryState extends State<MediaGallery> {
                                             carouselIndex = carouselIndex - 1;
                                           }
                                         });
-                                        _controller.animateToPage(
-                                          carouselIndex,
-                                          duration:
-                                              Duration(milliseconds: 1000),
-                                          curve: Curves.fastLinearToSlowEaseIn,
-                                        );
+                                        _animateToPage();
                                         _timer = Timer(
                                             Duration(
                                                 milliseconds:

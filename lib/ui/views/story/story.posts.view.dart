@@ -30,7 +30,6 @@ class _StoryPostsState extends State<StoryPosts> {
   static const gutter = 16.0;
   final random = math.Random();
   final scrollDirection = Axis.vertical;
-  int srcollToindex = 0;
 
   // PROVIDERS
   final StoryVM storyProvider = locator<StoryVM>();
@@ -52,13 +51,26 @@ class _StoryPostsState extends State<StoryPosts> {
         axis: scrollDirection);
     postsStream = storyProvider.streamPosts().listen((QuerySnapshot data) {
       storyProvider.posts = data.docs.map((doc) {
-        // if (doc.data()['timestamp'].toData().isAfter(userProvider.user.logs[storyProvider.story.id].toDate())) {
-
-        // }
         return Post.fromMap(doc.data(), doc.id);
       }).toList();
+
+      final int _firstUnreadIndex = storyProvider.posts.length -
+          1 -
+          storyProvider.posts.indexWhere((post) {
+            return post.timestamp.isAfter(
+                userProvider.user.logs[storyProvider.story.id].toDate());
+          });
+
+      storyProvider.firstUnread = _firstUnreadIndex;
+      storyProvider.scrollToIndex = _firstUnreadIndex;
     });
   }
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   Provider.of<StoryVM>(context, listen: true);
+  // }
 
   @override
   void dispose() {
@@ -66,14 +78,14 @@ class _StoryPostsState extends State<StoryPosts> {
     super.dispose();
   }
 
-  Future<void> scrollToIndex(i) async {
+  Future<void> scrollToIndex() async {
     await controller.scrollToIndex(
-      i,
+      storyProvider.scrollToIndex,
       preferPosition: AutoScrollPosition.end,
       duration: Duration(milliseconds: 700),
     );
     controller.highlight(
-      i,
+      storyProvider.scrollToIndex,
       highlightDuration: Duration(seconds: 1),
     );
   }
@@ -82,7 +94,7 @@ class _StoryPostsState extends State<StoryPosts> {
   Widget newPostsDivider(i) => Container(
         padding: EdgeInsets.fromLTRB(0, 22, 0, 18),
         child: Text(
-          '$i Unread Posts',
+          '${storyProvider.posts.length + 1 - i} Unread Posts',
           style: TextStyle(color: Theme.of(context).indicatorColor),
         ),
       );
@@ -105,12 +117,7 @@ class _StoryPostsState extends State<StoryPosts> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (srcollToindex > 0) {
-        scrollToIndex(srcollToindex);
-      } else if (storyProvider.posts.length > 0) {
-        // scrollToIndex(storyProvider.posts.length - 1); // TODO: implement for none followers
-        scrollToIndex(0); // for followers
-      }
+      scrollToIndex();
     });
 
     return Scaffold(
@@ -163,24 +170,26 @@ class _StoryPostsState extends State<StoryPosts> {
                         .map((entry) {
                       int index = entry.key;
                       Post post = entry.value;
-                      if (srcollToindex == 0 &&
-                          post.timestamp.isAfter(userProvider
-                              .user.logs[storyProvider.story.id]
-                              .toDate())) {
-                        srcollToindex = index;
-                      }
+                      // if (storyProvider.firstUnread == 0 &&
+                      //     post.timestamp.isAfter(userProvider
+                      //         .user.logs[storyProvider.story.id]
+                      //         .toDate())) {
+                      //   storyProvider.firstUnread = index;
+                      //   storyProvider.scrollToIndex = index;
+                      // }
                       return AutoScrollTag(
                           key: ValueKey(index),
                           controller: controller,
                           index: index,
                           child: Column(
                             children: [
-                              srcollToindex == index && index > 0
+                              storyProvider.firstUnread == index
                                   ? newPostsDivider(storyProvider.posts.length -
-                                      srcollToindex)
+                                      storyProvider.scrollToIndex)
                                   : SizedBox(),
                               StoryPost(
                                 post: post,
+                                postIndex: index,
                               ),
                             ],
                           ));
